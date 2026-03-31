@@ -9,11 +9,19 @@
       assign saved_amount = saved_amount | append: '%'
     endif
   endif
+
+  assign current_variant = product.selected_or_first_available_variant
+  assign badge_texte = current_variant.metafields.custom.label_texte
+  assign badge_color = current_variant.metafields.custom.label_color
+  if badge_texte == blank or badge_color == blank
+    assign badge_texte = product.metafields.custom.label_texte
+    assign badge_color = product.metafields.custom.label_color
+  endif
 -%}
 <div class="badges{% if class != blank %} {{ class }}{% endif %} pointer-events-none">
-  {%- if product.metafields.custom.label_texte != blank and product.metafields.custom.label_color != blank -%}
-    <span class="badge flex items-center gap-1d5 font-medium leading-none rounded-full" style="--badge-background: {{ product.metafields.custom.label_color }}; --badge-foreground: #ffffff;">
-      {{- product.metafields.custom.label_texte | escape -}}
+  {%- if badge_texte != blank and badge_color != blank -%}
+    <span class="badge flex items-center gap-1d5 font-medium leading-none rounded-full" style="--badge-background: {{ badge_color }}; --badge-foreground: #ffffff;">
+      {{- badge_texte | escape -}}
     </span>
   {%- endif -%}
 

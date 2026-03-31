@@ -9,12 +9,20 @@
       assign saved_amount = saved_amount | append: '%'
     endif
   endif
+
+  assign current_variant = product.selected_or_first_available_variant
+  assign badge_texte = current_variant.metafields.custom.label_texte
+  assign badge_color = current_variant.metafields.custom.label_color
+  if badge_texte == blank or badge_color == blank
+    assign badge_texte = product.metafields.custom.label_texte
+    assign badge_color = product.metafields.custom.label_color
+  endif
 -%}
 
 <div class="cluutch-badges-wrapper">
-  {% if product.metafields.custom.label_texte != blank and product.metafields.custom.label_color != blank %}
-    <p class="cluutch-badge" style="background: {{ product.metafields.custom.label_color }}; color: #ffffff;">
-      {{ product.metafields.custom.label_texte | escape }}
+  {% if badge_texte != blank and badge_color != blank %}
+    <p class="cluutch-badge" style="background: {{ badge_color }}; color: #ffffff;">
+      {{ badge_texte | escape }}
     </p>
   {% else %}
     {% if product.metafields.custom.cluutch_meilleure != blank %}
