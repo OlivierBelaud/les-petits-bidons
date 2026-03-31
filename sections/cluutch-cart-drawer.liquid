@@ -21,57 +21,53 @@
       aria-expanded="false"
     ></overlay-element>
     <div class="drawer__inner z-10 absolute top-0 flex flex-col w-full h-full overflow-hidden">
-      <gesture-element class="drawer__header flex justify-between opacity-0 invisible relative">
-        <ul class="drawer__tabs flex gap-10" is="tab-list">
-          <li>
-            <button
-              class="drawer__tab relative"
-              type="button"
-              aria-controls="MiniCart-{{ section.id }}"
-              aria-expanded="true"
-            >
-              <span class="drawer__title heading lg:text-3xl text-2xl leading-none tracking-tight">
-                {{- 'general.cart.title' | t -}}
-              </span>
-              <cart-count
-                class="count absolute font-medium text-xs lg:text-sm leading-none"
-                aria-label="{{ 'general.cart.cart_count' | t: count: cart.item_count | escape }}"
-                {% if cart == empty %}
-                  hidden
-                {% endif %}
-              >
-                {{- cart.item_count -}}
-              </cart-count>
-            </button>
-          </li>
-          {%- if section.settings.recent_products_enabled -%}
-            <li>
-              <button
-                class="drawer__tab"
-                type="button"
-                aria-controls="RecentlyViewed-{{ section.id }}"
-                aria-expanded="false"
-              >
-                <span class="drawer__title heading lg:text-3xl text-2xl leading-none tracking-tight">
-                  {{- section.settings.recent_products_heading | escape -}}
-                </span>
-              </button>
-            </li>
+      <gesture-element class="drawer__header flex justify-between items-center opacity-0 invisible relative">
+        <div class="drawer__header-logo">
+          {%- if settings.logo != blank -%}
+            <a href="{{ routes.root_url }}" class="drawer__logo-link flex items-center">
+              <span class="sr-only">{{ shop.name }}</span>
+              {{ settings.logo | image_url: width: 240 | image_tag: loading: 'lazy', style: 'max-height: 40px; width: auto;', alt: shop.name }}
+            </a>
+          {%- else -%}
+            <a href="{{ routes.root_url }}" class="drawer__logo-link h3">{{ shop.name }}</a>
           {%- endif -%}
-        </ul>
-        <button
-          class="button button--secondary button--close drawer__close hidden sm:flex items-center justify-center"
-          type="button"
-          is="hover-button"
-          aria-controls="CartDrawer"
-          aria-expanded="false"
-          aria-label="{{ 'general.accessibility.close' | t | escape }}"
-        >
-          <span class="btn-fill" data-fill></span>
-          <span class="btn-text">
-            {%- render 'icon', icon: 'close', size: 'sm' -%}
-          </span>
-        </button>
+        </div>
+
+        <div class="drawer__header-right flex items-center gap-8">
+          <button
+            class="drawer__tab relative"
+            type="button"
+            aria-controls="MiniCart-{{ section.id }}"
+            aria-expanded="true"
+          >
+            <span class="drawer__title heading lg:text-3xl text-2xl leading-none tracking-tight">
+              {{- 'general.cart.title' | t -}}
+            </span>
+            <cart-count
+              class="count absolute font-medium text-xs lg:text-sm leading-none"
+              aria-label="{{ 'general.cart.cart_count' | t: count: cart.item_count | escape }}"
+              {% if cart == empty %}
+                hidden
+              {% endif %}
+            >
+              {{- cart.item_count -}}
+            </cart-count>
+          </button>
+
+          <button
+            class="button button--secondary button--close drawer__close flex items-center justify-center"
+            type="button"
+            is="hover-button"
+            aria-controls="CartDrawer"
+            aria-expanded="false"
+            aria-label="{{ 'general.accessibility.close' | t | escape }}"
+          >
+            <span class="btn-fill" data-fill></span>
+            <span class="btn-text">
+              {%- render 'icon', icon: 'close', size: 'sm' -%}
+            </span>
+          </button>
+        </div>
       </gesture-element>
 
       <div class="drawer__content opacity-0 invisible flex flex-col h-full grow shrink">
@@ -136,10 +132,6 @@
                     assign minimum_amount = minimum_amounts
                     assign show_free_shipping_bar = true
                   endif
-
-                  if show_free_shipping_bar
-                    render 'free-shipping-bar', minimum_amount: minimum_amount
-                  endif
                 endif
               -%}
 
@@ -176,14 +168,17 @@
                           </a>
                         {%- endif -%}
                         <div class="horizontal-product__details flex flex-col justify-start gap-1d5">
-                          
+
                               <div class="flex flex-col gap-1">
                                   <div class="flex flex-col gap-1">
                                   <div class="block leading-tight">
-                                      {%- if section.settings.show_vendor -%}
-
-                                      <p class="text-xs text-opacity">{{ item.product.vendor }}</p>
-
+                                      {%- if item.product.metafields.reviews.rating.value != blank and item.product.metafields.reviews.rating_count.value > 0 -%}
+                                        {% assign cart_rating = item.product.metafields.reviews.rating.value | replace: ',', '.' | replace: ' ', '' | plus: 0 | round: 1 %}
+                                        <div class="flex items-center gap-1 text-xs" style="color: var(--mint-secondary, #007E7F);">
+                                          {% render 'cluutch-icon', icon: 'star' %}
+                                          <span>{{ cart_rating }}/5</span>
+                                          <span style="color: var(--TEXT, #003435); opacity: 0.5;">({{ item.product.metafields.reviews.rating_count.value }})</span>
+                                        </div>
                                       {%- endif -%}
                                       <a href="{{ item.url }}" class="horizontal-product__title reversed-link font-medium text-base leading-tight">{{ item.product.title | escape }}</a>
                                   </div>
@@ -310,41 +305,6 @@
                                                 
                                               </div>
 
-                                              <div class="cart-product__flex">
-
-                                                {%- if item.product.metafields.reviews.rating.value != blank and item.product.metafields.reviews.rating_count.value > 0 -%}
-                                                  {% liquid
-                                                    assign rating_decimal = 0
-                                                    assign decimal = item.product.metafields.reviews.rating.value.rating | modulo: 1
-                                                    if decimal >= 0.3 and decimal <= 0.7
-                                                      assign rating_decimal = 0.5
-                                                    elsif decimal > 0.7
-                                                      assign rating_decimal = 1
-                                                    endif
-                                                  %}
-                                                  <div class="product__rating cluutch-product__rating flex items-center gap-2" {{ block.shopify_attributes }}>
-                                                  
-                                                    <div style="display: flex; gap 2px; align-items: center;">
-                                                      {% assign raw_rating = item.product.metafields.reviews.rating.value %}
-                                                      {% assign clean_rating = raw_rating | replace: ',', '.' | replace: ' ', '' | plus: 0 %}
-                                                      {% assign rounded_rating = clean_rating | round: 1 %}
-                                                      {% assign range = '1,2,3,4,5' | split: ',' %}
-
-                                                      {% render 'cluutch-icon', icon: 'star' %}
-                                                      <p class="rating-text text-sm leading-none">
-                                                        <span aria-hidden="true">{{ rounded_rating }}/5</span>
-                                                      </p>
-                                                    </div>
-                                                    <p class=" ">
-                                                      <span class="review-text" aria-hidden="true">
-                                                          ({{- item.product.metafields.reviews.rating_count.value }})
-                                                      </span>
-                                                    
-                                                    </p>
-                                                  </div>
-                                                {%- endif -%}
-                                      
-                                              </div>
                                             </div>
                                           {%- if item.line_level_discount_allocations != blank -%}
                                               <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t | escape }}">
@@ -524,11 +484,18 @@
                                     </div>
                                   </x-modal>
                                 {%- endif -%}
-                                <quantity-input class="cart-quantity flex items-center relative">
+                                <quantity-input class="cart-qty-pill flex items-center" data-item-key="{{ item.key }}">
                                   <label class="sr-only" for="Quantity-{{ section.id }}-{{ item.key }}">
                                     {{- 'products.quantity.label' | t -}}
                                   </label>
-                                  <input class="quantity__input input text-center w-full h-full"
+                                  <button type="button" name="minus" class="cart-qty-pill__btn cart-qty-pill__minus" aria-label="{{ 'products.quantity.decrease' | t: product: item.product.title | escape }}">
+                                    <span class="cart-qty-pill__btn-content">
+                                      <span class="quantity__minus-icon{% if item.quantity <= 1 %} hidden{% endif %}">−</span>
+                                      <span class="quantity__trash-icon{% if item.quantity > 1 %} hidden{% endif %}">{%- render 'icon', icon: 'trash', size: 'sm' -%}</span>
+                                    </span>
+                                    <span class="cart-qty-pill__loader hidden">{%- render 'icon', icon: 'rotator', size: 'xs', class: 'animate-rotator' -%}</span>
+                                  </button>
+                                  <input class="cart-qty-pill__input"
                                     type="number"
                                     name="updates[]"
                                     aria-label="{{ 'products.quantity.input_label' | t: product: item.product.title | escape }}"
@@ -546,15 +513,36 @@
                                     step="{{ item.variant.quantity_rule.increment }}"
                                     value="{{ item.quantity }}"
                                   />
-                                  <div class="quantity__buttons absolute right-0 hidden lg:flex flex-col items-center justify-center h-full">
-                                    <button type="button" name="plus" class="quantity__button flex justify-center w-full items-end" aria-label="{{ 'products.quantity.increase' | t: product: item.product.title | escape }}">
-                                      {%- render 'icon', icon: 'increase', size: 'sm', class: 'stroke-1' -%}
-                                    </button>
-                                    <button type="button" name="minus" class="quantity__button flex justify-center w-full items-start" aria-label="{{ 'products.quantity.decrease' | t: product: item.product.title | escape }}">
-                                      {%- render 'icon', icon: 'decrease', size: 'sm', class: 'stroke-1' -%}
-                                    </button>
-                                  </div>
+                                  <button type="button" name="plus" class="cart-qty-pill__btn" aria-label="{{ 'products.quantity.increase' | t: product: item.product.title | escape }}">
+                                    <span class="cart-qty-pill__btn-content">+</span>
+                                    <span class="cart-qty-pill__loader hidden">{%- render 'icon', icon: 'rotator', size: 'xs', class: 'animate-rotator' -%}</span>
+                                  </button>
                                 </quantity-input>
+                                <script>
+                                  (function() {
+                                    var input = document.getElementById('Quantity-{{ section.id }}-{{ item.key }}');
+                                    if (!input) return;
+                                    function updateIcon() {
+                                      var qty = parseInt(input.value) || 0;
+                                      var pill = input.closest('.cart-qty-pill');
+                                      if (!pill) return;
+                                      var minusIcon = pill.querySelector('.quantity__minus-icon');
+                                      var trashIcon = pill.querySelector('.quantity__trash-icon');
+                                      if (minusIcon && trashIcon) {
+                                        if (qty <= 1) {
+                                          minusIcon.classList.add('hidden');
+                                          trashIcon.classList.remove('hidden');
+                                        } else {
+                                          minusIcon.classList.remove('hidden');
+                                          trashIcon.classList.add('hidden');
+                                        }
+                                      }
+                                    }
+                                    input.addEventListener('change', updateIcon);
+                                    var observer = new MutationObserver(function() { updateIcon(); });
+                                    observer.observe(input, { attributes: true, attributeFilter: ['value'] });
+                                  })();
+                                </script>
                               </div>
                             {%- else -%}
                               <div class="cart-quantity flex items-center relative">
@@ -580,7 +568,7 @@
                                   value="{{ item.quantity }}"
                                   disabled
                                 />
-                                <div class="quantity__buttons absolute right-0 hidden flex flex-col items-center justify-center h-full sr-only">
+                                <div class="quantity__buttons absolute right-0 hidden lg:flex flex-col items-center justify-center h-full sr-only">
                                   <button type="button" name="plus" class="quantity__button flex justify-center w-full items-end" aria-label="{{ 'products.quantity.increase' | t: product: item.product.title | escape }}" disabled>
                                     {%- render 'icon', icon: 'increase', size: 'sm', class: 'stroke-1' -%}
                                   </button>
@@ -594,7 +582,7 @@
                               <div id="Loader-{{ section.id }}-{{ item.key }}" class="loader absolute right-0" hidden>
                                 {%- render 'icon', icon: 'rotator', size: 'xs', class: 'animate-rotator' -%}
                               </div>
-                              <a class="link" href="{{ item.url_to_remove }}"{% unless is_gift_wrap_item %} is="cart-remove-button"{% else %} is="remove-gift-wrap"{% endunless %} data-index="{{ item.key }}" data-no-instant>{{ 'cart.general.remove' | t }}</a>
+                              <a class="link" href="{{ item.url_to_remove }}"{% unless is_gift_wrap_item %} is="cart-remove-button"{% else %} is="remove-gift-wrap"{% endunless %} data-index="{{ item.key }}" data-no-instant hidden>{{ 'cart.general.remove' | t }}</a>
                             </div>
                           </div>
                         </div>
@@ -616,6 +604,12 @@
                   -%}
                 </ul>
               </cart-items>
+
+              {%- if show_free_shipping_bar -%}
+                <div style="border-top: 1px solid rgb(var(--color-border)); padding-top: var(--sp-5);">
+                  {%- render 'free-shipping-bar', minimum_amount: minimum_amount -%}
+                </div>
+              {%- endif -%}
 
               {%- render 'gift-wrapping',
                 section_id: section.id,

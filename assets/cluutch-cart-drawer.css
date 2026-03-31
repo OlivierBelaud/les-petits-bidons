@@ -1,3 +1,7 @@
+.cluutch-cart-drawer .drawer__inner {
+    max-width: 43rem;
+}
+
 .cluutch-cart-drawer .free-shipping-bar progress-bar::before {
     background-color: #37B6AD;
 }
@@ -103,6 +107,113 @@
 .cart-product__flex .review-text {
     font-size: 16px;
     font-style: normal;
+}
+
+/* Quantity pill */
+.cart-qty-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    background: #F5F5F5;
+    border-radius: 999px;
+    padding: 4px 6px;
+    flex-shrink: 0;
+}
+
+.cart-qty-pill__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--TEXT, #003435);
+    padding: 0;
+    line-height: 1;
+}
+
+.cart-qty-pill__btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.cart-qty-pill__input {
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    border: none;
+    background: none;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: var(--font-body-family, 'DM Sans', sans-serif);
+    color: var(--TEXT, #003435);
+    padding: 0;
+    -moz-appearance: textfield;
+}
+
+.cart-qty-pill__input::-webkit-outer-spin-button,
+.cart-qty-pill__input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cart-qty-pill .hidden {
+    display: none;
+}
+
+.cart-qty-pill__loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-qty-pill__loader svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Mobile: full height, no grab bar, show close button */
+@media screen and (max-width: 767px) {
+    html.js .cluutch-cart-drawer .drawer__inner {
+        max-height: 100%;
+        border-radius: 0;
+    }
+
+    html.js .cluutch-cart-drawer .drawer__header::before {
+        display: none;
+    }
+
+    html.js .cluutch-cart-drawer .drawer__close {
+        all: revert;
+    }
+
+    html.js .cluutch-cart-drawer .button.button--close {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+        overflow: hidden !important;
+        clip: auto !important;
+        width: auto !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: clamp(var(--sp-4d5), 1.2vw, var(--sp-5d5)) !important;
+        border: none !important;
+        border-radius: var(--buttons-radius) !important;
+        white-space: normal !important;
+        cursor: pointer !important;
+        color: rgb(var(--color-button-background)) !important;
+        background: none !important;
+        backdrop-filter: blur(12px) !important;
+        --border-opacity: 0.1;
+        --buttons-border-width: 1px;
+        --buttons-radius: var(--rounded-full);
+        --shadow-opacity: 0;
+    }
 }
 
 /* Fix iOS: empêcher le scroll du body derrière le cart drawer */
