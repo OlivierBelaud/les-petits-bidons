@@ -1,5 +1,5 @@
 .cluutch-cart-drawer .drawer__inner {
-    max-width: 43rem;
+    max-width: 40rem;
 }
 
 .cluutch-cart-drawer .free-shipping-bar progress-bar::before {
@@ -181,10 +181,17 @@
     background-color: #6BBAB1 !important;
     border-color: #6BBAB1 !important;
     color: #fff !important;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    padding-block: 18px !important;
 }
 
 .cart-drawer__checkout-btn .btn-fill {
     background-color: #5aa89f !important;
+}
+
+.cart-drawer__checkout-info {
+    line-height: 1.6;
 }
 
 .cart-drawer__separator {
@@ -195,10 +202,13 @@
 
 .cart-drawer__rating {
     font-size: 14px;
+    padding-bottom: 2px;
 }
 
-.cart-drawer__rating-star {
-    font-size: 16px;
+.cart-drawer__rating .icon {
+    width: 16px;
+    height: 16px;
+    color: #D4A843;
 }
 
 /* Mobile: full height, no grab bar, show close button */

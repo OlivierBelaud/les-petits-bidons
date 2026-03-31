@@ -969,8 +969,12 @@
                   <hr class="cart-drawer__separator">
 
                   <div class="cart-drawer__rating flex items-center justify-center gap-2">
-                    <span class="cart-drawer__rating-star">⭐</span>
-                    <span class="cart-drawer__rating-text"><strong>4,8/5</strong> – 6370 avis vérifiés</span>
+                    {% render 'cluutch-icon', icon: 'star' %}
+                    <span class="cart-drawer__rating-text">
+                      {%- assign rating_value = shop.metafields.judgeme.all_reviews_rating | round: 1 | replace: '.', ',' -%}
+                      {%- assign reviews_count = shop.metafields.judgeme.all_reviews_count -%}
+                      <strong>{{ rating_value }}/5</strong> – {{ reviews_count }} avis vérifiés
+                    </span>
                   </div>
                 {%- endif -%}
               </div>
