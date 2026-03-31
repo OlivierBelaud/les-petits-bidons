@@ -221,8 +221,9 @@
 
 .cart-drawer__rating {
     font-size: 15px;
-    margin-top: -16px;
-    margin-bottom: -4px;
+    gap: 4px !important;
+    margin-top: -20px;
+    margin-bottom: -10px;
 }
 
 .cart-drawer__rating .icon {
@@ -230,7 +231,6 @@
     height: 16px;
     color: #D4A843;
     flex-shrink: 0;
-    margin-right: -4px;
 }
 
 /* Mobile: full height, no grab bar, show close button */
