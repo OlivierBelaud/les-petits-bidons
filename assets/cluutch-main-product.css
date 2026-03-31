@@ -496,7 +496,7 @@
 }
 
 .cluutch-badges-wrapper {
-    display: none !important;
+    display: flex;
 }
 
 .cluutch-main-product .size-option {
