@@ -579,9 +579,6 @@
                               </div>
                             {%- endunless -%}
                             <div class="text-xs text-right relative">
-                              <div id="Loader-{{ section.id }}-{{ item.key }}" class="loader absolute right-0" hidden>
-                                {%- render 'icon', icon: 'rotator', size: 'xs', class: 'animate-rotator' -%}
-                              </div>
                               <a class="link" href="{{ item.url_to_remove }}"{% unless is_gift_wrap_item %} is="cart-remove-button"{% else %} is="remove-gift-wrap"{% endunless %} data-index="{{ item.key }}" data-no-instant hidden>{{ 'cart.general.remove' | t }}</a>
                             </div>
                           </div>
