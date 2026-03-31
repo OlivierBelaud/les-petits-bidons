@@ -12,12 +12,10 @@
 -%}
 
 <div class="cluutch-badges-wrapper">
-  {% if product.metafields.theme.label.value != blank and product.metafields.theme.label_color.value != blank %}
-    {%- for label in product.metafields.theme.label.value -%}
-      <p class="cluutch-badge" style="background: {{ product.metafields.theme.label_color.value }}; color: #ffffff;">
-        {{ label | escape }}
-      </p>
-    {%- endfor -%}
+  {% if product.metafields.custom.label_texte != blank and product.metafields.custom.label_color != blank %}
+    <p class="cluutch-badge" style="background: {{ product.metafields.custom.label_color }}; color: #ffffff;">
+      {{ product.metafields.custom.label_texte | escape }}
+    </p>
   {% else %}
     {% if product.metafields.custom.cluutch_meilleure != blank %}
       <p class="cluutch-badge cluutch-badge--yellow">
