@@ -268,7 +268,7 @@ class CartItems extends HTMLElement {
     const index = target.getAttribute('data-index');
     let message = '';
 
-    if (inputValue < parseInt(target.getAttribute('data-min'))) {
+    if (inputValue !== 0 && inputValue < parseInt(target.getAttribute('data-min'))) {
       message = theme.quickOrderListStrings.minError.replace('[min]', target.getAttribute('data-min'));
     }
     else if (inputValue > parseInt(target.max)) {
