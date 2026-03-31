@@ -206,9 +206,8 @@
         border-radius: var(--buttons-radius) !important;
         white-space: normal !important;
         cursor: pointer !important;
-        color: rgb(var(--color-button-background)) !important;
-        background: none !important;
-        backdrop-filter: blur(12px) !important;
+        color: rgb(var(--color-button-text)) !important;
+        background: rgb(var(--color-button-background)) !important;
         --border-opacity: 0.1;
         --buttons-border-width: 1px;
         --buttons-radius: var(--rounded-full);
