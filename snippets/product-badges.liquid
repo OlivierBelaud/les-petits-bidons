@@ -11,17 +11,10 @@
   endif
 -%}
 <div class="badges{% if class != blank %} {{ class }}{% endif %} pointer-events-none">
-  {%- if product.metafields.theme.label.value != blank -%}
-    {%- capture styles -%}
-      {%- if product.metafields.theme.label_color.value != blank -%}
-        --badge-background: {{ product.metafields.theme.label_color.value }}; --badge-foreground: #ffffff;
-      {%- endif -%}
-    {%- endcapture -%}
-    {%- for label in product.metafields.theme.label.value -%}
-      <span class="badge flex items-center gap-1d5 font-medium leading-none rounded-full"{% if styles != blank %} style="{{ styles }}"{% endif %}>
-        {{- label | escape -}}
-      </span>
-    {%- endfor -%}
+  {%- if product.metafields.custom.label_texte != blank and product.metafields.custom.label_color != blank -%}
+    <span class="badge flex items-center gap-1d5 font-medium leading-none rounded-full" style="--badge-background: {{ product.metafields.custom.label_color }}; --badge-foreground: #ffffff;">
+      {{- product.metafields.custom.label_texte | escape -}}
+    </span>
   {%- endif -%}
 
   {%- if saved_amount != blank -%}
