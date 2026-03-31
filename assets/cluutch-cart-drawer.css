@@ -230,7 +230,10 @@
 /* Hide Smile.io floating widget when cart drawer is open on mobile */
 @media screen and (max-width: 767px) {
     .has-modal-open #smile-ui-container,
-    .has-modal-open .smile-launcher-frame-container {
+    .has-modal-open .smile-launcher-frame-container,
+    .has-modal-open #smile-launcher-frame,
+    .has-modal-open [id*="smile"],
+    .has-modal-open [class*="smile-launcher"] {
         display: none !important;
     }
 }
