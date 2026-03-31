@@ -2834,6 +2834,7 @@ class QuantityInput extends HTMLElement {
   onButtonClick(event) {
     event.preventDefault();
     const previousValue = this.input.value;
+    const clickedButton = event.currentTarget;
 
     if (event.currentTarget.name === "plus") {
       if (
@@ -2849,8 +2850,15 @@ class QuantityInput extends HTMLElement {
       this.input.stepDown();
     }
 
-    if (previousValue !== this.input.value)
+    if (previousValue !== this.input.value) {
+      const btnContent = clickedButton.querySelector(".cart-qty-pill__btn-content");
+      const btnLoader = clickedButton.querySelector(".cart-qty-pill__loader");
+      if (btnContent && btnLoader) {
+        btnContent.classList.add("hidden");
+        btnLoader.classList.remove("hidden");
+      }
       this.input.dispatchEvent(this.changeEvent);
+    }
 
     if (
       this.input.getAttribute("data-min") === previousValue &&
