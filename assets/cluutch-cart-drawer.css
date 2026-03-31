@@ -207,21 +207,17 @@
     font-size: 13px;
     line-height: 1.7;
     color: rgb(var(--color-foreground) / 0.8);
-    margin-top: -16px;
 }
 
 .cart-drawer__separator {
     border: none;
     height: 1px;
     background-color: #fff;
-    margin: -16px 0;
 }
 
 .cart-drawer__rating {
     font-size: 15px;
     gap: 4px !important;
-    margin-top: -20px;
-    margin-bottom: -10px;
 }
 
 .cart-drawer__rating .icon {
