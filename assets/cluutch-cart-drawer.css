@@ -258,10 +258,13 @@
 .cart-drawer .drawer__scrollable {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    touch-action: pan-y;
 }
 
-html.touch .has-modal-open .cart-drawer .drawer__inner {
-    touch-action: pan-y;
+html.touch .has-modal-open {
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 
 @media (min-width:1024px) {
