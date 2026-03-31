@@ -227,6 +227,14 @@
     flex-shrink: 0;
 }
 
+/* Hide Smile.io floating widget when cart drawer is open on mobile */
+@media screen and (max-width: 767px) {
+    .has-modal-open #smile-ui-container,
+    .has-modal-open .smile-launcher-frame-container {
+        display: none !important;
+    }
+}
+
 /* Mobile: full height, no grab bar, show close button */
 @media screen and (max-width: 767px) {
     html.js .cluutch-cart-drawer .drawer__inner {
