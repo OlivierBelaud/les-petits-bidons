@@ -176,6 +176,31 @@
     height: 14px;
 }
 
+/* Cart drawer checkout button */
+.cart-drawer__checkout-btn {
+    background-color: #6BBAB1 !important;
+    border-color: #6BBAB1 !important;
+    color: #fff !important;
+}
+
+.cart-drawer__checkout-btn .btn-fill {
+    background-color: #5aa89f !important;
+}
+
+.cart-drawer__separator {
+    border: none;
+    border-top: 1px solid rgba(var(--color-foreground), 0.1);
+    margin: 0;
+}
+
+.cart-drawer__rating {
+    font-size: 14px;
+}
+
+.cart-drawer__rating-star {
+    font-size: 16px;
+}
+
 /* Mobile: full height, no grab bar, show close button */
 @media screen and (max-width: 767px) {
     html.js .cluutch-cart-drawer .drawer__inner {
