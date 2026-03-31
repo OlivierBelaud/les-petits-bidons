@@ -19,6 +19,18 @@
   endif
 -%}
 
+<!-- DEBUG VARIANT -->
+<div style="background:red;color:white;padding:5px;font-size:10px;z-index:9999;position:relative;">
+  variant_id: {{ current_variant.id }}<br>
+  variant_title: {{ current_variant.title }}<br>
+  variant_label_texte: [{{ current_variant.metafields.custom.label_texte }}]<br>
+  variant_label_color: [{{ current_variant.metafields.custom.label_color }}]<br>
+  product_label_texte: [{{ product.metafields.custom.label_texte }}]<br>
+  product_label_color: [{{ product.metafields.custom.label_color }}]<br>
+  badge_texte: [{{ badge_texte }}]<br>
+  badge_color: [{{ badge_color }}]
+</div>
+<!-- FIN DEBUG -->
 <div class="cluutch-badges-wrapper">
   {% if badge_texte != blank and badge_color != blank %}
     <p class="cluutch-badge" style="background: {{ badge_color }}; color: #ffffff;">
