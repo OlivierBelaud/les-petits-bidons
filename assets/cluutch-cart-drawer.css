@@ -209,26 +209,28 @@
     font-size: 13px;
     line-height: 1.7;
     color: rgb(var(--color-foreground) / 0.8);
-    margin-top: -8px;
+    margin-top: -16px;
 }
 
 .cart-drawer__separator {
     border: none;
     height: 1px;
     background-color: #fff;
-    margin: 0;
+    margin: -16px 0;
 }
 
 .cart-drawer__rating {
     font-size: 15px;
-    padding: 0;
+    margin-top: -16px;
+    margin-bottom: -4px;
 }
 
 .cart-drawer__rating .icon {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     color: #D4A843;
     flex-shrink: 0;
+    margin-right: -4px;
 }
 
 /* Mobile: full height, no grab bar, show close button */
