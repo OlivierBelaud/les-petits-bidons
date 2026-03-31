@@ -961,7 +961,7 @@
                     {%- endif -%}
                   </form>
 
-                  <p class="cart-drawer__checkout-info text-center text-sm" style="opacity: 0.7;">
+                  <p class="cart-drawer__checkout-info text-center">
                     Codes promos & choix du mode de livraison à l'étape suivante<br>
                     Choix du point-relais après paiement
                   </p>
@@ -970,10 +970,11 @@
 
                   <div class="cart-drawer__rating flex items-center justify-center gap-2">
                     {% render 'cluutch-icon', icon: 'star' %}
-                    <span class="cart-drawer__rating-text">
-                      {%- assign rating_value = shop.metafields.judgeme.all_reviews_rating | round: 1 | replace: '.', ',' -%}
-                      {%- assign reviews_count = shop.metafields.judgeme.all_reviews_count -%}
-                      <strong>{{ rating_value }}/5</strong> – {{ reviews_count }} avis vérifiés
+                    <span class="cart-drawer__rating-text jdgm-all-reviews-text__text"
+                      data-score="{{ shop.metafields.judgeme.all_reviews_rating }}"
+                      data-number-of-reviews="{{ shop.metafields.judgeme.all_reviews_count }}"
+                    >
+                      <strong>4,8/5</strong> – 5 170 avis vérifiés
                     </span>
                   </div>
                 {%- endif -%}

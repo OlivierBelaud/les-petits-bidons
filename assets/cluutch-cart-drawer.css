@@ -178,7 +178,7 @@
 
 /* Cart drawer footer */
 .cluutch-cart-drawer .drawer__footer-buttons {
-    gap: 16px;
+    gap: 8px;
 }
 
 .cart-drawer__checkout-btn {
@@ -208,20 +208,20 @@
 .cart-drawer__checkout-info {
     font-size: 13px;
     line-height: 1.7;
-    color: rgb(var(--color-foreground) / 0.55);
-    margin-top: 4px;
+    color: rgb(var(--color-foreground) / 0.8);
+    margin-top: -8px;
 }
 
 .cart-drawer__separator {
     border: none;
     height: 1px;
-    background-color: rgb(var(--color-foreground) / 0.12);
-    margin: 4px 0;
+    background-color: #fff;
+    margin: 0;
 }
 
 .cart-drawer__rating {
     font-size: 15px;
-    padding-bottom: 4px;
+    padding: 0;
 }
 
 .cart-drawer__rating .icon {
