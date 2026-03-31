@@ -666,36 +666,7 @@
               {% endcase %}
             {% endfor %}
 
-            <!-- Start of Judge.me code -->
-            <div class="jdgm-widget jdgm-all-reviews-text">
-              <a href="javascript:void(0)">
-                {% comment %}
-                  <span
-                    data-score="{{ shop.metafields.judgeme.all_reviews_rating }}"
-                    class="jdgm-all-reviews-rating"
-                  ></span>
-                {% endcomment %}
-                <div style="display: flex; gap 2px; align-items: center;">
-                  {% assign range = '1,2,3,4,5' | split: ',' %}
-                  {% for i in range %}
-                    {% render 'cluutch-icon', icon: 'star' %}
-                  {% endfor %}
-                </div>
-                <span
-                  class="jdgm-all-reviews-text__text"
-                  data-score="{{ shop.metafields.judgeme.all_reviews_rating }}"
-                  data-number-of-reviews="{{ shop.metafields.judgeme.all_reviews_count }}"
-                  data-locale="en"
-                  >4.80/5 basé sur 5,170 avis</span
-                >
-              </a>
-            </div>
-            <div style="width:100%; background-color: rgb(var(--color-foreground) / .045);">
-              <a class="cart-product__link" href="https://judge.me/reviews/stores/lespetitsbidons.fr">
-                Nos clients nous font confiance
-              </a>
-            </div>
-            <!-- End of Judge.me code -->
+            <!-- Judge.me rating moved to footer bottom -->
             <div class="drawer__footer grid w-full{% if cart == empty %} hidden{% endif %}">
               {%- if section.settings.show_cart_note or section.settings.show_shipping_calculator -%}
                 <div class="drawer__footer-top flex">
@@ -904,25 +875,10 @@
                       {%- endfor -%}
                     </ul>
                   {%- endif -%}
-                  <div class="grid grid-cols-2 gap-4">
-                    <div class="tax-note text-sm sm:text-base rte">
-                      {%- liquid
-                        if cart.taxes_included and shop.shipping_policy.body != blank
-                          echo 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url
-                        elsif cart.taxes_included
-                          echo 'cart.general.taxes_included_but_shipping_at_checkout' | t
-                        elsif shop.shipping_policy.body != blank
-                          echo 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url
-                        else
-                          echo 'cart.general.taxes_and_shipping_at_checkout' | t
-                        endif
-                      -%}
-                    </div>
-                    <div class="totals grid place-self-end gap-1">
-                      <span class="totals__subtotal text-sm sm:text-base">{{ 'cart.general.subtotal' | t }}</span>
-                      <div class="totals__subtotal-value text-lg-2xl font-bold leading-none tracking-tight">
-                        {{ cart.total_price | money_with_currency }}
-                      </div>
+                  <div class="flex items-center justify-between">
+                    <span class="totals__subtotal text-sm sm:text-base">{{ 'cart.general.subtotal' | t }}</span>
+                    <div class="totals__subtotal-value text-lg-2xl font-bold leading-none tracking-tight">
+                      {{ cart.total_price | money_with_currency }}
                     </div>
                   </div>
                 </div>
