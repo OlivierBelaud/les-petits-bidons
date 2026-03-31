@@ -1,0 +1,104 @@
+.cluutch-logos {
+    color: var(--TEXT, #003435);
+    padding-block: 48px;
+    padding-bottom: 60px;
+    text-align: center;
+    border-radius: 40px 40px 0px 0px;
+    background: var(--white, #FFFFFA);
+
+    @media (min-width:768px) {
+        padding-block: 100px;
+    }
+}
+
+.logo-swiper .swiper-slide {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cluutch-logos p, .cluutch-logos h2 {
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    /* H2 48 semi  -4 raleway */
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 121.429%;
+    letter-spacing: -0.56px;
+
+    @media (min-width:768px) {
+        font-size: 48px;
+        line-height: 112.5%;
+        letter-spacing: -0.96px;
+    }
+}
+
+.cluutch-logos .swiper-slide p {
+    /* 24 med -2 */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 142.857%;
+    letter-spacing: normal;
+    margin-bottom: 16px;
+
+    @media (min-width:768px) {
+        font-size: 24px;
+        line-height: 125%;
+        letter-spacing: -0.48px;
+        margin-bottom: 40px;
+    }
+}
+
+.cluutch-logos .swiper-wrapper {
+    align-items: center;
+}
+
+.cluutch-logos__wrapper {
+    padding-inline: 40px;
+    max-width: 1120px;
+    margin-inline: auto;
+}
+
+.cluutch-logos .swiper-slide svg {
+    margin-inline: auto;
+}
+
+.cluutch-logos .swiper-pagination {
+    position: static;
+    margin-top: 16px;
+    height: 9px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @media (min-width:768px) {
+        margin-top: 40px;
+        height: auto;
+        display: block;
+    }
+}
+
+
+.swiper-pagination-bullet {
+    width: 6px;
+    height: 6px;
+    background: #003435;
+    opacity: 1;
+    margin-bottom: 1px !important;
+    margin-inline: 8px !important;
+}
+
+
+.swiper-pagination-bullet-active {
+    width: 8px;
+    height: 8px;
+    border: 1px solid #003435;
+    background: #FFFFFA;
+    margin-bottom: 0 !important;
+}

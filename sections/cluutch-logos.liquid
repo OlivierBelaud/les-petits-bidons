@@ -1,0 +1,90 @@
+{{ 'cluutch-logos.css' | asset_url | stylesheet_tag }}
+<script defer src="{{ 'cluutch-logos.js' | asset_url }}"></script>
+
+{% if page.url == '/pages/cluutch-our-story' %}
+  <style>
+    .cluutch-logos {
+      max-width: 1440px;
+      padding-inline: 20px;
+      margin-inline: auto;
+      padding-bottom: 48px;
+      border-radius: 0;
+      background: transparent;
+
+      @media (min-width:768px) {
+      padding-inline: 40px;
+      padding-bottom: 100px;
+      }
+    }
+    .cluutch-logos__story {
+      padding-block: 48px;
+      border-radius: 24px;
+      background: var(--white, #fffffa);
+
+      @media (min-width:768px) {
+      padding-block: 100px;
+      }
+    }
+  </style>
+{% endif %}
+<div class="cluutch-logos__story">
+  <div class="cluutch-logos__wrapper">
+    {{ section.settings.title }}
+
+    <div class="swiper logo-swiper-text">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          <div class="swiper-slide">
+            {{ block.settings.subtitle }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="swiper logo-swiper">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          <div class="swiper-slide">{{ block.settings.icon }}</div>
+        {% endfor %}
+      </div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Cluutch logos",
+  "class": "cluutch-logos",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "icon",
+      "type": "icon",
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "richtext",
+          "id": "subtitle",
+          "label": "Subtitle"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cluutch logos"
+    }
+  ]
+}
+{% endschema %}

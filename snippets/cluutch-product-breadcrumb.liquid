@@ -1,0 +1,45 @@
+<nav
+  class="product__breadcrumb cluutch-main-product__breadcrumb breadcrumb hidden lg:flex"
+  role="navigation"
+  aria-label="breadcrumbs"
+  {{ block.shopify_attributes }}
+>
+  <ul class="inline-flex  gap-4 md:gap-6">
+    <li class="flex items-center gap-4 md:gap-6">
+      <a
+        class="block cluutch-breadcrumbs"
+        href="{{ routes.root_url }}"
+        title="{{ 'general.breadcrumbs.home_link_title' | t | escape }}"
+      >
+        {% comment %} {%- render 'icon', icon: 'home', size: 'sm' -%} {% endcomment %}
+        Home
+      </a>
+    </li>
+    /
+    {% comment %}
+      {%- if block.settings.show_collections_link -%}
+        <li class="flex items-center gap-4 md:gap-6">
+          <a class="reversed-link" href="{{ routes.collections_url }}">{{ 'general.breadcrumbs.collections' | t }}</a>
+          /
+        </li>
+      {%- endif -%}
+    {% endcomment %}
+    <li class="flex items-center gap-4 md:gap-6">
+      {%- liquid
+        if collection == blank
+          assign collection = product.collections | first
+        endif
+      -%}
+      {% if collection.title != blank %}
+        <a class="reversed-link" href="{{ collection.url }}">{{ collection.title }}</a>
+
+      {% else %}
+        <a class="reversed-link" href="{{ collection.all }}">Collection</a>
+      {% endif %}
+    </li>
+    /
+    <li class="flex items-center gap-4 md:gap-6 cluutch-product-title cluutch-product-title-bread main-bread-crumb">
+      {{ product.selected_or_first_available_variant.metafields.custom.cluutch_variant_title }}
+    </li>
+  </ul>
+</nav>

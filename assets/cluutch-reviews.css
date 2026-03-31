@@ -1,0 +1,135 @@
+.cluutch-reviews__stars {
+    display: flex;
+    gap: 2.7px;
+}
+
+.cluutch-reviews .h2 {
+    margin-bottom: 24px;
+    margin-right: 20px;
+
+    @media (min-width:768px) {
+        margin-bottom: 40px;
+        margin-right: 0;
+    }
+}
+
+.cluutch-reviews__stars svg {
+    background: var(--golden-yellow, #FB1);
+    padding: 4px;
+    width: 20px;
+    height: 20px;
+
+    @media (min-width:768px) {
+        width: 27px;
+        height: 27px;
+    }
+}
+
+.cluutch-reviews__name.med16 {
+    margin-top: auto;
+
+    @media (max-width:767px) {
+        font-size: 16px;
+    }
+}
+
+.swiper-reviews {
+    padding-right: 20px;
+
+    @media (min-width:768px) {
+        padding-right: 0;
+    }
+}
+
+.cluutch-reviews__content {
+    display: flex;
+    flex-direction: column;
+    border-radius: 24px;
+    background: var(--white, #FFFFFA);
+    padding: 20px;
+    gap: 16px;
+    min-height: 214px;
+
+    @media (min-width:768px) {
+        padding: 24px;
+        gap: 20px;
+        min-height: 247px;
+    }
+
+    @media (min-width:1024px) {
+        min-height: 230px;
+    }
+
+    @media (min-width:1400px) {
+        min-height: 203px;
+    }
+}
+
+.cluutch-reviews__text {
+    font-family: "DM Sans";
+    font-style: normal;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 142.857%;
+
+    @media (min-width:768px) {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 137.5%;
+    }
+}
+
+
+.cluutch-reviews .swiper-button-next,
+.cluutch-reviews .swiper-button-prev {
+    border-radius: 60px;
+    border: 1px solid var(--mint-secondary, #007E7F);
+    background: var(--mint-light, #E4F7F6);
+    width: 48px;
+    height: 48px;
+    opacity: 1;
+    display: none;
+
+    @media (min-width:768px) {
+        display: flex;
+    }
+}
+
+.swiper-button-next.swiper-button-disabled,
+.swiper-button-prev.swiper-button-disabled {
+    opacity: .5;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    transition: all .3s ease;
+}
+
+.swiper-button-next:hover {
+    transform: translateX(5px);
+}
+
+.swiper-button-prev:hover {
+    transform: translateX(-5px);
+}
+
+.swiper-pagination-bullet {
+    transition: all .3s ease;
+}
+
+.cluutch-reviews .swiper-button-next svg,
+.cluutch-reviews .swiper-button-prev svg {
+    width: 28px;
+    height: 28px;
+}
+
+.cluutch-reviews .swiper-button-next:after,
+.cluutch-reviews .swiper-button-prev:after {
+    display: none;
+}
+
+@media (max-width:767px) {
+    .cluutch-reviews .page-width {
+        padding-right: 0;
+    }
+}

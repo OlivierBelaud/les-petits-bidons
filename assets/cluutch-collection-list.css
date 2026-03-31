@@ -1,0 +1,157 @@
+@media (max-width:768px) {
+    .cluutch-collection .h2--small {
+        text-align: left;
+    }
+}
+
+.cluutch-collection .title-wrapper {
+    /* margin-bottom: 40px; */
+    margin-bottom: 20px;
+}
+
+.cluutch-collection .grid.gap-4 {
+    /* gap: 20px; */
+    gap: 16px;
+
+    @media (min-width:768px) {
+        gap: 10px;
+    }
+}
+
+.cluutch-collection .cluutch-title__flex .heading strong {
+    font-weight: 600;
+    color: #007E7F;
+}
+
+.cluutch-title__flex {
+    gap: 20px;
+}
+
+.cluutch-description p {
+    text-align: left;
+    /* 24 med -2 */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 142.857%;
+    letter-spacing: normal;
+
+    @media (min-width:768px) {
+        font-size: 24px;
+        line-height: 125%;
+        letter-spacing: -0.48px;
+        text-align: center;
+    }
+}
+
+.cluutch-collection__content-wrapper {
+    position: relative;
+}
+
+.text-left .cluutch-title__flex {
+    text-align: start;
+}
+
+.text-center.cluutch-title__flex {
+    text-align: center;
+}
+
+.text-right .cluutch-title__flex {
+    text-align: end;
+}
+
+.cluutch-description.text-left p {
+    text-align: start;
+}
+
+.cluutch-description.text-right p {
+    text-align: end;
+}
+
+
+.cluutch-collection__content-wrapper .media img {
+    aspect-ratio: 270/230;
+
+    @media (min-width:768px) {
+        aspect-ratio: 445/440;
+    }
+}
+
+.cluutch-buttons {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: 10;
+    justify-content: space-between;
+    width: 100%;
+
+}
+
+.cluutch-collection__content-wrapper .button--secondary {
+    width: 48px;
+    height: 48px;
+    backdrop-filter: none;
+    border-radius: 60px;
+    border: 1px solid var(--mint-secondary, #007E7F);
+    background-color: #E4F7F6;
+    backdrop-filter: blur(10px);
+}
+
+.cluutch-collection__content-wrapper .indicators .button[disabled] {
+    opacity: .5;
+    pointer-events: none;
+}
+
+.cluutch-collection__content-wrapper motion-list {
+    gap: 12px;
+}
+
+.cluutch-collection .btn-text {
+    color: transparent;
+}
+
+.cluutch-collection .btn-fill {
+    background: #FFFFFA;
+}
+
+.cluutch-collection .button.button--secondary::after {
+    border: 1px solid var(--mint-secondary, #007E7F);
+}
+
+/* 
+.cluutch-collection .slider--desktop .card-grid {
+    --slider-item-width: calc(calc(var(--page-container) / var(--card-grid-per-row)) - var(--card-grid-gap)* calc(var(--card-grid-per-row) - 4) / var(--card-grid-per-row));
+} */
+
+/* @media (min-width:1400px) {
+    .cluutch-collection .slider--desktop .card-grid {
+        --slider-item-width: 445px;
+    }
+} */
+
+/* 
+@media (min-width:1400px) {
+    .cluutch-card img {
+        min-height: 350px;
+        max-height: 440px;
+    }
+} */
+
+/* .cluutch-collection .media-card__link:hover .heading {
+    text-decoration: underline;
+} */
+
+@media (min-width: 1441px) {
+    .cluutch-collection .page-width {
+        max-width: 1360px;
+        padding: 0;
+    }
+}
+
+@media (max-width:767px) {
+    .cluutch-list-collections .cluutch-card {
+        border-radius: 12px;
+    }
+
+}

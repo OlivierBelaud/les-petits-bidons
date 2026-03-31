@@ -1,0 +1,171 @@
+.cluutch-newsletter__wrapper {
+    padding-inline: 0;
+
+}
+
+.cluutch-newsletter__banner {
+    position: relative;
+}
+
+.cluutch-newsletter__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: 40px;
+    width: 100%;
+    object-fit: cover;
+    display: none;
+
+    @media (min-width:768px) {
+        display: block;
+    }
+}
+
+.cluutch-newsletter__image.cluutch-newsletter__image--mobile {
+    display: block;
+    border-radius: 24px;
+
+    @media (min-width:768px) {
+        display: none;
+    }
+}
+
+.cluutch-newsletter .label.is-floating {
+    display: none;
+}
+
+.cluutch-newsletter .page-width {
+    max-width: 100%;
+}
+
+.cluutch-newsletter__banner .banner__content {
+    max-width: 1440px;
+    padding-inline: 20px;
+    margin-inline: auto;
+
+    @media (min-width:768px) {
+        padding-inline: 40px;
+
+    }
+}
+
+.cluutch-newsletter__wrapper .split-words {
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    /* H2 48 semi  -4 raleway */
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 121.429%;
+    letter-spacing: -0.56px;
+
+    @media (min-width:768px) {
+        font-size: 48px;
+        line-height: 112.5%;
+        letter-spacing: -0.96px;
+    }
+}
+
+.cluutch-newsletter__text {
+    margin-top: 16px !important;
+    /* med 16 */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    max-width: 450px;
+    font-size: 14px;
+    line-height: 142.857%;
+
+    @media (min-width:768px) {
+        margin-top: 20px !important;
+        line-height: 137.5%;
+        font-size: 16px;
+    }
+}
+
+.cluutch-newsletter__banner .banner__box {
+    padding-block: 48px;
+
+    @media (min-width:768px) {
+        padding-block: 90px;
+    }
+}
+
+.cluutch-newsletter .newsletter-form {
+    display: block !important;
+    max-height: 64px !important;
+}
+
+.cluutch-newsletter .newsletter-form .input {
+    border-radius: 40px;
+    background: var(--white, #FFFFFA);
+    backdrop-filter: blur(8px);
+    /* 14 med */
+    font-family: "DM Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 142.857%;
+    max-width: 416px;
+    padding: 15px 24px;
+    height: 50px;
+
+    @media (min-width:768px) {
+        padding: 20px 40px;
+        height: 64px;
+    }
+}
+
+.cluutch-newsletter .newsletter-form .input:focus {
+    background: var(--white, #fff);
+}
+
+.cluutch-newsletter .newsletter-form .input::placeholder {
+    color: var(--TEXT, #003435);
+}
+
+.cluutch-newsletter .button--primary {
+    max-height: none;
+    max-width: none;
+    color: var(--TEXT, #003435);
+    /* button */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    border-radius: 40px;
+    padding: 14px 32px;
+    font-size: 14px;
+    line-height: 157.143%;
+
+    @media (min-width:768px) {
+        padding: 20px 40px;
+        font-size: 18px;
+        line-height: 133.333%;
+    }
+}
+
+.cluutch-newsletter .self-submit-button {
+    width: auto;
+    height: auto;
+    right: 0;
+
+    @media (min-width:768px) {
+        right: 32px;
+    }
+}
+
+.cluutch-newsletter form {
+    margin-block-start: 82px !important;
+
+    @media (min-width:768px) {
+        margin-block-start: 40px !important;
+    }
+}
+
+.cluutch-newsletter .section--rounded,
+.cluutch-newsletter .section--rounded:before {
+    border-radius: 40px;
+    background: transparent;
+}

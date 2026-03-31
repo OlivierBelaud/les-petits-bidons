@@ -1,0 +1,138 @@
+{{ 'cluutch-custom-timeline.css' | asset_url | stylesheet_tag }}
+<script defer src="{{ 'cluutch-custom-timeline.js' | asset_url }}"></script>
+
+<div class="page-width">
+  <div class="h2">{{ section.settings.title }}</div>
+
+  <div class="cluutch-custom-timeline__flex">
+    {% if section.settings.img != blank %}
+      {{-
+        section.settings.img
+        | image_url: width: master
+        | image_tag: loading: eager, class: 'timeline-swiper__image'
+      -}}
+    {% endif %}
+
+    <div class="cluutch-custom-timeline__swiper">
+      <div class="timeline-swiper--header-wrapper">
+        <div class="timeline-swiper__text">
+          <div class="timeline-swiper__text-title med24">{{ section.settings.content_title }}</div>
+          <div class="med16">
+            {{ section.settings.content_subtitle }}
+          </div>
+        </div>
+      </div>
+      <div class="timeline-swiper--body-wrapper">
+        <div class="swiper timeline-swiper--body">
+          <div class="swiper-wrapper">
+            {% for block in section.blocks %}
+              <div class="swiper-slide">
+                <div class="timeline-swiper__text">
+                  <div class="med24">{{ block.settings.title2 }}</div>
+                  <div class="med16">{{ block.settings.text }}</div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="cluutch-custom-timeline__buttons">
+          <div class="append-buttons">
+            {% for block in section.blocks %}
+              <a
+                href="#"
+                class="med16 slide-button {% if forloop.first %}active{% endif %}"
+                data-slide="{{ forloop.index0 }}"
+              >
+                {{ block.settings.link }}
+              </a>
+              {% unless forloop.last %}
+                <div class="cluutch-custom-timeline__line"></div>
+              {% endunless %}
+            {% endfor %}
+          </div>
+          <div class="swiper-buttons">
+            <div class="swiper-button-prev">
+              {%- render 'cluutch-icon', icon: 'arrow-left-long', class: 'transform' -%}
+            </div>
+            <div class="swiper-button-next">
+              {%- render 'cluutch-icon', icon: 'arrow-right-long', class: 'transform' -%}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% if block.settings.link < 6 %}
+  <style>
+    .cluutch-custom-timeline__buttons {
+      @media (min-width: 1260px) {
+        position: absolute;
+        padding-inline: 40px;
+      }
+    }
+  </style>
+{% endif %}
+
+
+{% schema %}
+{
+  "name": "cluutch-custom-timeline",
+  "class": "cluutch-custom-timeline",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "content_title",
+      "label": "Title content",
+      "default": "Comment ça a commencé ?"
+    },
+    {
+      "type": "text",
+      "id": "content_subtitle",
+      "label": "Subtitle content",
+      "default": "L’histoire débute en juin 2017, avec une idée simple : laver sans tout salir. Après 8 mois de recherche et 30 recettes testées, une formule de lessive naturelle et efficace voit le jour, respectueuse de l’environnement et des peaux sensibles."
+    },
+    {
+      "type": "image_picker",
+      "id": "img",
+      "label": "Image",
+      "info": "Recommended image size: 660px 1380px"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "slide",
+      "type": "slide",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title2",
+          "label": "Second title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "link",
+          "label": "Link text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "cluutch-custom-timeline"
+    }
+  ]
+}
+{% endschema %}

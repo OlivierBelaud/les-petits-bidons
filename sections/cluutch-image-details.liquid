@@ -1,0 +1,74 @@
+{{ 'cluutch-image-details.css' | asset_url | stylesheet_tag }}
+<div class="page-width">
+  <div class="cluutch-image-details__title">
+    {{ section.settings.title }}
+  </div>
+  <div class="cluutch-image-details__flex">
+    {% for block in section.blocks %}
+      {% if block.settings.img != blank %}
+        <div class="cluutch-image-details__card">
+          <div class="cluutch-image-details__image-wrapper">
+            {{-
+              block.settings.img
+              | image_url: width: master
+              | image_tag: loading: eager, class: 'cluutch-image-details__image'
+            -}}
+          </div>
+
+          <details class="cluutch-image-details__text">
+            <summary>
+              {{ block.settings.summary }}
+              <div class="cluutch-image-details__button"></div>
+            </summary>
+            <div class="cluutch-image-details__content med14">
+              {{ block.settings.text }}
+            </div>
+          </details>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "cluutch-image-details",
+  "class": "cluutch-image-details",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "item",
+      "type": "item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "img",
+          "label": "Image",
+          "info": "Recommended image size: 660px 600px"
+        },
+        {
+          "type": "text",
+          "id": "summary",
+          "label": "Summary"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "cluutch-image-details"
+    }
+  ]
+}
+{% endschema %}

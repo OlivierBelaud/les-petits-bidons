@@ -1,0 +1,4 @@
+.cluutch-timeline .slider .timeline {
+    --slider-item-width: var(--page-container);
+    /* overflow: hidden; */
+}

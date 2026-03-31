@@ -1,0 +1,588 @@
+.cluutch-faq .section::before {
+
+    background-color: rgb(var(--color-background));
+}
+
+.cluutch-faq__wrapper {
+    width: 100%;
+    max-width: 910px;
+    margin-inline: auto;
+}
+
+.cluutch-faq .accordion {
+    border-radius: 16px;
+    background: var(--white, #FFFFFA);
+    margin-bottom: 10px;
+
+    @media (min-width:768px) {
+        border-radius: 24px;
+        margin-bottom: 16px;
+    }
+}
+
+.cluutch-faq .accordion--mint {
+    background: var(--mint-light, #E4F7F6);
+}
+
+.cluutch-faq .details svg {
+    transition: all .3s ease;
+    width: 20px;
+    height: 20px;
+
+    @media (min-width:768px) {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.cluutch-faq .accordion+.accordion {
+    border: none;
+}
+
+.cluutch-faq .details[aria-expanded="true"] svg {
+    transform: rotateX(180deg);
+}
+
+.cluutch-faq .accordion:last-child {
+    margin-bottom: 0;
+}
+
+.cluutch-faq .accordion .details__summary {
+    min-height: 72px;
+    padding: 12px 24px;
+
+    @media (min-width:768px) {
+        min-height: 80px;
+        padding: 12px 28px 12px 40px;
+    }
+}
+
+.cluutch-faq .details__summary span {
+    /* 24 med -2 */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 137.5%;
+    letter-spacing: normal;
+    max-width: 251px;
+
+    @media (min-width:500px) {
+        max-width: none;
+    }
+
+    @media (min-width:768px) {
+        line-height: 125%;
+        letter-spacing: -0.48px;
+        font-size: 24px;
+    }
+}
+
+.cluutch-faq .details__content {
+    padding: 0 12px 12px 24px;
+    /* 24 med -2 */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    margin-block-start: 0 !important;
+
+    letter-spacing: normal;
+    font-size: 14px;
+    line-height: 142.857%;
+
+    @media (min-width:768px) {
+        line-height: 125%;
+        letter-spacing: -0.48px;
+        font-size: 16px;
+        padding: 0 40px 25px;
+    }
+}
+
+.cluutch-faq__button {
+    text-align: center;
+}
+
+.cluutch-faq__button a {
+    /* button */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    background-color: rgb(var(--color-button-background));
+    color: var(--white, #FFFFFA);
+    padding: 14px 32px;
+    font-size: 14px;
+    line-height: 157.143%;
+
+    @media (min-width:768px) {
+        padding: 20px 40px;
+        font-size: 18px;
+        line-height: 133.333%;
+    }
+
+    @media (min-width:1300px) {
+        min-width: 200px;
+        min-height: 64px;
+    }
+}
+
+.cluutch-faq .cluutch-button--more {}
+
+.cluutch-faq__button .btn-fill {
+    background: #F5F5F5;
+}
+
+.search-question__button .btn-fill {
+    background: #FFFFFA;
+}
+
+
+.cluutch-faq .heading {
+    text-align: center;
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    /* H2 48 semi  -4 raleway */
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+    margin-bottom: 24px;
+    font-size: 28px;
+    line-height: 121.429%;
+    letter-spacing: -0.56px;
+
+    @media (min-width:768px) {
+        line-height: 112.5%;
+        letter-spacing: -0.96px;
+        font-size: 48px;
+        margin-bottom: 38px;
+    }
+}
+
+.cluutch-faq .faq {
+    margin-bottom: 24px;
+
+    @media (min-width:768px) {
+        margin-bottom: 38px;
+    }
+}
+
+.cluutch-faq__title-style .faq {
+    margin-bottom: 0;
+}
+
+.cluutch-faq .faqs.with-background>:is(div, form) {
+    padding: 0;
+}
+
+.faqs.cluutch-faq__title-style {
+    flex-direction: row-reverse;
+    gap: 12px;
+}
+
+.faqs.cluutch-faq__title-style .cluutch-faq__wrapper {
+    max-width: none;
+}
+
+.faqs.cluutch-faq__title-style .accordion {
+    flex: 1;
+    margin-left: initial;
+    max-width: 100%;
+    width: 100%;
+
+    @media (min-width:1260px) {
+        max-width: 830px;
+        margin-left: auto;
+    }
+
+    @media (min-width:1360px) {
+        max-width: 903px;
+    }
+}
+
+.cluutch-faq__flex-content {
+    display: flex;
+    margin-bottom: 16px;
+    flex-direction: column;
+    margin-top: 32px;
+
+    @media (min-width:1260px) {
+        flex-direction: row;
+        margin-top: 100px;
+    }
+}
+
+.cluutch-faq__flex-content:first-child {
+    margin-top: 0;
+}
+
+.cluutch-faq__left-title {
+    flex: 1;
+    min-width: 300px;
+    max-width: 345px;
+    height: 52px;
+}
+
+.cluutch-faq__description {
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 310px;
+
+    @media (min-width:768px) {
+        max-width: none;
+        margin-bottom: 40px;
+    }
+}
+
+.cluutch-faq__description p {
+    margin-block: 0;
+}
+
+.cluutch-faq__description a {
+    font-weight: 600;
+}
+
+////
+
+._tabs-block._active {
+    display: block
+}
+
+.tabs-block__item._active h3:after {
+    opacity: 1
+}
+
+.tabs-block__item._active h3 {
+    color: #592a18
+}
+
+.tabs__item-text p {
+    color: #808693;
+    line-height: 150%
+}
+
+.tabs__item-text p strong {
+    color: #575c66;
+    font-weight: 400
+}
+
+.question {
+    display: none
+}
+
+.question._active {
+    display: block
+}
+
+@media (max-width: 1024px) {
+    .swiper-container-wrapper {
+        flex-direction: column
+    }
+
+    .gallery-top {
+        order: 1
+    }
+
+    .gallery-thumbs {
+        order: 2;
+        max-width: 100%;
+        margin-right: 0;
+        margin-top: 16px
+    }
+}
+
+@media (max-width: 768px) {
+    .product-container {
+        padding: 0
+    }
+
+    .tabs__item-text p {
+        color: #808693;
+        line-height: 150%;
+        font-size: 14px
+    }
+
+    .tabs__item-text p strong {
+        color: #575c66;
+        font-weight: 400;
+        font-size: 14px
+    }
+}
+
+.myInput {
+    width: 100%;
+    background-color: red;
+    color: #808693;
+    transition: all .3s ease;
+    outline: none !important;
+    border-radius: 40px;
+    background: var(--white, #FFFFFA);
+    backdrop-filter: blur(8px);
+    color: var(--TEXT, #003435);
+    font-family: "DM Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 142.857%;
+
+    max-height: 50px;
+    padding: 15px 24px;
+
+    @media (min-width:768px) {
+        max-height: 56px;
+        padding: 20px 40px;
+    }
+}
+
+.myInput:focus {
+    border-color: #3b4932
+}
+
+.myInput:focus~.reset-button {
+    opacity: 1;
+    z-index: 4
+}
+
+.myInput {
+    color: #000 !important
+}
+
+.myInput::-moz-placeholder {
+    color: var(--TEXT, #003435);
+}
+
+.myInput::placeholder {
+    color: var(--TEXT, #003435);
+}
+
+.search-question__list {
+    position: absolute;
+    left: 55%;
+    transform: translateX(-50%);
+    width: 120%;
+    top: calc(100% + 16px);
+    border: 1px solid #e7e9ee;
+    border-radius: 16px;
+    padding: 8px;
+    max-height: 402px;
+    overflow-y: auto;
+    background: #F5F5F5;
+    background: var(--mint-light, #E4F7F6);
+    z-index: 2;
+
+}
+
+.question {
+    cursor: pointer
+}
+
+.question-wrapper:first-child {
+    margin-top: 0 !important
+}
+
+.search-question__list {
+    display: none
+}
+
+.search-question__list._active {
+    display: block
+}
+
+.question__popup {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 50;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 24px;
+    max-width: 600px;
+    width: 100%;
+    padding: 24px
+}
+
+.question__popup-wrapper {
+    display: none
+}
+
+.question__popup-wrapper._active {
+    display: block
+}
+
+.search-icon:after {
+    width: 1px;
+    position: absolute;
+    height: 20px;
+    content: "";
+    background-color: #e7e9ee;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%)
+}
+
+.faq-page .tabs-block__item._active {
+    border-color: #3b4932
+}
+
+.tabs-block__block .faq-details:last-child {
+    border-bottom: 1px solid #e7e9ee !important
+}
+
+@media (max-width: 768px) {
+    .question__popup {
+        top: auto;
+        bottom: 0;
+        transform: translateX(-50%);
+        padding: 20px;
+        border-radius: 20px
+    }
+
+    .faq-page .tabs-block__item .faq-count {
+        display: none
+    }
+
+    .faq-page .tabs-block__item p {
+        border: none;
+        padding-left: 24px;
+        padding-right: 24px;
+        font-size: 14px
+    }
+}
+
+.faq-details h3 {
+    padding-right: 40px
+}
+
+.search-question__title {
+    color: var(--TEXT, #003435);
+    font-family: "DM Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 142.857%;
+    padding: 12px;
+}
+
+.cluutch-faq__banner {
+    position: relative;
+}
+
+.cluutch-faq__banner-content {
+    position: absolute;
+    z-index: 3;
+    top: 40px;
+
+    @media (min-width:768px) {
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+    }
+}
+
+.cluutch-faq .page-width {
+    overflow: visible;
+    width: 100%;
+}
+
+.cluutch-faq .h2 {
+    margin-bottom: 20px;
+}
+
+@media (max-width:767px) {
+    .cluutch-h2 {
+        font-family: Raleway;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 133.333%;
+        letter-spacing: -0.48px;
+    }
+
+    .search-question__button svg {
+        display: none;
+    }
+}
+
+.search-question__button {
+    position: absolute;
+    top: 0;
+    display: flex;
+    gap: 10px;
+    background: var(--golden-yellow, #FB1);
+
+    padding: 14px 30px;
+    right: -0;
+
+    @media (min-width:768px) {
+        right: -40px;
+        padding: 16px 40px;
+    }
+}
+
+.search-question .search-question__button:hover:after {
+    border: 2px solid var(--golden-yellow, #FB1);
+}
+
+.got-button.search-question__button {
+    position: relative;
+    right: 0;
+}
+
+.search-question__button::after {
+    border-color: var(--golden-yellow, #FB1);
+}
+
+.cluutch-faq .btn-text {
+    display: flex;
+    gap: 10px;
+    color: var(--TEXT, #003435);
+}
+
+.cluutch-faq .cluutch-faq__button .btn-text {
+    color: var(--white, #FFFFFA);
+}
+
+.cluutch-faq .cluutch-faq__button .button--secondary:hover .btn-text {
+    color: var(--mint-main, #37B6AD);
+
+
+}
+
+.cluutch-faq__content-wrapper {
+    max-width: 510px;
+}
+
+.cluutch-faq__popup-flex {
+
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #E7E7E7;
+}
+
+.cluutch-faq__popup .med24 {
+    margin-bottom: 10px;
+}
+
+.cluutch-faq__popup .med14 {
+    margin-bottom: 20px;
+}
+
+.cluutch-faq__flex-content:has(.details.hidden) {
+    display: none;
+}
+
+.cluutch-faq__banner {
+    margin-bottom: -23px;
+}
+
+.faq-product,
+.faq-product:before {
+    border-radius: 24px;
+}
+
+.cluutch-banner__image-wrapper img {
+    width: 100%;
+    min-height: 240px;
+    max-height: 300px;
+    object-fit: cover;
+    object-position: right;
+}

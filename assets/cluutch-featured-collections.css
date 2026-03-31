@@ -1,0 +1,294 @@
+/* .cluutch-collections .split-words {
+    text-align: center;
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+
+    font-family: Raleway;
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 112.5%;
+    letter-spacing: -0.96px;
+} */
+
+/* 
+.cluutch-collections .slider--desktop .card-grid {
+    --slider-item-width: calc(calc(var(--page-container) / var(--card-grid-per-row)) - var(--card-grid-gap)* calc(var(--card-grid-per-row) - 8) / var(--card-grid-per-row));
+} */
+
+.cluutch-collections .split-words strong {
+    color: #007E7F;
+    font-weight: 600;
+}
+
+
+
+.cluutch-collections .title-wrapper .grid.gap-4 {
+    gap: 20px;
+}
+
+.cluutch-collections__flex {
+    gap: 12px;
+
+    @media (min-width:768px) {
+        gap: 24px;
+    }
+}
+
+.cluutch-collections__buttons {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    width: 100%;
+    justify-content: space-between;
+    max-width: 1440px;
+    padding-inline: 40px;
+}
+
+.cluutch-slider {
+    position: relative;
+}
+
+.cluutch-collections__buttons .button--secondary {
+    width: 48px;
+    height: 48px;
+    backdrop-filter: none;
+    border-radius: 60px;
+    border: 1px solid var(--mint-secondary, #007E7F);
+    background: var(--mint-light, #E4F7F6);
+    backdrop-filter: blur(10px);
+    transition: all .3s ease;
+}
+
+.cluutch-collections__buttons .button--secondary:first-child:hover {
+    transform: translate3d(-5px, 0, 0);
+}
+
+.cluutch-collections__buttons .button--secondary:last-child:hover {
+    transform: translate3d(5px, 0, 0);
+}
+
+.cluutch-collections__buttons.indicators .button[disabled] {
+    opacity: .5;
+    pointer-events: none;
+}
+
+.product-card__flex {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.product-card__title {
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    /* 24 semibold  -2 raleway */
+    font-family: Raleway;
+    /* font-size: 24px; */
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 137.5%;
+    letter-spacing: -0.32px;
+
+    @media (min-width:768px) {
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 125%;
+        letter-spacing: -0.48px;
+    }
+}
+
+.cluutch-grow {
+    max-width: 270px;
+}
+
+.cluutch-price .price__regular {
+    color: var(--TEXT, #003435);
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    /* 24 semibold  -2 raleway */
+    font-family: Raleway;
+    /* font-size: 24px; */
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 137.5%;
+    letter-spacing: -0.32px;
+
+    @media (min-width:768px) {
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 125%;
+        letter-spacing: -0.48px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cluutch-card__content .cluutch-price {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+
+    .cluutch-card__content .button {
+        margin-top: 4px;
+    }
+}
+
+.cluutch-rating {
+    display: flex;
+    padding: 0;
+    gap: 5px;
+    align-items: center;
+    background: var(--white, #FFFFFA);
+    margin-top: 4px;
+
+    @media (min-width:768px) {
+        margin-top: 0;
+    }
+}
+
+.cluutch-rating p {
+    color: var(--TEXT, #003435);
+    /* 14 med */
+    font-family: "DM Sans";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 166.667%;
+
+    @media (min-width:768px) {
+        font-size: 14px;
+        line-height: 142.857%;
+    }
+}
+
+@media (max-width:768px) {
+    .cluutch-rating p:last-child {
+        font-style: italic;
+    }
+}
+
+.cluutch-rating svg {
+    width: 14px;
+    height: 14px;
+
+    @media (min-width:768px) {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.media.media--height img {
+    object-position: unset;
+}
+
+
+.cluutch-card__media,
+.cluutch-card__media img {
+    object-fit: cover;
+    width: 100%;
+    /* aspect-ratio: 445 / 350; */
+}
+
+.cluutch-grid {
+    gap: 12px;
+}
+
+.cluutch-card__content {
+    padding: 12px;
+    background: var(--white, #FFFFFA);
+
+    @media (min-width:1300px) {
+        /* padding: 24px; */
+        padding: 10px;
+        padding-bottom: 20px;
+    }
+}
+
+
+.cluutch-card .product-card__flex {
+    width: 100%;
+    align-items: flex-start;
+}
+
+.cluutch-card .button--primary {
+    /* button */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    padding: 16px;
+    width: 100% !important;
+    color: var(--white, #FFFFFA);
+    font-size: 14px;
+    line-height: 157.143%;
+    height: 42px;
+
+    @media (min-width:768px) {
+        font-size: 18px;
+        line-height: 133.333%;
+        height: auto;
+    }
+}
+
+.cluutch-card .button--primary:hover {
+    color: #FFFFFA;
+}
+
+.cluutch-card__content form {
+    width: 100%;
+    /* max-width: 397px; */
+    margin-inline: auto;
+}
+
+.cluutch-collections .tab__item {
+    /* button */
+    font-family: "DM Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 157.143%;
+    padding: 12px 32px;
+
+    @media (min-width:768px) {
+        font-size: 18px;
+        padding: 16px 40px;
+        line-height: 133.333%;
+    }
+}
+
+.cluutch-collections .tab__item.button--secondary {
+    border-radius: 40px;
+    background: var(--mint-light, #E4F7F6);
+    color: var(--TEXT, #003435);
+}
+
+.cluutch-title__flex {
+    gap: 16px;
+}
+
+.cluutch-collections .tab-list {
+    /* margin-bottom: 32px; */
+    margin-bottom: 20px;
+
+    @media (min-width: 768px) {
+        margin-bottom: 15px;
+    }
+}
+
+.cluutch-collections .cluutch-collections__buttons .btn-fill {
+    background-color: #FFFFFA;
+}
+
+.cluutch-collections .cluutch-collections__buttons .btn-text {
+    color: transparent;
+}
+
+.cluutch-collections .cluutch-card .button[disabled] {
+    background: var(--mint-main, #37B6AD);
+    opacity: .6 !important;
+}
+
+.cluutch-collections .cluutch-card .button[disabled]:hover .btn-text {
+    color: white !important;
+}

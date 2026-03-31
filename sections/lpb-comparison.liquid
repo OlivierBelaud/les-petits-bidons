@@ -1,0 +1,744 @@
+{% assign section_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .lpb-comparison-{{ section_id }} {
+    padding: {{ section.settings.padding_top_mobile }}px 16px {{ section.settings.padding_bottom_mobile }}px;
+    background-color: {{ section.settings.background_color }};
+    border-radius: 24px;
+    margin: 0 {{ section.settings.section_margin_mobile }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison-{{ section_id }} {
+      padding: {{ section.settings.padding_top }}px 60px {{ section.settings.padding_bottom }}px;
+      margin: 0;
+      border-radius: 24px;
+    }
+  }
+
+  .lpb-comparison__container-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  /* Mobile: titre en haut */
+  .lpb-comparison__title-{{ section_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: {{ section.settings.title_color }};
+    margin: 0 0 24px 0;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__title-{{ section_id }} {
+      font-size: 32px;
+      margin-bottom: 32px;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .lpb-comparison__title-{{ section_id }} {
+      font-size: 40px;
+    }
+  }
+
+  /* Desktop: layout horizontal */
+  @media screen and (min-width: 1024px) {
+    .lpb-comparison__layout-{{ section_id }} {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .lpb-comparison__title-{{ section_id }} {
+      flex: 0 0 280px;
+      text-align: left;
+      margin-bottom: 0;
+    }
+
+    .lpb-comparison__content-{{ section_id }} {
+      flex: 1;
+    }
+  }
+
+  /* Grille des 4 blocs */
+  .lpb-comparison__grid-{{ section_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.grid_row_gap_mobile }}px {{ section.settings.grid_column_gap_mobile }}px;
+    position: relative;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__grid-{{ section_id }} {
+      gap: {{ section.settings.grid_row_gap }}px {{ section.settings.grid_column_gap }}px;
+    }
+  }
+
+  /* VS badge au centre des blocs du haut */
+  .lpb-comparison__vs-{{ section_id }} {
+    position: absolute;
+    left: 50%;
+    top: 70px;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 50%;
+    border: 2px solid {{ section.settings.title_color }};
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__vs-{{ section_id }} {
+      width: 48px;
+      height: 48px;
+      font-size: 14px;
+      top: 95px;
+    }
+  }
+
+  /* Positionner le VS au milieu de la première ligne */
+  .lpb-comparison__header-row-{{ section_id }} {
+    display: contents;
+  }
+
+  /* Bloc blanc - image + titre */
+  .lpb-comparison__image-block-{{ section_id }} {
+    background-color: {{ section.settings.card_background }};
+    border-radius: {{ section.settings.card_border_radius }}px;
+    padding: 20px;
+    border: 1px solid {{ section.settings.card_border_color }};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__image-block-{{ section_id }} {
+      padding: 24px;
+    }
+  }
+
+  .lpb-comparison__image-{{ section_id }} {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 12px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__image-{{ section_id }} {
+      width: 120px;
+      height: 120px;
+    }
+  }
+
+  .lpb-comparison__column-title-{{ section_id }} {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__column-title-{{ section_id }} {
+      font-size: 18px;
+    }
+  }
+
+  /* Bloc blanc - arguments */
+  .lpb-comparison__args-block-{{ section_id }} {
+    background-color: {{ section.settings.card_background }};
+    border-radius: {{ section.settings.card_border_radius }}px;
+    padding: 16px;
+    border: 1px solid {{ section.settings.card_border_color }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__args-block-{{ section_id }} {
+      padding: 20px;
+    }
+  }
+
+  .lpb-comparison__list-{{ section_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__list-{{ section_id }} {
+      gap: 16px;
+    }
+  }
+
+  .lpb-comparison__item-{{ section_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: {{ section.settings.arguments_font_weight }};
+    line-height: 1.4;
+    color: {{ section.settings.text_color }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__item-{{ section_id }} {
+      font-size: 14px;
+      gap: 12px;
+    }
+  }
+
+  .lpb-comparison__icon-{{ section_id }} {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__icon-{{ section_id }} {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .lpb-comparison__icon--check-{{ section_id }} {
+    color: {{ section.settings.check_color }};
+  }
+
+  .lpb-comparison__icon--cross-{{ section_id }} {
+    color: {{ section.settings.cross_color }};
+  }
+
+  .lpb-comparison__button-wrapper-{{ section_id }} {
+    margin-top: 24px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__button-wrapper-{{ section_id }} {
+      margin-top: 32px;
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .lpb-comparison__button-{{ section_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ section.settings.button_background }};
+    color: {{ section.settings.button_text_color }};
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 16px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    text-align: center;
+    transition: opacity 0.2s ease;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-comparison__button-{{ section_id }} {
+      display: inline-block;
+      width: auto;
+      font-size: 16px;
+      padding: 16px 48px;
+    }
+  }
+
+  .lpb-comparison__button-{{ section_id }}:hover {
+    opacity: 0.9;
+  }
+{% endstyle %}
+
+<div class="lpb-comparison-{{ section_id }}">
+  <div class="lpb-comparison__container-{{ section_id }}">
+    <div class="lpb-comparison__layout-{{ section_id }}">
+      {% if section.settings.title != blank %}
+        <h2 class="lpb-comparison__title-{{ section_id }}">{{ section.settings.title }}</h2>
+      {% endif %}
+
+      <div class="lpb-comparison__content-{{ section_id }}">
+        <!-- Grille 2x2 des 4 blocs -->
+        <div class="lpb-comparison__grid-{{ section_id }}">
+          <!-- VS badge -->
+          <div class="lpb-comparison__vs-{{ section_id }}">VS</div>
+
+          <!-- Bloc haut gauche - Image Les Petits Bidons -->
+          <div class="lpb-comparison__image-block-{{ section_id }}">
+            {% if section.settings.column1_image != blank %}
+              <img
+                src="{{ section.settings.column1_image | image_url: width: 240 }}"
+                alt="{{ section.settings.column1_title }}"
+                class="lpb-comparison__image-{{ section_id }}"
+                loading="lazy"
+              >
+            {% endif %}
+            {% if section.settings.column1_title != blank %}
+              <h3 class="lpb-comparison__column-title-{{ section_id }}">{{ section.settings.column1_title }}</h3>
+            {% endif %}
+          </div>
+
+          <!-- Bloc haut droit - Image Les autres -->
+          <div class="lpb-comparison__image-block-{{ section_id }}">
+            {% if section.settings.column2_image != blank %}
+              <img
+                src="{{ section.settings.column2_image | image_url: width: 240 }}"
+                alt="{{ section.settings.column2_title }}"
+                class="lpb-comparison__image-{{ section_id }}"
+                loading="lazy"
+              >
+            {% endif %}
+            {% if section.settings.column2_title != blank %}
+              <h3 class="lpb-comparison__column-title-{{ section_id }}">{{ section.settings.column2_title }}</h3>
+            {% endif %}
+          </div>
+
+          <!-- Bloc bas gauche - Arguments check -->
+          <div class="lpb-comparison__args-block-{{ section_id }}">
+            <ul class="lpb-comparison__list-{{ section_id }}">
+              {% for i in (1..8) %}
+                {% assign arg_key = 'column1_arg_' | append: i %}
+                {% assign arg_value = section.settings[arg_key] %}
+                {% if arg_value != blank %}
+                  <li class="lpb-comparison__item-{{ section_id }}">
+                    <span class="lpb-comparison__icon-{{ section_id }} lpb-comparison__icon--check-{{ section_id }}">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="20" height="20" rx="4" fill="currentColor" fill-opacity="0.15"/>
+                        <path d="M14.5 7L8.5 13L5.5 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <span>{{ arg_value }}</span>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+
+          <!-- Bloc bas droit - Arguments croix -->
+          <div class="lpb-comparison__args-block-{{ section_id }}">
+            <ul class="lpb-comparison__list-{{ section_id }}">
+              {% for i in (1..8) %}
+                {% assign arg_key = 'column2_arg_' | append: i %}
+                {% assign arg_value = section.settings[arg_key] %}
+                {% if arg_value != blank %}
+                  <li class="lpb-comparison__item-{{ section_id }}">
+                    <span class="lpb-comparison__icon-{{ section_id }} lpb-comparison__icon--cross-{{ section_id }}">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="20" height="20" rx="4" fill="currentColor" fill-opacity="0.15"/>
+                        <path d="M13 7L7 13M7 7L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <span>{{ arg_value }}</span>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        {% if section.settings.button_text != blank and section.settings.button_link != blank %}
+          <div class="lpb-comparison__button-wrapper-{{ section_id }}">
+            <a href="{{ section.settings.button_link }}" class="lpb-comparison__button-{{ section_id }}">
+              {{ section.settings.button_text }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "LPB Comparison",
+  "tag": "section",
+  "class": "lpb-comparison-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Titre"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Pourquoi choisir Les Petits Bidons ?"
+    },
+    {
+      "type": "header",
+      "content": "Colonne 1 - Nous"
+    },
+    {
+      "type": "image_picker",
+      "id": "column1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "column1_title",
+      "label": "Titre",
+      "default": "Les Petits Bidons"
+    },
+    {
+      "type": "text",
+      "id": "column1_arg_1",
+      "label": "Argument 1",
+      "default": "Ingrédients d'origine naturelle"
+    },
+    {
+      "type": "text",
+      "id": "column1_arg_2",
+      "label": "Argument 2",
+      "default": "Testée sur peaux sensibles"
+    },
+    {
+      "type": "text",
+      "id": "column1_arg_3",
+      "label": "Argument 3",
+      "default": "Certifiée par le label ECOCERT"
+    },
+    {
+      "type": "text",
+      "id": "column1_arg_4",
+      "label": "Argument 4",
+      "default": "Fabriquée en France de A à Z"
+    },
+    {
+      "type": "text",
+      "id": "column1_arg_5",
+      "label": "Argument 5",
+      "default": "Emballage recyclé"
+    },
+    {
+      "type": "text",
+      "id": "column1_arg_6",
+      "label": "Argument 6"
+    },
+    {
+      "type": "text",
+      "id": "column1_arg_7",
+      "label": "Argument 7"
+    },
+    {
+      "type": "text",
+      "id": "column1_arg_8",
+      "label": "Argument 8"
+    },
+    {
+      "type": "header",
+      "content": "Colonne 2 - Les autres"
+    },
+    {
+      "type": "image_picker",
+      "id": "column2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "column2_title",
+      "label": "Titre",
+      "default": "Les autres"
+    },
+    {
+      "type": "text",
+      "id": "column2_arg_1",
+      "label": "Argument 1",
+      "default": "Huile de palme et dérivés de pétrole"
+    },
+    {
+      "type": "text",
+      "id": "column2_arg_2",
+      "label": "Argument 2",
+      "default": "Conservateurs allergisants"
+    },
+    {
+      "type": "text",
+      "id": "column2_arg_3",
+      "label": "Argument 3",
+      "default": "Pas de certification ou moins stricte"
+    },
+    {
+      "type": "text",
+      "id": "column2_arg_4",
+      "label": "Argument 4",
+      "default": "Fabriqué en majorité à l'étranger"
+    },
+    {
+      "type": "text",
+      "id": "column2_arg_5",
+      "label": "Argument 5",
+      "default": "Trop de plastique"
+    },
+    {
+      "type": "text",
+      "id": "column2_arg_6",
+      "label": "Argument 6"
+    },
+    {
+      "type": "text",
+      "id": "column2_arg_7",
+      "label": "Argument 7"
+    },
+    {
+      "type": "text",
+      "id": "column2_arg_8",
+      "label": "Argument 8"
+    },
+    {
+      "type": "header",
+      "content": "Bouton"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texte du bouton",
+      "default": "Voir les lessives naturelles"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Lien du bouton"
+    },
+    {
+      "type": "header",
+      "content": "Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#FDF6E3"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Fond des cartes",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Bordure des cartes",
+      "default": "#E8E8E8"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#003435"
+    },
+    {
+      "type": "select",
+      "id": "arguments_font_weight",
+      "label": "Graisse des arguments",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "check_color",
+      "label": "Couleur check",
+      "default": "#007E7F"
+    },
+    {
+      "type": "color",
+      "id": "cross_color",
+      "label": "Couleur croix",
+      "default": "#D64545"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Fond du bouton",
+      "default": "#007E7F"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texte du bouton",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Espacement grille desktop"
+    },
+    {
+      "type": "range",
+      "id": "grid_row_gap",
+      "label": "Espace haut/bas (entre lignes)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "grid_column_gap",
+      "label": "Espace gauche/droite (entre colonnes)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Espacement grille mobile"
+    },
+    {
+      "type": "range",
+      "id": "grid_row_gap_mobile",
+      "label": "Espace haut/bas (entre lignes)",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "grid_column_gap_mobile",
+      "label": "Espace gauche/droite (entre colonnes)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Mise en page"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Largeur maximale du contenu",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "header",
+      "content": "Padding desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding haut",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bas",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_margin",
+      "label": "Marge latérale",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Espacement mobile"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding haut",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bas",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_margin_mobile",
+      "label": "Marge latérale",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Bordures"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Arrondi des cartes",
+      "min": 0,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "LPB Comparison"
+    }
+  ]
+}
+{% endschema %}

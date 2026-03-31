@@ -1,0 +1,113 @@
+{{ 'cluutch-text-slider.css' | asset_url | stylesheet_tag }}
+<script defer src="{{ 'cluutch-text-slider.js' | asset_url }}"></script>
+<div class="cluutch-text-slider__wrapper page-width">
+  <div class="cluutch-text-slider__flex">
+    <div class="swiper img-swiper">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          <div class="swiper-slide">
+            <div style="height: 100%;">
+              {% if block.settings.img != blank %}
+                {{-
+                  block.settings.img
+                  | image_url: width: 1300
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: widths,
+                    sizes: sizes,
+                    style: style,
+                    preload: true,
+                    is: 'lazy-image'
+                -}}
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="cluutch-text-slider__swiper">
+      <div class="swiper text-swiper">
+        <div class="swiper-wrapper">
+          {% for block in section.blocks %}
+            <div class="swiper-slide">
+              <h2 class="cluutch-text-slider__title">{{ block.settings.title }}</h2>
+              <div class="cluutch-text-slider__text">
+                {{ block.settings.text }}
+                {{ block.settings.text2 }}
+              </div>
+              {% if block.settings.button_text != blank %}
+                <div class="cluutch-text-slider__button-wrapper">
+                  <a href=" {{ block.settings.button_url }} ">
+                    <button class="cluutch-card-slider__button cluutch-button button cluutch-button--more">
+                      <span class="btn-fill"></span>
+                      <span class="cluutch-card-slider__button-text"> {{ block.settings.button_text }}</span>
+                    </button>
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="cluutch-text-slider__buttons">
+          <div class="swiper-button-prev">{% render 'cluutch-icon', icon: 'arrow-left-long' %}</div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-next">{% render 'cluutch-icon', icon: 'arrow-right-long' %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cluutch text slider",
+  "class": "cluutch-text-slider",
+  "settings": [],
+  "blocks": [
+    {
+      "name": "item",
+      "type": "item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "richtext",
+          "id": "text2",
+          "label": "Text second",
+          "info": "If you need it"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button url"
+        },
+        {
+          "type": "image_picker",
+          "id": "img",
+          "label": "Image",
+          "info": "Recommended image size: 1360px 1200px"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cluutch text slider"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,157 @@
+.cluutch-image-details__title, .cluutch-image-details__title h2 {
+    color: var(--TEXT, #003435);
+    text-align: center;
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+
+    font-size: 28px;
+    line-height: 121.429%;
+    letter-spacing: -0.56px;
+    margin-bottom: 24px;
+
+    @media (min-width:768px) {
+        letter-spacing: -0.96px;
+        margin-bottom: 40px;
+        line-height: 112.5%;
+        font-size: 48px;
+    }
+}
+
+.cluutch-image-details__title strong, .cluutch-image-details__title h2 strong {
+    color: rgba(0, 126, 127, 0.91);
+    font-weight: 600;
+}
+
+.cluutch-image-details__title p, .cluutch-image-details__title h2 {
+    max-width: 1084px;
+    margin: auto;
+}
+
+.cluutch-image-details__flex {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    row-gap: 8px;
+    max-width: 500px;
+    margin: auto;
+
+    @media (min-width:768px) {
+        max-width: 650px;
+    }
+
+    @media (min-width:1024px) {
+        display: flex;
+        gap: 12px;
+        max-width: none;
+    }
+}
+
+.cluutch-image-details__image {
+    border-radius: 12px 12px 0 0;
+    aspect-ratio: 331 / 304;
+
+    @media (min-width:768px) {
+        border-radius: 24px 24px 0 0;
+    }
+}
+
+.cluutch-image-details__text {
+    background: var(--white, #FFFFFA);
+    border-radius: 0 0 12px 12px;
+
+    @media (min-width:768px) {
+        border-radius: 0 0 24px 24px;
+    }
+}
+
+.cluutch-image-details__text summary {
+    color: var(--TEXT, #003435);
+    font-style: normal;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-family: Raleway;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: -0.24px;
+    padding: 12px;
+    gap: 40px;
+
+    @media (min-width:550px) {
+        gap: 10px;
+    }
+
+    @media (min-width:768px) {
+        line-height: 110%;
+        padding: 24px;
+        font-size: 20px;
+        font-family: "DM Sans";
+        font-weight: 500;
+    }
+}
+
+.cluutch-image-details__button {
+    display: block !important;
+    position: relative;
+    border-radius: 60px;
+    background: var(--golden-yellow, #FB1);
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    flex-shrink: 0;
+
+    @media (min-width:768px) {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+    }
+}
+
+.cluutch-image-details__button::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0);
+    height: 13px;
+    width: 2px;
+    border-radius: 10px;
+    background: #003435;
+    transition: all .3s ease;
+}
+
+.cluutch-image-details__text[open] .cluutch-image-details__button::before {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.cluutch-image-details__button::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 2px;
+    width: 13px;
+    border-radius: 10px;
+    background: #003435;
+}
+
+.cluutch-image-details__content {
+    padding: 24px;
+    padding-top: 0;
+    text-align: left;
+}
+
+.cluutch-image-details__card {
+    flex: 1;
+
+    @media (min-width:1024px) {
+        max-width: 331px;
+    }
+}

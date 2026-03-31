@@ -1,0 +1,140 @@
+{{ 'cluutch-card-slider.css' | asset_url | stylesheet_tag }}
+<script defer src="{{ 'cluutch-card-slider.js' | asset_url }}"></script>
+<div class="cluutch-card-slider__wrapper page-width">
+  <div class="cluutch-card-slider__title">
+    {{ section.settings.title }}
+    {{ section.settings.icon }}
+  </div>
+  <p class="cluutch-card-slider__subtitle">{{ section.settings.subtitle }}</p>
+
+  <div class="cluutch-card-slider__swiper">
+    <div class="swiper card-swiper">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          <div class="swiper-slide">
+            {% if block.settings.img != blank %}
+              {{-
+                block.settings.img
+                | image_url: width: 800
+                | image_tag:
+                  loading: 'lazy',
+                  widths: widths,
+                  sizes: sizes,
+                  style: style,
+                  preload: true,
+                  is: 'lazy-image'
+              -}}
+            {% endif %}
+            <div class="cluutch-card-slider__content">
+              <div class="cluutch-card-slider__flex">
+                <div style="display: flex; gap: 4px;">
+                  {% assign range = '1,2,3,4,5' | split: ',' %}
+                  {% for i in range %}
+                    {% render 'cluutch-icon', icon: 'star' %}
+                  {% endfor %}
+                </div>
+
+                {{ block.settings.nubmer }}
+              </div>
+              <p class="cluutch-card-slider__content-title">
+                {{ block.settings.title }}
+              </p>
+              <p class="cluutch-card-slider__text">
+                {{ block.settings.text }}
+              </p>
+              <p class="cluutch-card-slider__content-title">
+                {{ block.settings.name }}
+              </p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="swiper-button-next">{% render 'cluutch-icon', icon: 'arrow-right-long' %}</div>
+      <div class="swiper-button-prev">{% render 'cluutch-icon', icon: 'arrow-left-long' %}</div>
+    </div>
+  </div>
+  {% if section.settings.button_text != blank %}
+    <div class="cluutch-card-slider__button-wrapper">
+      <a href=" {{ section.settings.button_url }} ">
+        <button class="cluutch-card-slider__button cluutch-button button cluutch-button--more">
+          <span class="btn-fill"></span>
+          <span class="cluutch-card-slider__button-text"> {{ section.settings.button_text }}</span>
+        </button>
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Cluutch card slider",
+  "class": "cluutch-card-slider",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "html",
+      "id": "icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button url"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "item",
+      "type": "item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "img",
+          "label": "Image",
+          "info": "Recommended image size: 900px 1100px"
+        },
+        {
+          "type": "text",
+          "id": "nubmer",
+          "label": "Nubmer"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cluutch card slider"
+    }
+  ]
+}
+{% endschema %}

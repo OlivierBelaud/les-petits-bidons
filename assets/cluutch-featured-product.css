@@ -1,0 +1,363 @@
+.cluutch-line {
+    height: 1px;
+    width: 100%;
+    display: block !important;
+    margin-top: 24px;
+
+}
+
+.cluutch-product .section:before {
+    background: #F5F5F5;
+    color: var(--TEXT, #003435);
+}
+
+.cluutch-product .media--contain>img {
+    object-fit: cover;
+    object-position: center;
+
+    /* @media (min-width:1300px) {
+        max-height: 600px;
+    } */
+}
+
+
+.cluutch-product .product__text.rte {
+    padding: 0;
+    margin-block: 16px;
+    color: var(--TEXT, #003435);
+    /* 20 med -2 */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 122.222%;
+
+    @media (min-width:768px) {
+        font-size: 20px;
+        line-height: 130%;
+        letter-spacing: -0.4px;
+    }
+}
+
+.cluutch-product__info {
+    border-radius: 24px;
+    background: var(--white, #FFFFFA);
+    padding: 24px 20px;
+
+    @media screen and (min-width: 768px) {
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    @media (min-width:1400px) {
+        padding: 60px;
+    }
+}
+
+.cluutch-product .featured-product {
+    gap: 10px;
+    grid-template-columns: 1fr;
+
+    max-width: 500px;
+    margin: auto;
+
+    @media (min-width: 768px) {
+        gap: 12px;
+    }
+
+    @media (min-width: 1024px) {
+        grid-template-columns: 1fr 1fr;
+        align-items: stretch;
+        max-width: none;
+        margin: initial;
+    }
+
+    @media (min-width: 1536px) {
+        padding-inline: 0;
+
+    }
+}
+
+.cluutch-product__rating {
+
+    gap: 9px;
+}
+
+.cluutch-product .product__title {
+    display: flex;
+    gap: 19px;
+}
+
+.cluutch-product .rating-count {
+    padding: 0;
+    font-family: "DM Sans";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 166.667%;
+}
+
+.cluutch-product .cluutch-product__rating {
+    margin: 0;
+    margin-top: 8px;
+    place-self: baseline;
+    /* padding: 16px; */
+    border-radius: 16px;
+    /* background: #f5f5f5; */
+    text-align: center;
+    font-family: DM Sans;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    /* line-height: 166.667%; */
+    gap: 4px;
+    padding-block: 4px;
+
+    @media (min-width: 768px) {
+        gap: 10px;
+        margin-top: 12px;
+        padding-block: 0;
+    }
+}
+
+.cluutch-product .rating-text {
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    margin-right: 4px;
+    font-size: 16px;
+    line-height: 137.5%;
+    letter-spacing: normal;
+
+    @media (min-width: 768px) {
+        margin-right: 10px;
+        line-height: 150%;
+        letter-spacing: -0.4px;
+        font-size: 20px;
+    }
+}
+
+.cluutch-product__price {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: space-between;
+    padding-block: 10px;
+
+    @media (min-width: 768px) {
+        justify-content: flex-end;
+        flex-direction: row-reverse;
+        gap: 42px;
+    }
+}
+
+
+.mobile\:product-title-md,
+.mobile\:product-title-md .word {
+    line-height: initial;
+}
+
+.cluutch-product .shopify-payment-button__button,
+.cluutch-product .product-form__submit {
+    /* button */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    border-radius: 40px;
+    padding: 14px 32px;
+    min-height: auto;
+    width: auto;
+    font-size: 14px;
+    line-height: 157.143%;
+    height: 50px;
+
+    @media (min-width:768px) {
+        font-size: 18px;
+        line-height: 133.333%;
+        height: 54px;
+        padding: 16px 40px;
+    }
+}
+
+.cluutch-product .shopify-payment-button__button::after,
+.cluutch-product .product-form__submit::after {
+    border: 2px solid #37B6AD;
+}
+
+.cluutch-product .product-form__submit {
+    background: var(--mint-main, #37B6AD);
+    color: var(--white, #FFFFFA);
+
+}
+
+.cluutch-product .cluutch-original-button.product-form__submit {
+    transition: none;
+}
+
+/* 
+.cluutch-product .product-form__submit:hover {
+    background: var(--mint-light, #E4F7F6);
+    color: var(--TEXT, #003435);
+} */
+
+.cluutch-product .buy-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    @media (min-width: 1260px) {
+        flex-direction: row;
+        gap: 12px;
+    }
+}
+
+
+@media (max-width:1260px) {
+    .cluutch-product .cluutch-button--more {
+        width: 100%;
+    }
+
+}
+
+.cluutch-product .price__regular {
+    color: var(--TEXT, #003435);
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    /* 24 semibold  -2 raleway */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 130%;
+    letter-spacing: -0.4px;
+
+    @media (min-width: 768px) {
+        font-size: 24px;
+        line-height: 125%;
+        letter-spacing: -0.48px;
+        font-weight: 600;
+        font-family: Raleway;
+    }
+}
+
+.cluutch-product .split-words {
+    color: var(--TEXT, #003435);
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    /* H2 48 semi  -4 raleway */
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 112%;
+    letter-spacing: -0.5px;
+
+    @media (min-width: 768px) {
+        font-size: 40px;
+        line-height: 112.5%;
+        letter-spacing: -0.96px;
+    }
+}
+
+.cluutch-product .cluutch-img {
+    aspect-ratio: 674 / 600;
+}
+
+.cluutch-product .product__price {
+    /* margin-top: 8px; */
+    margin-top: 24px;
+
+    @media (min-width: 768px) {
+        margin-top: 18px;
+    }
+
+}
+
+.cluutch-richtext:first-child {
+    margin-top: 16px;
+}
+
+.cluutch-richtext {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.cluutch-richtext svg {
+    width: 100%;
+    max-width: 22px;
+}
+
+.cluutch-richtext p {
+    color: var(--TEXT, #003435);
+    /* 14 med */
+    font-family: "DM Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 142.857%;
+}
+
+.cluutch-product .product-form-wrapper {
+    /* margin-top: 72px; */
+    margin-top: 8px;
+
+
+}
+
+.cluutch-product .product__gallery--partial {
+    height: 100%;
+}
+
+@media (max-width:767px) {
+    .cluutch-product .cluutch-product__price--variant {
+        color: var(--TEXT, #003435);
+        font-family: "DM Sans";
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 137.5%;
+
+    }
+}
+
+.review-text {
+    font-size: 16px;
+    font-style: italic;
+
+    @media (min-width:768px) {
+        font-size: 20px;
+    }
+}
+
+.review-text span {
+    margin-right: 10px;
+}
+
+@media (max-width: 767px) {
+    .cluutch-product__rating svg {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+@media (max-width: 1023px) {
+    .product__gallery--partial .slider .product__media {
+        width: 100%;
+        aspect-ratio: 335 / 298;
+    }
+
+    .product__gallery button:is([is=media-lightbox-button], [is=media-hover-button]) {
+        display: none;
+    }
+}
+
+.cluutch-product .product__media-container,
+.cluutch-product .product__media-list {
+    height: 100%;
+}

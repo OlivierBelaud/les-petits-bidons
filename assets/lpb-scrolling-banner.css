@@ -1,0 +1,67 @@
+.lpb-scrolling-banner {
+    width: 100%;
+    overflow: hidden;
+    background: var(--lpb-banner-bg, var(--mint-main, #37B6AD));
+    padding-block: var(--lpb-banner-padding, 12px);
+}
+
+.lpb-scrolling-banner__track {
+    display: flex;
+    width: max-content;
+    animation: lpb-scroll var(--lpb-banner-speed, 20s) linear infinite;
+}
+
+.lpb-scrolling-banner__track span {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    padding-inline: 40px;
+    color: var(--lpb-banner-color, var(--white, #FFFFFA));
+    font-family: "DM Sans", sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.5;
+
+    @media (min-width: 768px) {
+        font-size: 16px;
+        padding-inline: 60px;
+    }
+}
+
+/* Richtext support */
+.lpb-scrolling-banner__track span p {
+    margin: 0;
+    display: inline;
+}
+
+.lpb-scrolling-banner__track span strong {
+    font-weight: 700;
+}
+
+.lpb-scrolling-banner__track span em {
+    font-style: italic;
+}
+
+.lpb-scrolling-banner__track span a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+@keyframes lpb-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Block mode (inside cluutch-main-product) */
+/*.lpb-scrolling-banner-block .lpb-scrolling-banner {
+    border-radius: 16px;
+
+    @media (min-width: 768px) {
+        border-radius: 20px;
+    }
+}*/

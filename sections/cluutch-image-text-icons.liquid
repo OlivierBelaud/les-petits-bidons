@@ -1,0 +1,314 @@
+{{ 'cluutch-image-text-icons.css' | asset_url | stylesheet_tag }}
+<script defer src="{{ 'cluutch-image-text-icons.js' | asset_url }}"></script>
+<style>
+    #{{ section.id }} .cluutch-content__text p, #{{ section.id }} .cluutch-content__text h2{
+      color:  {{ section.settings.color }};
+    }
+    #{{ section.id }} .cluutch-content__text p strong, #{{ section.id }} .cluutch-content__text h2 strong{
+      color:  {{ section.settings.color_strong }};
+    }
+  {% if section.settings.image_mobile == blank %}
+    #{{ section.id }} .cluutch-image{
+      display: block;
+    }
+  {% endif %}
+</style>
+{% comment %} This one is needed to choose between 2 styles. {% endcomment %}
+{% if section.settings.wrapper == true %}
+  <style>
+        #{{ section.id }} .cluutch-image {
+          border-radius: 24px 24px 0px 0px;
+          @media (min-width:768px){
+            border-radius: 40px 40px 0px 0px;
+          }
+        }
+
+     #{{ section.id }} .cluutch-content {
+      max-width: 1440px;
+      margin-inline: auto;
+      padding: 46.5px 20px;
+
+      @media (min-width:768px){
+        padding: 64px 40px 65px;
+      }
+    }
+    .cluutch-image-text-icons #{{ section.id }}{
+        margin-bottom: -23px;
+    }
+
+    #{{ section.id }} .cluutch-wrapper{
+      padding-inline: 0;
+     }
+     #{{ section.id }} .cluutch-wrapper{
+      max-width: none;
+
+      @media (max-width:767px) {
+          background: #F2E9D9;
+          border-radius: 24px 24px 0px 0px;
+      }
+    }
+  </style>
+{% else %}
+  <style>
+    #{{ section.id }} .cluutch-content__block-content svg{
+      @media(max-width:767px){
+
+        width:39px;
+        height:39px;
+      }
+    }
+    #{{ section.id }} .cluutch-image__mobile{
+      height: 100% !important;
+      object-position: initial !important;
+    }
+    #{{ section.id }} .cluutch-content__text p, #{{ section.id }} .cluutch-content__text h2{
+      margin-inline: auto;
+      text-align: left;
+      @media (min-width:768px) {
+      text-align: center;
+      }
+    }
+    #{{ section.id }} .cluutch-image.cluutch-image__mobile{
+        transform: translateY(0);
+    }
+    #{{ section.id }} .cluutch-content__text p:nth-child(2){
+      margin-bottom: 46px;
+      text-align: left;
+      max-width: 832px;
+      padding-right: 20px;
+      @media (min-width:768px) {
+        text-align: center;
+      padding-right: 0;
+      }
+      @media (min-width:1024px) {
+      margin-bottom: 150px;
+      }
+      @media (min-width:1300px) {
+      margin-bottom: 218px;
+      }
+    }
+    .cluutch-image-text-icons #{{ section.id }}{
+      padding-inline: 20px;
+      padding-bottom: 48px;
+
+      @media (min-width:1024px) {
+        padding-inline: 40px;
+        padding-bottom: 100px;
+      }
+    }
+
+    #{{ section.id }} .cluutch-wrapper{
+     padding-inline: 0;
+     border-radius: 24px 24px 24px 24px;
+
+     }
+    #{{ section.id }} .cluutch-image {
+    border-radius: 24px 24px 24px 24px;
+    object-fit: cover;
+    object-position: 0px 70%;
+    }
+
+     #{{ section.id }} .cluutch-content {
+      padding: 20px;
+      padding-right: 0;
+      @media (min-width:768px) {
+        padding: 40px 20px 20px;
+      }
+     }
+     #{{ section.id }} .cluutch-content__block-content p:last-child{
+       max-width: 200px;
+     }
+     #{{ section.id }} .cluutch-content__block-content{
+       padding: 14px 12px;
+       padding: 24px;
+       min-height: 165px;
+       @media (min-width:768px) {
+        min-height: 190px;
+       }
+      @media (min-width:1300px) {
+        min-height: 188px;
+        padding: 28px 24px;
+      }
+     }
+  </style>
+{% endif %}
+{% comment %} This one is needed to choose between 2 styles. {% endcomment %}
+<div class="section" id="{{ section.id }}">
+  <div class="cluutch-wrapper">
+    {% if section.settings.image_mobile != blank %}
+      {{
+        section.settings.image_mobile
+        | image_url: width: 1600
+        | image_tag:
+          loading: loading,
+          fetchpriority: fetchpriority,
+          sizes: sizes,
+          widths: '1600',
+          is: 'lazy-image',
+          class: 'cluutch-image cluutch-image__mobile'
+      }}
+    {% endif %}
+    {% if section.settings.image != blank %}
+      {{
+        section.settings.image
+        | image_url: width: 1600
+        | image_tag:
+          loading: loading,
+          fetchpriority: fetchpriority,
+          sizes: sizes,
+          widths: '1600',
+          is: 'lazy-image',
+          class: 'cluutch-image'
+      }}
+    {% endif %}
+
+    <div class="cluutch-content">
+      {% if section.settings.text != blank %}
+        <div class="cluutch-content__flex">
+          {{ section.settings.icon }}
+          {{ section.settings.text }}
+        </div>
+      {% endif %}
+      <div class="cluutch-content__text">
+        {{ section.settings.title }}
+        {{ section.settings.subtitle }}
+        {% if section.settings.button_text != blank %}
+          <a href="{{ section.settings.button_url }}">
+            <button class="cluutch-button button cluutch-button--more ">
+              <span class="btn-fill"></span>
+              <span class="cluutch-button--text">{{ section.settings.button_text }}</span>
+            </button>
+          </a>
+        {% endif %}
+      </div>
+      <div class="cluutch-content__block">
+        {% if section.settings.wrapper == true %}
+          {% for block in section.blocks %}
+            <div class="cluutch-content__block-content">
+              {{ block.settings.icon }}
+              {{ block.settings.title }}
+              {{ block.settings.text }}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="swiper mobile-swiper">
+            <div class="swiper-wrapper">
+              {% for block in section.blocks %}
+                <div class="swiper-slide">
+                  <div class="cluutch-content__block-content">
+                    {{ block.settings.icon }}
+                    {{ block.settings.title }}
+                    {{ block.settings.text }}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% for block in section.blocks %}
+            <div class="cluutch-content__block-content cluutch-content__block-content--hidden">
+              {{ block.settings.icon }}
+              {{ block.settings.title }}
+              {{ block.settings.text }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Cluutch-image-text-icons",
+  "class": "cluutch-image-text-icons",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image",
+      "info": "Recommended image size: 2880px 1400px"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Background image mobile",
+      "info": "Recommended image size: 750px 1650px"
+    },
+    {
+      "type": "html",
+      "id": "icon",
+      "label": "Icon"
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "label": "Color of text"
+    },
+    {
+      "type": "color",
+      "id": "color_strong",
+      "label": "Color of strong text"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button url"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text"
+    },
+    {
+      "type": "checkbox",
+      "id": "wrapper",
+      "label": "Wrapper",
+      "info": "2 formats of wrapper",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Content",
+      "type": "content",
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icon"
+        },
+
+        {
+          "type": "richtext",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cluutch-image-text-icons"
+    }
+  ]
+}
+{% endschema %}

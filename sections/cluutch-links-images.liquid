@@ -1,0 +1,223 @@
+{{ 'cluutch-links-images.css' | asset_url | stylesheet_tag }}
+
+{% style %}
+  .cluutch-links-images--custom {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  {% if section.settings.title_align_left %}
+    .cluutch-links-images--custom .cluutch-links-images__title,
+    .cluutch-links-images--custom .cluutch-links-images__title p,
+    .cluutch-links-images--custom .cluutch-links-images__title h2 {
+      text-align: left;
+      margin-left: 0;
+      margin-right: auto;
+    }
+  {% endif %}
+
+  .cluutch-links-images__button-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+  }
+
+  @media (min-width: 768px) {
+    .cluutch-links-images__button-wrapper {
+      margin-top: 48px;
+    }
+  }
+
+  .cluutch-links-images__button {
+    display: inline-block;
+    background-color: {{ section.settings.button_background }};
+    color: {{ section.settings.button_text_color }};
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .cluutch-links-images__button:hover {
+    opacity: 0.9;
+  }
+
+  @media (min-width: 768px) {
+    .cluutch-links-images__button {
+      font-size: 16px;
+      padding: 16px 48px;
+    }
+  }
+{% endstyle %}
+
+<div class="page-width cluutch-links-images--custom">
+  <div class="cluutch-links-images__title">
+    {{ section.settings.title }}
+  </div>
+  <div class="cluutch-links-images__flex{% if section.settings.single_row_mobile %} cluutch-links-images__flex--single-row{% endif %}">
+    {% for block in section.blocks %}
+      {% if block.settings.img != blank %}
+        <a
+          href=" {{ block.settings.button_url }} "
+          {% if block.settings.button_url == blank %}
+            style="
+              pointer-events: none;
+              cursor: default;
+            "
+          {% endif %}
+        >
+          <div class="cluutch-links-images__card">
+            <div class="cluutch-links-images__image-wrapper">
+              {{-
+                block.settings.img
+                | image_url: width: master
+                | image_tag: loading: eager, class: 'cluutch-links-images__image'
+              -}}
+            </div>
+
+            <div class="cluutch-links-images__text">
+              {{ block.settings.text }}
+              {% if block.settings.description != blank %}
+                <div class="cluutch-links-images__card-description">
+                  {{ block.settings.description }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% if section.settings.button_link != blank and section.settings.button_text != blank %}
+    <div class="cluutch-links-images__button-wrapper">
+      <a href="{{ section.settings.button_link }}" class="cluutch-links-images__button">
+        {{ section.settings.button_text }}
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Cluutch-links-images",
+  "class": "cluutch-links-images",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Titre"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "checkbox",
+      "id": "title_align_left",
+      "label": "Titre aligné à gauche",
+      "default": false,
+      "info": "Par défaut le titre est centré"
+    },
+    {
+      "type": "header",
+      "content": "Affichage"
+    },
+    {
+      "type": "checkbox",
+      "id": "single_row_mobile",
+      "label": "Une seule ligne sur mobile",
+      "default": false,
+      "info": "Activé = scroll horizontal sur mobile au lieu de la grille"
+    },
+    {
+      "type": "header",
+      "content": "Espacement"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding haut",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bas",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Bouton"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texte du bouton",
+      "default": "Voir les lessives en promo"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Lien du bouton"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Fond du bouton",
+      "default": "#007E7F"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texte du bouton",
+      "default": "#FFFFFF"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Card",
+      "type": "Card",
+      "settings": [
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button url"
+        },
+        {
+          "type": "image_picker",
+          "id": "img",
+          "label": "Image",
+          "info": "Recommended image size: 660px 660px"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cluutch-links-images"
+    }
+  ]
+}
+{% endschema %}

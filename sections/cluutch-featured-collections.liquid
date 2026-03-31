@@ -1,0 +1,1121 @@
+{{ 'cluutch-featured-collections.css' | asset_url | stylesheet_tag }}
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top_mobile }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+
+  {%- render 'section-variables', section: section -%}
+    @media(min-width:768px){
+      --section-padding-top: {{ section.settings.padding_top }}px;
+      --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+</style>
+
+<div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}">
+  <div class="page-width{% if section.settings.full_width %} page-width--full{% endif %} relative">
+    {%- render 'cluutch-section-heading', section: section -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <tabs-element class="tab-list flex gap-6 justify-between">
+        <div class="scroll-area grid">
+          <div class="cluutch-collections__flex flex" role="tablist">
+            {%- for block in section.blocks -%}
+              {%- assign collection = block.settings.collection -%}
+              <button
+                class="tab__item button{% if forloop.first %} button--primary{% else %} button--secondary{% endif %} whitespace-nowrap"
+                {% if forloop.first %}
+                  disabled
+                {% endif %}
+                type="button"
+                is="hover-button"
+                role="tab"
+                aria-controls="TabPanel-{{ block.id }}"
+                data-index="{{ forloop.index0 }}"
+                {{ block.shopify_attributes }}
+              >
+                <span class="btn-fill" data-fill></span>
+                <span class="btn-text">
+                  {%- liquid
+                    if block.settings.title != blank or collection != blank
+                      echo block.settings.title | default: collection.title | escape
+                    else
+                      echo 'onboarding.collection_title' | t | escape
+                    endif
+                  -%}
+                </span>
+              </button>
+            {%- endfor -%}
+          </div>
+        </div>
+        {%- if section.settings.carousel_on_desktop -%}
+          {%- for block in section.blocks -%}
+            <div
+              class="indicators hidden cluutch-collections__buttons lg:flex gap-2d5"
+              {% unless forloop.first %}
+                hidden
+              {% endunless %}
+              data-index="{{ forloop.index0 }}"
+            >
+              <button
+                class="button button--secondary"
+                type="button"
+                is="previous-button"
+                aria-controls="Slider-{{ block.id }}"
+                aria-label="{{ 'general.pagination.previous' | t | escape }}"
+                disabled
+              >
+                <span class="btn-fill" data-fill></span>
+                <span class="btn-text">
+                  {%- render 'cluutch-icon', icon: 'arrow-left-long', class: 'transform' -%}
+                </span>
+              </button>
+              <button
+                class="button button--secondary"
+                type="button"
+                is="next-button"
+                aria-controls="Slider-{{ block.id }}"
+                aria-label="{{ 'general.pagination.next' | t | escape }}"
+              >
+                <span class="btn-fill" data-fill></span>
+                <span class="btn-text">
+                  {%- render 'cluutch-icon', icon: 'arrow-right-long', class: 'transform' -%}
+                </span>
+              </button>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </tabs-element>
+
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign collection = block.settings.collection
+          assign products = block.settings.products | default: collection.products
+        -%}
+        <div
+          id="TabPanel-{{ block.id }}"
+          role="tabpanel"
+          class="cluutch-slider"
+          {% unless forloop.first %}
+            hidden
+          {% endunless %}
+        >
+          <slider-element
+            id="Slider-{{ block.id }}"
+            class=" grid slider{% if section.settings.carousel_on_desktop %} slider--desktop{% endif %}{% if section.settings.swipe_on_mobile %} slider--tablet{% endif %}"
+            selector=".card-grid>.card"
+          >
+            <motion-list class="product-grid cluutch-grid card-grid card-grid--{{ section.settings.columns }} mobile:card-grid--{{ section.settings.columns_mobile }} grid">
+              {%- for product in products limit: section.settings.product_limit -%}
+                {% if product.tags contains 'new' %}
+                  {%- if product.variants.size == 0 -%}
+                    {% comment %}
+                      {%- render 'cluutch-product-card',
+                        product: product,
+                        product_id: product.id,
+                        section_id: section.id,
+                        lazy_load: false,
+                        image_ratio: settings.product_image_ratio,
+                        image_fill: settings.product_image_fill,
+                        show_secondary_image: settings.product_secondary_image,
+                        show_vendor: settings.product_vendor,
+                        show_rating: settings.product_rating,
+                        show_color_swatches: settings.product_color_swatches,
+                        show_countdown: settings.product_countdown,
+                        show_quick_add: settings.product_quick_add,
+                        show_quick_view: settings.product_quick_view,
+                        show_save_amount: settings.product_save_amount,
+                        save_type: settings.product_save_type
+                      -%}
+                    {% endcomment %}
+                  {% else %}
+                    {%- liquid
+                      assign rating_max = 5
+                      if product.metafields.reviews.rating.value != blank and product.metafields.reviews.rating_count.value > 0
+                        assign rating_value = product.metafields.reviews.rating.value.rating | round: 1
+                        assign rating_count = product.metafields.reviews.rating_count.value
+                        assign rating_max = product.metafields.reviews.rating.value.scale_max
+                      elsif show_empty
+                        assign rating_value = 0.0
+                        assign rating_count = 0
+                      elsif show_placeholder
+                        assign rating_value = 4.5
+                        assign rating_count = 2
+                      else
+                        assign hide_rating = true
+                      endif
+                    -%}
+
+                    {% if collection.handle == 'bebe-les-petits-bidons' %}
+                      {%- for variant in product.variants -%}
+                        {% if variant.title contains 'Bébé'
+                          or variant.metafields.custom.collection_category contains 'Bébé'
+                        %}
+                          <div class="card cluutch-card product-card product-card--card flex flex-col leading-none relative overflow-hidden">
+                            <div class="product-card__media cluutch-card__media relative h-auto overflow-hidden">
+                              <a
+                                href="{{ variant.url }}"
+                                class="block relative media media--adapt media--contain overflow-hidden"
+                              >
+                                {% if variant.image %}
+                                  {{
+                                    variant.image
+                                    | image_url: width: master
+                                    | image_tag: loading: 'lazy', alt: variant.title, class: 'variant-image__img'
+                                  }}
+                                {% else %}
+                                  {{
+                                    product.featured_image
+                                    | image_url: width: master
+                                    | image_tag: loading: 'lazy', alt: product.title, class: 'variant-image__img'
+                                  }}
+                                {% endif %}
+                              </a>
+
+                              <div class="cluutch-badges-wrapper">
+                                {% if product.metafields.theme.label.value != blank and product.metafields.theme.label_color.value != blank %}
+                                  {%- for label in product.metafields.theme.label.value -%}
+                                    <p class="cluutch-badge" style="background: {{ product.metafields.theme.label_color.value }}; color: #ffffff;">
+                                      {{ label | escape }}
+                                    </p>
+                                  {%- endfor -%}
+                                {% else %}
+                                  {% if variant.metafields.custom.cluutch_meilleure != blank %}
+                                    <p class="cluutch-badge cluutch-badge--yellow">
+                                      {{ variant.metafields.custom.cluutch_meilleure }}
+                                    </p>
+                                  {% endif %}
+                                  {% if variant.metafields.custom.cluutch_sans != blank %}
+                                    <p class="cluutch-badge cluutch-badge--blue">
+                                      {{ variant.metafields.custom.cluutch_sans }}
+                                    </p>
+                                  {% endif %}
+                                  {% if variant.metafields.custom.cluutch_lavande != blank %}
+                                    <p class="cluutch-badge cluutch-badge--blue-lava">
+                                      {{ variant.metafields.custom.cluutch_lavande }}
+                                    </p>
+                                  {% endif %}
+                                  {% if variant.metafields.custom.cluutch_fleurs != blank %}
+                                    <p class="cluutch-badge cluutch-badge--orange">
+                                      {{ variant.metafields.custom.cluutch_fleurs }}
+                                    </p>
+                                  {% endif %}
+                                  {% if variant.metafields.custom.cluutch_eucalyptus != blank %}
+                                    <p class="cluutch-badge cluutch-badge--mint">
+                                      {{ variant.metafields.custom.cluutch_eucalyptus }}
+                                    </p>
+                                  {% endif %}
+                                {% endif %}
+                              </div>
+                            </div>
+
+                            <div class="product-card__content cluutch-card__content grow flex flex-col justify-start text-left">
+                              <div
+                                class="product-card__details cluutch-card__details flex flex-col  items-baseline gap-2 w-full"
+                              >
+                                <div class="product-card__flex">
+                                  <p class="grow cluutch-grow">
+                                    <a
+                                      class="product-card__title reversed-link text-base-xl font-medium leading-tight"
+                                      href="{{ variant.url }}"
+                                    >
+                                      {{- variant.metafields.custom.cluutch_variant_title -}}
+                                    </a>
+                                  </p>
+
+                                  {%- unless hide_rating -%}
+                                    <div
+                                      class="rating cluutch-rating product-card__rating rounded-full flex items-center gap-2 md:gap-1d5 pointer-events-none"
+                                      title="{{ 'general.accessibility.star_reviews_count' | t: count: rating_count | escape }}"
+                                    >
+                                      <span
+                                        role="img"
+                                        aria-label="{{ 'general.accessibility.star_reviews_info' | t: rating_value: rating_value, rating_max: rating_max }}"
+                                      >
+                                        {%- render 'cluutch-icon', icon: 'star' -%}
+                                      </span>
+                                      <p>{{ rating_value }}</p>
+                                      <p>({{ rating_count }})</p>
+                                    </div>
+                                  {%- endunless -%}
+                                </div>
+
+                                <div class="price flex flex-wrap  gap-2 md:gap-1d5 cluutch-price">
+                                  {% if variant.compare_at_price > variant.price %}
+                                    <span class="price--sale">{{ variant.price | money }}</span>
+                                    <span class="price--compare"
+                                      ><del>{{ variant.compare_at_price | money }}</del></span
+                                    >
+                                  {% else %}
+                                    <span class="price__regular whitespace-nowrap">{{ variant.price | money }}</span>
+                                  {% endif %}
+                                </div>
+                                <div class="quick-add flex justify-end md:justify-center w-full z-1 pointer-events-none">
+                                  {%- form 'product', product, is: 'product-form', id: product_form_id -%}
+                                    <input type="hidden" name="id" value="{{ variant.id }}">
+                                    {%- liquid
+                                      if product.template_suffix != 'pre-order'
+                                        assign quick_add_label = 'products.product.add_to_cart' | t
+                                      else
+                                        assign quick_add_label = 'products.product.pre_order' | t
+                                      endif
+                                    -%}
+                                    <button
+                                      type="submit"
+                                      class="button button--primary pointer-events-auto "
+                                      is="hover-button"
+                                      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                                      aria-label="{{ quick_add_label | escape }}"
+                                      {% unless product.variants.first.available %}
+                                        disabled="disabled"
+                                      {% endunless %}
+                                    >
+                                      <span class="btn-fill" data-fill></span>
+                                      <span class="btn-text">
+                                        {% comment %} {%- render 'icon', icon: 'cart', size: 'sm', class: 'md:hidden' -%} {% endcomment %}
+                                        {% if template.name == 'collection' %}
+                                          <span
+                                            class=" hidden md:block"
+                                            data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+                                          >
+                                            {% if product.variants.first.available %}
+                                              {{- quick_add_label -}}
+                                            {% else %}
+                                              Épuisé
+                                            {% endif %}
+                                          </span>
+                                          <span
+                                            class="block  md:hidden"
+                                            data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+                                          >
+                                            Ajouter
+                                          </span>
+                                        {% else %}
+                                          <span
+                                            class="block"
+                                            data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+                                          >
+                                            {% if product.variants.first.available %}
+                                              {{- quick_add_label -}}
+                                            {% else %}
+                                              Épuisé
+                                            {% endif %}
+                                          </span>
+                                        {% endif %}
+                                      </span>
+                                    </button>
+                                  {%- endform -%}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                      {%- endfor -%}
+
+                    {% elsif collection.handle == 'sport-les-petits-bidons' %}
+                      {%- for variant in product.variants -%}
+                        {% if variant.title contains 'Eucalyptus'
+                          or variant.metafields.custom.collection_category contains 'Sport'
+                        %}
+                          <div class="card cluutch-card product-card product-card--card flex flex-col leading-none relative overflow-hidden">
+                            <div class="product-card__media cluutch-card__media relative h-auto overflow-hidden">
+                              <a
+                                href="{{ variant.url }}"
+                                class="block relative media media--adapt media--contain overflow-hidden"
+                              >
+                                {% if variant.image %}
+                                  {{
+                                    variant.image
+                                    | image_url: width: master
+                                    | image_tag: loading: 'lazy', alt: variant.title, class: 'variant-image__img'
+                                  }}
+                                {% else %}
+                                  {{
+                                    product.featured_image
+                                    | image_url: width: master
+                                    | image_tag: loading: 'lazy', alt: product.title, class: 'variant-image__img'
+                                  }}
+                                {% endif %}
+                              </a>
+
+                              <div class="cluutch-badges-wrapper">
+                                {% if product.metafields.theme.label.value != blank and product.metafields.theme.label_color.value != blank %}
+                                  {%- for label in product.metafields.theme.label.value -%}
+                                    <p class="cluutch-badge" style="background: {{ product.metafields.theme.label_color.value }}; color: #ffffff;">
+                                      {{ label | escape }}
+                                    </p>
+                                  {%- endfor -%}
+                                {% else %}
+                                  {% if variant.metafields.custom.cluutch_meilleure != blank %}
+                                    <p class="cluutch-badge cluutch-badge--yellow">
+                                      {{ variant.metafields.custom.cluutch_meilleure }}
+                                    </p>
+                                  {% endif %}
+                                  {% if variant.metafields.custom.cluutch_sans != blank %}
+                                    <p class="cluutch-badge cluutch-badge--blue">
+                                      {{ variant.metafields.custom.cluutch_sans }}
+                                    </p>
+                                  {% endif %}
+                                  {% if variant.metafields.custom.cluutch_lavande != blank %}
+                                    <p class="cluutch-badge cluutch-badge--blue-lava">
+                                      {{ variant.metafields.custom.cluutch_lavande }}
+                                    </p>
+                                  {% endif %}
+                                  {% if variant.metafields.custom.cluutch_fleurs != blank %}
+                                    <p class="cluutch-badge cluutch-badge--orange">
+                                      {{ variant.metafields.custom.cluutch_fleurs }}
+                                    </p>
+                                  {% endif %}
+                                  {% if variant.metafields.custom.cluutch_eucalyptus != blank %}
+                                    <p class="cluutch-badge cluutch-badge--mint">
+                                      {{ variant.metafields.custom.cluutch_eucalyptus }}
+                                    </p>
+                                  {% endif %}
+                                {% endif %}
+                              </div>
+                            </div>
+
+                            <div class="product-card__content cluutch-card__content grow flex flex-col justify-start text-left">
+                              <div
+                                class="product-card__details cluutch-card__details flex flex-col  items-baseline gap-2 w-full"
+                              >
+                                <div class="product-card__flex">
+                                  <p class="grow cluutch-grow">
+                                    <a
+                                      class="product-card__title reversed-link text-base-xl font-medium leading-tight"
+                                      href="{{ variant.url }}"
+                                    >
+                                      {{- variant.metafields.custom.cluutch_variant_title -}}
+                                    </a>
+                                  </p>
+
+                                  {%- unless hide_rating -%}
+                                    <div
+                                      class="rating cluutch-rating product-card__rating rounded-full flex items-center gap-2 md:gap-1d5 pointer-events-none"
+                                      title="{{ 'general.accessibility.star_reviews_count' | t: count: rating_count | escape }}"
+                                    >
+                                      <span
+                                        role="img"
+                                        aria-label="{{ 'general.accessibility.star_reviews_info' | t: rating_value: rating_value, rating_max: rating_max }}"
+                                      >
+                                        {%- render 'cluutch-icon', icon: 'star' -%}
+                                      </span>
+                                      <p>{{ rating_value }}</p>
+                                      <p>({{ rating_count }})</p>
+                                    </div>
+                                  {%- endunless -%}
+                                </div>
+
+                                <div class="price flex flex-wrap  gap-2 md:gap-1d5 cluutch-price">
+                                  {% if variant.compare_at_price > variant.price %}
+                                    <span class="price--sale">{{ variant.price | money }}</span>
+                                    <span class="price--compare"
+                                      ><del>{{ variant.compare_at_price | money }}</del></span
+                                    >
+                                  {% else %}
+                                    <span class="price__regular whitespace-nowrap">{{ variant.price | money }}</span>
+                                  {% endif %}
+                                </div>
+                                <div class="quick-add flex justify-end md:justify-center w-full z-1 pointer-events-none">
+                                  {%- form 'product', product, is: 'product-form', id: product_form_id -%}
+                                    <input type="hidden" name="id" value="{{ variant.id }}">
+                                    {%- liquid
+                                      if product.template_suffix != 'pre-order'
+                                        assign quick_add_label = 'products.product.add_to_cart' | t
+                                      else
+                                        assign quick_add_label = 'products.product.pre_order' | t
+                                      endif
+                                    -%}
+                                    <button
+                                      type="submit"
+                                      class="button button--primary pointer-events-auto "
+                                      is="hover-button"
+                                      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                                      aria-label="{{ quick_add_label | escape }}"
+                                      {% unless product.variants.first.available %}
+                                        disabled="disabled"
+                                      {% endunless %}
+                                    >
+                                      <span class="btn-fill" data-fill></span>
+                                      <span class="btn-text">
+                                        {% comment %} {%- render 'icon', icon: 'cart', size: 'sm', class: 'md:hidden' -%} {% endcomment %}
+                                        {% if template.name == 'collection' %}
+                                          <span
+                                            class=" hidden md:block"
+                                            data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+                                          >
+                                            {% if product.variants.first.available %}
+                                              {{- quick_add_label -}}
+                                            {% else %}
+                                              Épuisé
+                                            {% endif %}
+                                          </span>
+                                          <span
+                                            class="block  md:hidden"
+                                            data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+                                          >
+                                            Ajouter
+                                          </span>
+                                        {% else %}
+                                          <span
+                                            class="block"
+                                            data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+                                          >
+                                            {% if product.variants.first.available %}
+                                              {{- quick_add_label -}}
+                                            {% else %}
+                                              Épuisé
+                                            {% endif %}
+                                          </span>
+                                        {% endif %}
+                                      </span>
+                                    </button>
+                                  {%- endform -%}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                      {%- endfor -%}
+
+                    {% else %}
+                      {%- for variant in product.variants -%}
+                        <div class="card cluutch-card product-card product-card--card flex flex-col leading-none relative overflow-hidden">
+                          <div class="product-card__media cluutch-card__media relative h-auto overflow-hidden">
+                            <a
+                              href="{{ variant.url }}"
+                              class="block relative media media--adapt media--contain overflow-hidden"
+                            >
+                              {% if variant.image %}
+                                {{
+                                  variant.image
+                                  | image_url: width: master
+                                  | image_tag: loading: 'lazy', alt: variant.title, class: 'variant-image__img'
+                                }}
+                              {% else %}
+                                {{
+                                  product.featured_image
+                                  | image_url: width: master
+                                  | image_tag: loading: 'lazy', alt: product.title, class: 'variant-image__img'
+                                }}
+                              {% endif %}
+                            </a>
+
+                            <div class="cluutch-badges-wrapper">
+                              {% if product.metafields.theme.label.value != blank and product.metafields.theme.label_color.value != blank %}
+                                {%- for label in product.metafields.theme.label.value -%}
+                                  <p class="cluutch-badge" style="background: {{ product.metafields.theme.label_color.value }}; color: #ffffff;">
+                                    {{ label | escape }}
+                                  </p>
+                                {%- endfor -%}
+                              {% else %}
+                                {% if variant.metafields.custom.cluutch_meilleure != blank %}
+                                  <p class="cluutch-badge cluutch-badge--yellow">
+                                    {{ variant.metafields.custom.cluutch_meilleure }}
+                                  </p>
+                                {% endif %}
+                                {% if variant.metafields.custom.cluutch_sans != blank %}
+                                  <p class="cluutch-badge cluutch-badge--blue">
+                                    {{ variant.metafields.custom.cluutch_sans }}
+                                  </p>
+                                {% endif %}
+                                {% if variant.metafields.custom.cluutch_lavande != blank %}
+                                  <p class="cluutch-badge cluutch-badge--blue-lava">
+                                    {{ variant.metafields.custom.cluutch_lavande }}
+                                  </p>
+                                {% endif %}
+                                {% if variant.metafields.custom.cluutch_fleurs != blank %}
+                                  <p class="cluutch-badge cluutch-badge--orange">
+                                    {{ variant.metafields.custom.cluutch_fleurs }}
+                                  </p>
+                                {% endif %}
+                                {% if variant.metafields.custom.cluutch_eucalyptus != blank %}
+                                  <p class="cluutch-badge cluutch-badge--mint">
+                                    {{ variant.metafields.custom.cluutch_eucalyptus }}
+                                  </p>
+                                {% endif %}
+                              {% endif %}
+                            </div>
+                          </div>
+
+                          <div class="product-card__content cluutch-card__content grow flex flex-col justify-start text-left">
+                            <div
+                              class="product-card__details cluutch-card__details flex flex-col  items-baseline gap-2 w-full"
+                            >
+                              <div class="product-card__flex">
+                                <p class="grow cluutch-grow">
+                                  <a
+                                    class="product-card__title reversed-link text-base-xl font-medium leading-tight"
+                                    href="{{ variant.url }}"
+                                  >
+                                    {{- variant.metafields.custom.cluutch_variant_title -}}
+                                  </a>
+                                </p>
+
+                                {%- unless hide_rating -%}
+                                  <div
+                                    class="rating cluutch-rating product-card__rating rounded-full flex items-center gap-2 md:gap-1d5 pointer-events-none"
+                                    title="{{ 'general.accessibility.star_reviews_count' | t: count: rating_count | escape }}"
+                                  >
+                                    <span
+                                      role="img"
+                                      aria-label="{{ 'general.accessibility.star_reviews_info' | t: rating_value: rating_value, rating_max: rating_max }}"
+                                    >
+                                      {%- render 'cluutch-icon', icon: 'star' -%}
+                                    </span>
+                                    <p>{{ rating_value }}</p>
+                                    <p>({{ rating_count }})</p>
+                                  </div>
+                                {%- endunless -%}
+                              </div>
+
+                              <div class="price flex flex-wrap  gap-2 md:gap-1d5 cluutch-price">
+                                {% if variant.compare_at_price > variant.price %}
+                                  <span class="price--sale">{{ variant.price | money }}</span>
+                                  <span class="price--compare"
+                                    ><del>{{ variant.compare_at_price | money }}</del></span
+                                  >
+                                {% else %}
+                                  <span class="price__regular whitespace-nowrap">{{ variant.price | money }}</span>
+                                {% endif %}
+                              </div>
+                              <div class="quick-add flex justify-end md:justify-center w-full z-1 pointer-events-none">
+                                {%- form 'product', product, is: 'product-form', id: product_form_id -%}
+                                  <input type="hidden" name="id" value="{{ variant.id }}">
+                                  {%- liquid
+                                    if product.template_suffix != 'pre-order'
+                                      assign quick_add_label = 'products.product.add_to_cart' | t
+                                    else
+                                      assign quick_add_label = 'products.product.pre_order' | t
+                                    endif
+                                  -%}
+                                  <button
+                                    type="submit"
+                                    class="button button--primary pointer-events-auto "
+                                    is="hover-button"
+                                    data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                                    aria-label="{{ quick_add_label | escape }}"
+                                    {% unless product.variants.first.available %}
+                                      disabled="disabled"
+                                    {% endunless %}
+                                  >
+                                    <span class="btn-fill" data-fill></span>
+                                    <span class="btn-text">
+                                      {% comment %} {%- render 'icon', icon: 'cart', size: 'sm', class: 'md:hidden' -%} {% endcomment %}
+                                      {% if template.name == 'collection' %}
+                                        <span
+                                          class=" hidden md:block"
+                                          data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+                                        >
+                                          {% if product.variants.first.available %}
+                                            {{- quick_add_label -}}
+                                          {% else %}
+                                            Épuisé
+                                          {% endif %}
+                                        </span>
+                                        <span
+                                          class="block  md:hidden"
+                                          data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+                                        >
+                                          Ajouter
+                                        </span>
+                                      {% else %}
+                                        <span
+                                          class="block"
+                                          data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+                                        >
+                                          {% if product.variants.first.available %}
+                                            {{- quick_add_label -}}
+                                          {% else %}
+                                            Épuisé
+                                          {% endif %}
+                                        </span>
+                                      {% endif %}
+                                    </span>
+                                  </button>
+                                {%- endform -%}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                    {% endif %}
+                    {% comment %} for 2nd varinat {% endcomment %}
+
+                    {% comment %} for 2nd varinat {% endcomment %}
+                  {% endif %}
+                {% else %}
+                  {%- capture placeholder -%}product-{% cycle '1', '2', '3', '4', '5', '6' %}{%- endcapture -%}
+                  {%- render 'product-card-placeholder',
+                    lazy_load: false,
+                    image_ratio: settings.product_image_ratio,
+                    image_fill: settings.product_image_fill,
+                    show_secondary_image: settings.product_secondary_image,
+                    show_vendor: settings.product_vendor,
+                    show_rating: settings.product_rating,
+                    show_color_swatches: settings.product_color_swatches,
+                    show_countdown: settings.product_countdown,
+                    show_quick_add: settings.product_quick_add,
+                    show_quick_view: settings.product_quick_view,
+                    show_save_amount: settings.product_save_amount,
+                    save_type: settings.product_save_type,
+                    placeholder: placeholder
+                  -%}
+                {% endif %}
+              {%- else -%}
+                {%- for i in (1..section.settings.product_limit) -%}
+                  {%- capture placeholder -%}product-{% cycle '1', '2', '3', '4', '5', '6' %}{%- endcapture -%}
+                  {%- render 'product-card-placeholder',
+                    lazy_load: false,
+                    image_ratio: settings.product_image_ratio,
+                    image_fill: settings.product_image_fill,
+                    show_secondary_image: settings.product_secondary_image,
+                    show_vendor: settings.product_vendor,
+                    show_rating: settings.product_rating,
+                    show_color_swatches: settings.product_color_swatches,
+                    show_countdown: settings.product_countdown,
+                    show_quick_add: settings.product_quick_add,
+                    show_quick_view: settings.product_quick_view,
+                    show_save_amount: settings.product_save_amount,
+                    save_type: settings.product_save_type,
+                    placeholder: placeholder
+                  -%}
+                {%- endfor -%}
+              {%- endfor -%}
+            </motion-list>
+          </slider-element>
+
+          {%- if section.settings.show_view_all
+            and collection != blank
+            and section.settings.product_limit < collection.all_products_count
+          -%}
+            <p class="text-center">
+              <a
+                class="button button--secondary icon-with-text"
+                href="{{ collection.url }}"
+                is="hover-link"
+                aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: collection.title }}"
+              >
+                <span class="btn-fill" data-fill></span>
+                <span class="btn-text">
+                  {%- liquid
+                    render 'icon', icon: 'newspaper'
+                    echo 'sections.featured_collection.view_all' | t
+                  -%}
+                </span>
+              </a>
+            </p>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "cluutch-collections",
+  "class": "featured-collections cluutch-collections",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "t:sections.global.settings.product_limit.label",
+      "default": 6,
+      "min": 2,
+      "max": 12,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.global.settings.columns.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_on_desktop",
+      "label": "t:sections.global.settings.carousel_on_desktop.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "t:sections.featured-collection.settings.show_view_all.label",
+      "info": "t:sections.featured-collection.settings.show_view_all.info",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__mobile.content"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:sections.global.settings.columns_mobile.options__1.label"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.global.settings.columns_mobile.options__2.label"
+        }
+      ],
+      "default": "1",
+      "label": "t:sections.global.settings.columns_mobile.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "swipe_on_mobile",
+      "label": "t:sections.global.settings.swipe_on_mobile.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__heading.content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.settings.heading.label",
+      "default": "Featured collection"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "title-sm",
+          "label": "t:sections.global.settings.heading_size.options__1.label"
+        },
+        {
+          "value": "title-md",
+          "label": "t:sections.global.settings.heading_size.options__2.label"
+        },
+        {
+          "value": "title-lg tracking-heading",
+          "label": "t:sections.global.settings.heading_size.options__3.label"
+        },
+        {
+          "value": "title-xl tracking-heading",
+          "label": "t:sections.global.settings.heading_size.options__4.label"
+        },
+        {
+          "value": "custom",
+          "label": "Custom style"
+        }
+      ],
+      "default": "title-md",
+      "label": "t:sections.global.settings.heading_size.label"
+    },
+    {
+      "type": "html",
+      "id": "svg",
+      "label": "Icon"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "t:sections.global.settings.heading_alignment.label",
+      "options": [
+        {
+          "value": "text-left md:items-end md:flex-row",
+          "label": "t:sections.global.settings.heading_alignment.options__1.label"
+        },
+        {
+          "value": "text-center md:items-center",
+          "label": "t:sections.global.settings.heading_alignment.options__2.label"
+        },
+        {
+          "value": "text-right md:items-end md:flex-row-reverse",
+          "label": "t:sections.global.settings.heading_alignment.options__3.label"
+        }
+      ],
+      "default": "text-left md:items-end md:flex-row"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "options": [
+        {
+          "value": "h1",
+          "label": "t:sections.global.settings.heading_tag.options__1.label"
+        },
+        {
+          "value": "h2",
+          "label": "t:sections.global.settings.heading_tag.options__2.label"
+        },
+        {
+          "value": "h3",
+          "label": "t:sections.global.settings.heading_tag.options__3.label"
+        },
+        {
+          "value": "h4",
+          "label": "t:sections.global.settings.heading_tag.options__4.label"
+        },
+        {
+          "value": "h5",
+          "label": "t:sections.global.settings.heading_tag.options__5.label"
+        },
+        {
+          "value": "h6",
+          "label": "t:sections.global.settings.heading_tag.options__6.label"
+        },
+        {
+          "value": "div",
+          "label": "t:sections.global.settings.heading_tag.options__7.label"
+        },
+        {
+          "value": "span",
+          "label": "t:sections.global.settings.heading_tag.options__8.label"
+        },
+        {
+          "value": "p",
+          "label": "t:sections.global.settings.heading_tag.options__9.label"
+        }
+      ],
+      "default": "h2",
+      "label": "t:sections.global.settings.heading_tag.label",
+      "info": "t:sections.global.settings.heading_tag.info"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "t:sections.global.settings.subheading.label"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "t:sections.global.settings.description.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__highlight.content",
+      "info": "t:sections.global.settings.header__highlight.info"
+    },
+    {
+      "type": "select",
+      "id": "highlighted_text",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.global.settings.highlighted_text.options__1.label"
+        },
+        {
+          "value": "text",
+          "label": "t:sections.global.settings.highlighted_text.options__2.label"
+        },
+        {
+          "value": "full_text",
+          "label": "t:sections.global.settings.highlighted_text.options__3.label"
+        },
+        {
+          "value": "half_text",
+          "label": "t:sections.global.settings.highlighted_text.options__4.label"
+        },
+        {
+          "value": "underline",
+          "label": "t:sections.global.settings.highlighted_text.options__5.label"
+        },
+        {
+          "value": "stencil",
+          "label": "t:sections.global.settings.highlighted_text.options__6.label"
+        },
+        {
+          "value": "scribble",
+          "label": "t:sections.global.settings.highlighted_text.options__7.label"
+        }
+      ],
+      "default": "none",
+      "label": "t:sections.global.settings.highlighted_text.label"
+    },
+    {
+      "type": "select",
+      "id": "highlighted_scribble",
+      "options": [
+        {
+          "value": "circle",
+          "label": "t:sections.global.settings.highlighted_scribble.options__1.label"
+        },
+        {
+          "value": "basic-underline",
+          "label": "t:sections.global.settings.highlighted_scribble.options__2.label"
+        },
+        {
+          "value": "sketch-underline",
+          "label": "t:sections.global.settings.highlighted_scribble.options__3.label"
+        },
+        {
+          "value": "squiggle-underline",
+          "label": "t:sections.global.settings.highlighted_scribble.options__4.label"
+        },
+        {
+          "value": "squiggle-underline-2",
+          "label": "t:sections.global.settings.highlighted_scribble.options__5.label"
+        }
+      ],
+      "default": "circle",
+      "label": "t:sections.global.settings.highlighted_scribble.label",
+      "info": "t:sections.global.settings.highlighted_scribble.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__colors.content",
+      "info": "t:sections.global.settings.header__colors.info"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "t:sections.global.settings.color_text.label"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "t:sections.global.settings.color_background.label"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_background",
+      "label": "t:sections.global.settings.gradient_background.label"
+    },
+    {
+      "type": "color",
+      "id": "color_highlight",
+      "label": "t:sections.global.settings.color_highlight.label"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_highlight",
+      "label": "t:sections.global.settings.gradient_highlight.label"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text",
+      "label": "t:sections.global.settings.color_button_text.label"
+    },
+    {
+      "type": "color",
+      "id": "color_button_background",
+      "label": "t:sections.global.settings.color_button_background.label"
+    },
+    {
+      "type": "color_background",
+      "id": "color_button_gradient",
+      "label": "t:sections.global.settings.color_button_gradient.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__section.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile padding top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile padding bottom",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.global.settings.padding_top.label",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.global.settings.padding_bottom.label",
+      "default": 72
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "t:sections.global.settings.divider.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.global.settings.full_width.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "rounded",
+      "default": false,
+      "label": "t:sections.global.settings.rounded.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "t:sections.global.blocks.collection.name",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.global.settings.collection.label"
+        },
+        {
+          "type": "product_list",
+          "id": "products",
+          "label": "t:sections.global.settings.products.label",
+          "info": "t:sections.global.settings.products.info"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.global.settings.title.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "use_collection_category",
+          "label": "Use unique from metafield",
+          "info": "Use to force the collection to only use unique variants based on the metafield."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cluutch featured-collections",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "templates": ["password"]
+  }
+}
+{% endschema %}

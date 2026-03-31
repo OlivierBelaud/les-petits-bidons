@@ -1,0 +1,822 @@
+{% doc %}
+  @prompt
+    I want a quiz with the 3 following questions:
+    
+    Q1. Depuis combien de temps Les Petits Bidons ont-ils rejoint la famille Charbonneaux ?
+     1 an |  5 ans |  10 ans
+    
+    
+    Q2. Quelle est la mission principale des Petits Bidons ?
+     Proposer des produits ménagers écoresponsables |  Créer des lessives flashy |  Vendre des fusées écologiques
+    
+    
+    Q3. Quel geste simple rend votre ménage plus responsable ?
+     Utiliser une lessive écologique |  Lancer sa machine à moitié vide |  Ajouter trop de lessive
+    
+    When the quiz is over, display an iframe (let me inject the code in the settings), Make it not full width, the good answers are:
+    - 1 an
+    - Proposer des produits ménagers écoresponsables
+    - Utiliser une lessive écologique
+    
+    Let me be able to customize the questions and answers, and select which answer is correct directly in the settings.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-quiz-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .ai-quiz-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    width: 100%;
+    padding: 40px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    font-family: {{ settings.type_body_font.family }}, sans-serif;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-quiz-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .ai-quiz-title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    line-height: 1.2;
+  }
+
+  .ai-quiz-subtitle-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .ai-quiz-progress-{{ ai_gen_id }} {
+    width: 100%;
+    height: 8px;
+    background-color: {{ block.settings.progress_bg_color }};
+    border-radius: 4px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+
+  .ai-quiz-progress-bar-{{ ai_gen_id }} {
+    height: 100%;
+    background-color: {{ block.settings.progress_color }};
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .ai-quiz-question-{{ ai_gen_id }} {
+    display: none;
+    margin-bottom: 30px;
+  }
+
+  .ai-quiz-question-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-quiz-question-title-{{ ai_gen_id }} {
+    color: {{ block.settings.question_color }};
+    font-size: {{ block.settings.question_size }}px;
+    font-weight: 600;
+    margin: 0 0 20px;
+    line-height: 1.3;
+  }
+
+  .ai-quiz-answers-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-quiz-answer-{{ ai_gen_id }} {
+    background-color: {{ block.settings.answer_bg_color }};
+    border: 2px solid {{ block.settings.answer_border_color }};
+    border-radius: {{ block.settings.answer_border_radius }}px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    text-align: left;
+    width: 100%;
+    position: relative;
+  }
+
+  .ai-quiz-answer-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.answer_hover_bg_color }};
+    border-color: {{ block.settings.answer_hover_border_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-quiz-answer-{{ ai_gen_id }}.selected {
+    background-color: {{ block.settings.answer_selected_bg_color }};
+    border-color: {{ block.settings.answer_selected_border_color }};
+    color: {{ block.settings.answer_selected_text_color }};
+  }
+
+  .ai-quiz-answer-{{ ai_gen_id }}.correct {
+    background-color: {{ settings.color_success_background }};
+    border-color: {{ settings.color_success_text }};
+    color: {{ settings.color_success_text }};
+  }
+
+  .ai-quiz-answer-{{ ai_gen_id }}.incorrect {
+    background-color: {{ settings.color_error_background }};
+    border-color: {{ settings.color_error_text }};
+    color: {{ settings.color_error_text }};
+  }
+
+  .ai-quiz-navigation-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+  }
+
+  .ai-quiz-button-{{ ai_gen_id }} {
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    padding: 12px 24px;
+    font-size: {{ block.settings.text_size }}px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+  }
+
+  .ai-quiz-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-quiz-button-{{ ai_gen_id }}:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .ai-quiz-question-counter-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    font-weight: 500;
+  }
+
+  .ai-quiz-results-{{ ai_gen_id }} {
+    display: none;
+    text-align: center;
+  }
+
+  .ai-quiz-results-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-quiz-score-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 700;
+    margin: 0 0 20px;
+  }
+
+  .ai-quiz-score-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    margin: 0 0 30px;
+  }
+
+  .ai-quiz-iframe-container-{{ ai_gen_id }} {
+    margin-top: 30px;
+    border-radius: {{ block.settings.border_radius }}px;
+    overflow: hidden;
+  }
+
+  .ai-quiz-iframe-{{ ai_gen_id }} {
+    width: 100%;
+    height: 400px;
+    border: none;
+  }
+
+  .ai-quiz-restart-{{ ai_gen_id }} {
+    background-color: transparent;
+    color: {{ block.settings.text_color }};
+    border: 2px solid {{ block.settings.text_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    padding: 10px 20px;
+    font-size: {{ block.settings.text_size }}px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+  }
+
+  .ai-quiz-restart-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.text_color }};
+    color: {{ block.settings.background_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-quiz-wrapper-{{ ai_gen_id }} {
+      padding: 20px 15px;
+    }
+
+    .ai-quiz-container-{{ ai_gen_id }} {
+      padding: 30px 20px;
+    }
+
+    .ai-quiz-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-quiz-question-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.question_size | times: 0.9 }}px;
+    }
+
+    .ai-quiz-answer-{{ ai_gen_id }} {
+      padding: 14px 16px;
+    }
+
+    .ai-quiz-navigation-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .ai-quiz-button-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-quiz-wrapper-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <quiz-component-{{ ai_gen_id }} class="ai-quiz-container-{{ ai_gen_id }}">
+    <div class="ai-quiz-header-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-quiz-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.subtitle != blank %}
+        <p class="ai-quiz-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</p>
+      {% endif %}
+      <div class="ai-quiz-progress-{{ ai_gen_id }}">
+        <div class="ai-quiz-progress-bar-{{ ai_gen_id }}"></div>
+      </div>
+    </div>
+
+    {% assign total_questions = 0 %}
+    {% for i in (1..3) %}
+      {% assign question_key = 'question_' | append: i %}
+      {% assign answer1_key = 'question_' | append: i | append: '_answer1' %}
+      {% assign answer2_key = 'question_' | append: i | append: '_answer2' %}
+      {% assign answer3_key = 'question_' | append: i | append: '_answer3' %}
+      {% assign correct_key = 'question_' | append: i | append: '_correct' %}
+      
+      {% assign question = block.settings[question_key] %}
+      {% assign answer1 = block.settings[answer1_key] %}
+      {% assign answer2 = block.settings[answer2_key] %}
+      {% assign answer3 = block.settings[answer3_key] %}
+      {% assign correct = block.settings[correct_key] %}
+      
+      {% if question != blank and answer1 != blank and answer2 != blank and answer3 != blank %}
+        {% assign total_questions = total_questions | plus: 1 %}
+        <div class="ai-quiz-question-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" data-question="{{ forloop.index }}">
+          <h3 class="ai-quiz-question-title-{{ ai_gen_id }}">{{ question }}</h3>
+          <div class="ai-quiz-answers-{{ ai_gen_id }}">
+            <button class="ai-quiz-answer-{{ ai_gen_id }}" data-answer="{% if correct == '1' %}correct{% else %}wrong{% endif %}">{{ answer1 }}</button>
+            <button class="ai-quiz-answer-{{ ai_gen_id }}" data-answer="{% if correct == '2' %}correct{% else %}wrong{% endif %}">{{ answer2 }}</button>
+            <button class="ai-quiz-answer-{{ ai_gen_id }}" data-answer="{% if correct == '3' %}correct{% else %}wrong{% endif %}">{{ answer3 }}</button>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <div class="ai-quiz-results-{{ ai_gen_id }}">
+      <h3 class="ai-quiz-score-{{ ai_gen_id }}">Félicitations !</h3>
+      <p class="ai-quiz-score-text-{{ ai_gen_id }}">Vous avez terminé le quiz avec un score de <span class="score-value">0</span>/<span class="total-questions">{{ total_questions }}</span>.</p>
+      
+      {% if block.settings.completion_iframe != blank %}
+        <div class="ai-quiz-iframe-container-{{ ai_gen_id }}">
+          {{ block.settings.completion_iframe }}
+        </div>
+      {% endif %}
+      
+      <button class="ai-quiz-restart-{{ ai_gen_id }}">Recommencer le quiz</button>
+    </div>
+
+    {% if total_questions > 0 %}
+      <div class="ai-quiz-navigation-{{ ai_gen_id }}">
+        <span class="ai-quiz-question-counter-{{ ai_gen_id }}">Question <span class="current-question">1</span> sur <span class="total-questions">{{ total_questions }}</span></span>
+        <button class="ai-quiz-button-{{ ai_gen_id }} next-button" disabled>Suivant</button>
+      </div>
+    {% endif %}
+  </quiz-component-{{ ai_gen_id }}>
+</div>
+
+<script>
+  (function() {
+    class QuizComponent{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentQuestion = 1;
+        this.totalQuestions = parseInt(this.querySelector('.total-questions')?.textContent || '0');
+        this.score = 0;
+        this.answers = {};
+      }
+
+      connectedCallback() {
+        if (this.totalQuestions === 0) return;
+        
+        this.progressBar = this.querySelector('.ai-quiz-progress-bar-{{ ai_gen_id }}');
+        this.questions = this.querySelectorAll('.ai-quiz-question-{{ ai_gen_id }}');
+        this.results = this.querySelector('.ai-quiz-results-{{ ai_gen_id }}');
+        this.nextButton = this.querySelector('.next-button');
+        this.restartButton = this.querySelector('.ai-quiz-restart-{{ ai_gen_id }}');
+        this.questionCounter = this.querySelector('.current-question');
+        this.scoreValue = this.querySelector('.score-value');
+        this.navigation = this.querySelector('.ai-quiz-navigation-{{ ai_gen_id }}');
+
+        this.setupEventListeners();
+        this.updateProgress();
+      }
+
+      setupEventListeners() {
+        this.querySelectorAll('.ai-quiz-answer-{{ ai_gen_id }}').forEach(answer => {
+          answer.addEventListener('click', (e) => this.selectAnswer(e));
+        });
+
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => this.nextQuestion());
+        }
+        
+        if (this.restartButton) {
+          this.restartButton.addEventListener('click', () => this.restartQuiz());
+        }
+      }
+
+      selectAnswer(e) {
+        const currentQuestionEl = this.querySelector('.ai-quiz-question-{{ ai_gen_id }}.active');
+        const answers = currentQuestionEl.querySelectorAll('.ai-quiz-answer-{{ ai_gen_id }}');
+        
+        answers.forEach(answer => answer.classList.remove('selected'));
+        e.target.classList.add('selected');
+
+        this.answers[this.currentQuestion] = e.target.dataset.answer;
+        this.nextButton.disabled = false;
+      }
+
+      nextQuestion() {
+        if (this.currentQuestion < this.totalQuestions) {
+          this.questions[this.currentQuestion - 1].classList.remove('active');
+          this.currentQuestion++;
+          this.questions[this.currentQuestion - 1].classList.add('active');
+          this.questionCounter.textContent = this.currentQuestion;
+          this.nextButton.disabled = true;
+          this.updateProgress();
+
+          if (this.currentQuestion === this.totalQuestions) {
+            this.nextButton.textContent = 'Terminer';
+          }
+        } else {
+          this.showResults();
+        }
+      }
+
+      showResults() {
+        this.score = Object.values(this.answers).filter(answer => answer === 'correct').length;
+        
+        this.questions.forEach(question => question.style.display = 'none');
+        this.navigation.style.display = 'none';
+        this.results.classList.add('active');
+        this.scoreValue.textContent = this.score;
+        this.progressBar.style.width = '100%';
+
+        this.showCorrectAnswers();
+      }
+
+      showCorrectAnswers() {
+        this.questions.forEach((question, index) => {
+          const answers = question.querySelectorAll('.ai-quiz-answer-{{ ai_gen_id }}');
+          const userAnswer = this.answers[index + 1];
+          
+          answers.forEach(answer => {
+            if (answer.dataset.answer === 'correct') {
+              answer.classList.add('correct');
+            } else if (answer.classList.contains('selected') && userAnswer === 'wrong') {
+              answer.classList.add('incorrect');
+            }
+          });
+        });
+      }
+
+      restartQuiz() {
+        this.currentQuestion = 1;
+        this.score = 0;
+        this.answers = {};
+
+        this.questions.forEach((question, index) => {
+          question.style.display = index === 0 ? 'block' : 'none';
+          question.classList.toggle('active', index === 0);
+          
+          const answers = question.querySelectorAll('.ai-quiz-answer-{{ ai_gen_id }}');
+          answers.forEach(answer => {
+            answer.classList.remove('selected', 'correct', 'incorrect');
+          });
+        });
+
+        this.results.classList.remove('active');
+        this.navigation.style.display = 'flex';
+        this.nextButton.textContent = 'Suivant';
+        this.nextButton.disabled = true;
+        this.questionCounter.textContent = '1';
+        this.updateProgress();
+      }
+
+      updateProgress() {
+        const progress = ((this.currentQuestion - 1) / this.totalQuestions) * 100;
+        this.progressBar.style.width = progress + '%';
+      }
+    }
+
+    customElements.define('quiz-component-{{ ai_gen_id }}', QuizComponent{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Quiz personnalisable",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenu"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre du quiz",
+      "default": "Quiz Les Petits Bidons"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sous-titre",
+      "default": "Testez vos connaissances sur Les Petits Bidons"
+    },
+    {
+      "type": "html",
+      "id": "completion_iframe",
+      "label": "Code iframe de fin",
+      "info": "Collez ici le code iframe complet à afficher à la fin du quiz"
+    },
+    {
+      "type": "header",
+      "content": "Question 1"
+    },
+    {
+      "type": "text",
+      "id": "question_1",
+      "label": "Question 1",
+      "default": "Depuis combien de temps Les Petits Bidons ont-ils rejoint la famille Charbonneaux ?"
+    },
+    {
+      "type": "text",
+      "id": "question_1_answer1",
+      "label": "Réponse 1",
+      "default": "1 an"
+    },
+    {
+      "type": "text",
+      "id": "question_1_answer2",
+      "label": "Réponse 2",
+      "default": "5 ans"
+    },
+    {
+      "type": "text",
+      "id": "question_1_answer3",
+      "label": "Réponse 3",
+      "default": "10 ans"
+    },
+    {
+      "type": "select",
+      "id": "question_1_correct",
+      "label": "Bonne réponse",
+      "options": [
+        {
+          "value": "1",
+          "label": "Réponse 1"
+        },
+        {
+          "value": "2",
+          "label": "Réponse 2"
+        },
+        {
+          "value": "3",
+          "label": "Réponse 3"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Question 2"
+    },
+    {
+      "type": "text",
+      "id": "question_2",
+      "label": "Question 2",
+      "default": "Quelle est la mission principale des Petits Bidons ?"
+    },
+    {
+      "type": "text",
+      "id": "question_2_answer1",
+      "label": "Réponse 1",
+      "default": "Proposer des produits ménagers écoresponsables"
+    },
+    {
+      "type": "text",
+      "id": "question_2_answer2",
+      "label": "Réponse 2",
+      "default": "Créer des lessives flashy"
+    },
+    {
+      "type": "text",
+      "id": "question_2_answer3",
+      "label": "Réponse 3",
+      "default": "Vendre des fusées écologiques"
+    },
+    {
+      "type": "select",
+      "id": "question_2_correct",
+      "label": "Bonne réponse",
+      "options": [
+        {
+          "value": "1",
+          "label": "Réponse 1"
+        },
+        {
+          "value": "2",
+          "label": "Réponse 2"
+        },
+        {
+          "value": "3",
+          "label": "Réponse 3"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Question 3"
+    },
+    {
+      "type": "text",
+      "id": "question_3",
+      "label": "Question 3",
+      "default": "Quel geste simple rend votre ménage plus responsable ?"
+    },
+    {
+      "type": "text",
+      "id": "question_3_answer1",
+      "label": "Réponse 1",
+      "default": "Utiliser une lessive écologique"
+    },
+    {
+      "type": "text",
+      "id": "question_3_answer2",
+      "label": "Réponse 2",
+      "default": "Lancer sa machine à moitié vide"
+    },
+    {
+      "type": "text",
+      "id": "question_3_answer3",
+      "label": "Réponse 3",
+      "default": "Ajouter trop de lessive"
+    },
+    {
+      "type": "select",
+      "id": "question_3_correct",
+      "label": "Bonne réponse",
+      "options": [
+        {
+          "value": "1",
+          "label": "Réponse 1"
+        },
+        {
+          "value": "2",
+          "label": "Réponse 2"
+        },
+        {
+          "value": "3",
+          "label": "Réponse 3"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Mise en page"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 400,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Largeur maximale",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "Style général"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Couleur des questions",
+      "default": "#003435"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Arrondi des bords",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Tailles de police"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Taille du titre",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Taille des questions",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du texte",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Barre de progression"
+    },
+    {
+      "type": "color",
+      "id": "progress_bg_color",
+      "label": "Couleur de fond",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "progress_color",
+      "label": "Couleur de progression",
+      "default": "#003435"
+    },
+    {
+      "type": "header",
+      "content": "Réponses"
+    },
+    {
+      "type": "color",
+      "id": "answer_bg_color",
+      "label": "Couleur de fond",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "answer_border_color",
+      "label": "Couleur de bordure",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "answer_hover_bg_color",
+      "label": "Couleur de fond au survol",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "answer_hover_border_color",
+      "label": "Couleur de bordure au survol",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "answer_selected_bg_color",
+      "label": "Couleur de fond sélectionnée",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "answer_selected_border_color",
+      "label": "Couleur de bordure sélectionnée",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "answer_selected_text_color",
+      "label": "Couleur du texte sélectionné",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "answer_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Arrondi des réponses",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Boutons"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Couleur de fond",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Couleur du texte",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Couleur de fond au survol",
+      "default": "#002829"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Arrondi des boutons",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quiz personnalisable"
+    }
+  ]
+}
+{% endschema %}

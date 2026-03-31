@@ -1,0 +1,760 @@
+{% doc %}
+  @prompt
+    Build a section that shows a horizontal scrolling row of short trust messages (with optional icons) : white bagdes, with rounded corners (30px). It should loop seamlessly, scroll slowly and smoothly, pause on hover, and feel minimal/premium (Font DM SANS).
+    
+    In the Shopify editor, I want these options:
+    
+    Items list : label + optional icon (theme icon or custom SVG)
+    
+    Display: show/hide on mobile, show/hide on desktop, full-width or page-width
+    
+    Style: text size (desktop/mobile), icon size, spacing between items, padding top/bottom, colours (text/icon/background), optional subtle “pill” style (none / soft background / thin outline), border radius
+    
+    Animation: enable/disable, direction, speed (slow/medium/fast), pause on hover, The "none" option in the pill style is not woking, could you make the speed adjustment more precise with numbers like text size?, speed option is not working
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% liquid
+  assign speed_value = 110 | minus: block.settings.animation_speed
+%}
+
+{% style %}
+  .ai-trust-badges-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    padding: {{ block.settings.padding_top }}px 0 {{ block.settings.padding_bottom }}px;
+    background-color: transparent;
+  }
+
+  {% if block.settings.hide_on_mobile %}
+    @media screen and (max-width: 749px) {
+      .ai-trust-badges-{{ ai_gen_id }} {
+        display: none;
+      }
+    }
+  {% endif %}
+
+  {% if block.settings.hide_on_desktop %}
+    @media screen and (min-width: 750px) {
+      .ai-trust-badges-{{ ai_gen_id }} {
+        display: none;
+      }
+    }
+  {% endif %}
+
+  .ai-trust-badges-container-{{ ai_gen_id }} {
+    {% if block.settings.container_width == 'page-width' %}
+      max-width: {{ settings.page_width }}px;
+      margin: 0 auto;
+      padding: 0 20px;
+    {% else %}
+      width: 100%;
+    {% endif %}
+  }
+
+  .ai-trust-badges-track-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.item_spacing }}px;
+    {% if block.settings.enable_animation %}
+      animation: ai-trust-badges-scroll-{{ ai_gen_id }} {{ speed_value }}s linear infinite;
+      {% if block.settings.animation_direction == 'right' %}
+        animation-direction: reverse;
+      {% endif %}
+    {% endif %}
+  }
+
+  {% if block.settings.enable_animation and block.settings.pause_on_hover %}
+    .ai-trust-badges-track-{{ ai_gen_id }}:hover {
+      animation-play-state: paused;
+    }
+  {% endif %}
+
+  @keyframes ai-trust-badges-scroll-{{ ai_gen_id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .ai-trust-badges-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-radius: {{ block.settings.border_radius }}px;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: {{ block.settings.text_size_desktop }}px;
+    font-weight: 400;
+    line-height: 1.4;
+
+    {% if block.settings.pill_style == 'soft-background' %}
+      background-color: {{ block.settings.badge_background }};
+      border: none;
+    {% elsif block.settings.pill_style == 'outline' %}
+      background-color: transparent;
+      border: 1px solid {{ block.settings.badge_background }};
+    {% else %}
+      background-color: transparent;
+      border: none;
+    {% endif %}
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-trust-badges-item-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_size_mobile }}px;
+    }
+  }
+
+  .ai-trust-badges-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: {{ block.settings.icon_color }};
+  }
+
+  .ai-trust-badges-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  .ai-trust-badges-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+  }
+{% endstyle %}
+
+<ai-trust-badges-{{ ai_gen_id }} class="ai-trust-badges-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-trust-badges-container-{{ ai_gen_id }}">
+    <div class="ai-trust-badges-track-{{ ai_gen_id }}">
+      {% liquid
+        assign items_count = 0
+        for i in (1..10)
+          assign label_key = 'item_' | append: i | append: '_label'
+          if block.settings[label_key] != blank
+            assign items_count = items_count | plus: 1
+          endif
+        endfor
+      %}
+
+      {% if items_count > 0 %}
+        {% for repeat in (1..2) %}
+          {% for i in (1..10) %}
+            {% liquid
+              assign label_key = 'item_' | append: i | append: '_label'
+              assign icon_key = 'item_' | append: i | append: '_icon'
+              assign custom_svg_key = 'item_' | append: i | append: '_custom_svg'
+              
+              assign item_label = block.settings[label_key]
+              assign item_icon = block.settings[icon_key]
+              assign custom_svg = block.settings[custom_svg_key]
+            %}
+
+            {% if item_label != blank %}
+              <div class="ai-trust-badges-item-{{ ai_gen_id }}">
+                {% if custom_svg != blank %}
+                  <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+                    {{ custom_svg }}
+                  </div>
+                {% elsif item_icon != 'none' %}
+                  <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+                    {% if item_icon == 'checkmark' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    {% elsif item_icon == 'star' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    {% elsif item_icon == 'heart' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                      </svg>
+                    {% elsif item_icon == 'shield' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      </svg>
+                    {% elsif item_icon == 'truck' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                      </svg>
+                    {% elsif item_icon == 'leaf' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                      </svg>
+                    {% elsif item_icon == 'award' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="7"></circle>
+                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                      </svg>
+                    {% elsif item_icon == 'gift' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                        <rect x="2" y="7" width="20" height="5"></rect>
+                        <line x1="12" y1="22" x2="12" y2="7"></line>
+                        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                      </svg>
+                    {% endif %}
+                  </div>
+                {% endif %}
+                <span class="ai-trust-badges-text-{{ ai_gen_id }}">{{ item_label }}</span>
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      {% else %}
+        <div class="ai-trust-badges-item-{{ ai_gen_id }}">
+          <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="ai-trust-badges-text-{{ ai_gen_id }}">Livraison gratuite</span>
+        </div>
+        <div class="ai-trust-badges-item-{{ ai_gen_id }}">
+          <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
+          </div>
+          <span class="ai-trust-badges-text-{{ ai_gen_id }}">100% naturel</span>
+        </div>
+        <div class="ai-trust-badges-item-{{ ai_gen_id }}">
+          <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <span class="ai-trust-badges-text-{{ ai_gen_id }}">Paiement sécurisé</span>
+        </div>
+        <div class="ai-trust-badges-item-{{ ai_gen_id }}">
+          <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <span class="ai-trust-badges-text-{{ ai_gen_id }}">4.9/5 étoiles</span>
+        </div>
+        <div class="ai-trust-badges-item-{{ ai_gen_id }}">
+          <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="ai-trust-badges-text-{{ ai_gen_id }}">Livraison gratuite</span>
+        </div>
+        <div class="ai-trust-badges-item-{{ ai_gen_id }}">
+          <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
+          </div>
+          <span class="ai-trust-badges-text-{{ ai_gen_id }}">100% naturel</span>
+        </div>
+        <div class="ai-trust-badges-item-{{ ai_gen_id }}">
+          <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <span class="ai-trust-badges-text-{{ ai_gen_id }}">Paiement sécurisé</span>
+        </div>
+        <div class="ai-trust-badges-item-{{ ai_gen_id }}">
+          <div class="ai-trust-badges-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <span class="ai-trust-badges-text-{{ ai_gen_id }}">4.9/5 étoiles</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</ai-trust-badges-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AiTrustBadges{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.track = this.querySelector('.ai-trust-badges-track-{{ ai_gen_id }}');
+      }
+    }
+
+    customElements.define('ai-trust-badges-{{ ai_gen_id }}', AiTrustBadges{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Trust badges scroll",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Items"
+    },
+    {
+      "type": "text",
+      "id": "item_1_label",
+      "label": "Item 1 label",
+      "default": "Livraison gratuite"
+    },
+    {
+      "type": "select",
+      "id": "item_1_icon",
+      "label": "Item 1 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "truck"
+    },
+    {
+      "type": "html",
+      "id": "item_1_custom_svg",
+      "label": "Item 1 custom SVG"
+    },
+    {
+      "type": "text",
+      "id": "item_2_label",
+      "label": "Item 2 label",
+      "default": "100% naturel"
+    },
+    {
+      "type": "select",
+      "id": "item_2_icon",
+      "label": "Item 2 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "leaf"
+    },
+    {
+      "type": "html",
+      "id": "item_2_custom_svg",
+      "label": "Item 2 custom SVG"
+    },
+    {
+      "type": "text",
+      "id": "item_3_label",
+      "label": "Item 3 label",
+      "default": "Paiement sécurisé"
+    },
+    {
+      "type": "select",
+      "id": "item_3_icon",
+      "label": "Item 3 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "shield"
+    },
+    {
+      "type": "html",
+      "id": "item_3_custom_svg",
+      "label": "Item 3 custom SVG"
+    },
+    {
+      "type": "text",
+      "id": "item_4_label",
+      "label": "Item 4 label",
+      "default": "4.9/5 étoiles"
+    },
+    {
+      "type": "select",
+      "id": "item_4_icon",
+      "label": "Item 4 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "star"
+    },
+    {
+      "type": "html",
+      "id": "item_4_custom_svg",
+      "label": "Item 4 custom SVG"
+    },
+    {
+      "type": "text",
+      "id": "item_5_label",
+      "label": "Item 5 label"
+    },
+    {
+      "type": "select",
+      "id": "item_5_icon",
+      "label": "Item 5 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "checkmark"
+    },
+    {
+      "type": "html",
+      "id": "item_5_custom_svg",
+      "label": "Item 5 custom SVG"
+    },
+    {
+      "type": "text",
+      "id": "item_6_label",
+      "label": "Item 6 label"
+    },
+    {
+      "type": "select",
+      "id": "item_6_icon",
+      "label": "Item 6 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "heart"
+    },
+    {
+      "type": "html",
+      "id": "item_6_custom_svg",
+      "label": "Item 6 custom SVG"
+    },
+    {
+      "type": "text",
+      "id": "item_7_label",
+      "label": "Item 7 label"
+    },
+    {
+      "type": "select",
+      "id": "item_7_icon",
+      "label": "Item 7 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "award"
+    },
+    {
+      "type": "html",
+      "id": "item_7_custom_svg",
+      "label": "Item 7 custom SVG"
+    },
+    {
+      "type": "text",
+      "id": "item_8_label",
+      "label": "Item 8 label"
+    },
+    {
+      "type": "select",
+      "id": "item_8_icon",
+      "label": "Item 8 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "gift"
+    },
+    {
+      "type": "html",
+      "id": "item_8_custom_svg",
+      "label": "Item 8 custom SVG"
+    },
+    {
+      "type": "text",
+      "id": "item_9_label",
+      "label": "Item 9 label"
+    },
+    {
+      "type": "select",
+      "id": "item_9_icon",
+      "label": "Item 9 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "checkmark"
+    },
+    {
+      "type": "html",
+      "id": "item_9_custom_svg",
+      "label": "Item 9 custom SVG"
+    },
+    {
+      "type": "text",
+      "id": "item_10_label",
+      "label": "Item 10 label"
+    },
+    {
+      "type": "select",
+      "id": "item_10_icon",
+      "label": "Item 10 icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "star", "label": "Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "award", "label": "Award" },
+        { "value": "gift", "label": "Gift" }
+      ],
+      "default": "checkmark"
+    },
+    {
+      "type": "html",
+      "id": "item_10_custom_svg",
+      "label": "Item 10 custom SVG"
+    },
+    {
+      "type": "header",
+      "content": "Display"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide on mobile",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_desktop",
+      "label": "Hide on desktop",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "options": [
+        { "value": "full-width", "label": "Full width" },
+        { "value": "page-width", "label": "Page width" }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Text size (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Text size (mobile)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Spacing between items",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Badge background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "pill_style",
+      "label": "Pill style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "soft-background", "label": "Soft background" },
+        { "value": "outline", "label": "Thin outline" }
+      ],
+      "default": "soft-background"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "Enable animation",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "animation_direction",
+      "label": "Direction",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "label": "Speed",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "info": "Higher number = faster speed"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust badges scroll"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,261 @@
+.cluutch-card-slider .swiper-slide {
+    position: relative;
+}
+
+.cluutch-card-slider__content {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    border-radius: 16px;
+    margin-inline: 12px;
+    background: var(--white, #FFFFFA);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+
+    @media (min-width:768px) {
+        bottom: 34px;
+        margin-inline: 20px;
+        border-radius: 20px;
+        gap: 6px;
+    }
+
+    @media (min-width:1300px) {
+        padding: 14px;
+    }
+}
+
+.cluutch-card-slider {
+    background: var(--background, #F5F5F5);
+    color: var(--TEXT, #003435);
+
+}
+
+.cluutch-card-slider__title {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 16px;
+
+    @media (min-width:768px) {
+        margin-bottom: 10px;
+    }
+}
+
+.cluutch-card-slider__subtitle {
+    /* med 24 (-2) */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    color: var(--TEXT, #003435);
+    letter-spacing: normal;
+    font-size: 14px;
+    line-height: 142.857%;
+    margin-bottom: 24px;
+
+    @media (min-width:768px) {
+        line-height: 125%;
+        letter-spacing: -0.48px;
+        font-size: 24px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+}
+
+.cluutch-card-slider__title p, .cluutch-card-slider__title h2 {
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    /* H2 48 semi  -4 raleway */
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+
+    font-size: 28px;
+    line-height: 121.429%;
+    letter-spacing: -0.56px;
+
+    @media (min-width:768px) {
+        font-size: 40px;
+        line-height: 112.5%;
+        letter-spacing: -0.96px;
+    }
+}
+
+.cluutch-card-slider__title p strong, .cluutch-card-slider__title h2 strong {
+    color: var(--mint-secondary, #007E7F);
+    font-weight: 600;
+}
+
+.cluutch-card-slider__swiper {
+    margin-bottom: 24px;
+
+    margin-right: -20px;
+
+    @media (min-width:768px) {
+
+        margin-right: 0;
+    }
+}
+
+.cluutch-card-slider .swiper-button-next,
+.cluutch-card-slider .swiper-button-prev {
+    border-radius: 60px;
+    border: 1px solid var(--mint-secondary, #007E7F);
+    background: var(--mint-light, #E4F7F6);
+    width: 48px;
+    height: 48px;
+
+    @media (max-width:767px) {
+        display: none;
+    }
+
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    transition: all .3s ease;
+}
+
+.swiper-button-next:hover {
+    transform: translateX(5px);
+}
+
+.swiper-button-prev:hover {
+    transform: translateX(-5px);
+}
+
+.swiper-pagination-bullet {
+    transition: all .3s ease;
+}
+
+.cluutch-card-slider .swiper-button-next svg,
+.cluutch-card-slider .swiper-button-prev svg {
+    width: 28px;
+    height: 28px;
+}
+
+.cluutch-card-slider .swiper-button-next:after,
+.cluutch-card-slider .swiper-button-prev:after {
+    display: none;
+}
+
+.cluutch-card-slider__content-title {
+    font-family: "DM Sans";
+    font-style: normal;
+    color: var(--TEXT, #003435);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 137.5%;
+
+    @media (min-width:768px) {
+        font-size: 18px;
+        line-height: 133.333%;
+        font-weight: 500;
+    }
+}
+
+@media (max-width:767px) {
+    .cluutch-card-slider__content-title:last-child {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 142.857%;
+    }
+}
+
+.cluutch-card-slider__text {
+    /* med 16 */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    margin-top: -4px;
+    font-size: 14px;
+    line-height: 142.857%;
+
+    @media (min-width:768px) {
+        font-size: 16px;
+        line-height: 137.5%;
+    }
+}
+
+.cluutch-card-slider__flex {
+    display: flex;
+    gap: 9px;
+    /* 14 med */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    align-items: center;
+    height: 24px;
+    font-size: 12px;
+    line-height: 150%;
+
+    @media (min-width:768px) {
+        height: 32px;
+        font-size: 14px;
+        line-height: 142.857%;
+    }
+}
+
+.cluutch-card-slider__flex svg {
+    width: 14px;
+    height: 14px;
+
+    @media (min-width:768px) {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.cluutch-card-slider .swiper-slide img {
+    border-radius: 24px;
+    max-height: 550px;
+    object-fit: cover;
+    aspect-ratio: 270/416;
+
+    @media (min-width:768px) {
+        aspect-ratio: 445/612;
+    }
+}
+
+.cluutch-card-slider__button-wrapper {
+    text-align: center;
+}
+
+.cluutch-card-slider .cluutch-card-slider__button {
+    border-radius: 40px;
+    background: var(--mint-main, #37B6AD);
+    color: var(--white, #FFFFFA);
+    width: auto;
+    max-width: 287px;
+    padding: 14px;
+    width: 100%;
+
+    @media (min-width:768px) {
+        max-width: 297px;
+    }
+}
+
+.cluutch-card-slider__button-text {
+    transform: all .4s ease;
+}
+
+.cluutch-card-slider__button:hover .cluutch-card-slider__button-text {
+    color: var(--TEXT, #003435);
+    z-index: 1;
+
+}
+
+.cluutch-card-slider__wrapper {
+    margin-bottom: 48px;
+
+    @media (min-width:768px) {
+        margin-bottom: 100px;
+    }
+}
+
+.cluutch-card-slider__wrapper .cluutch-button--more .btn-fill {
+    background: var(--background, #F5F5F5);
+
+}

@@ -1,0 +1,74 @@
+{{ 'cluutch-bg-img.css' | asset_url | stylesheet_tag }}
+
+<div class="page-width">
+  <div class="cluutch-bg-img__img-wrapper">
+    {% if section.settings.image != blank %}
+      {{-
+        section.settings.image
+        | image_url: width: 1400
+        | image_tag:
+          loading: 'lazy',
+          sizes: sizes,
+          widths: '300,400,500,600,700,800,900,1000,1200,1400,1600',
+          is: 'lazy-image',
+          class: 'cluutch-bg-img__img'
+      -}}
+    {% endif %}
+    {% if section.settings.image_mobile != blank %}
+      {{-
+        section.settings.image_mobile
+        | image_url: width: 1400
+        | image_tag:
+          loading: 'lazy',
+          sizes: sizes,
+          widths: '300,400,500,600,700,800,900,1000,1200,1400,1600',
+          is: 'lazy-image',
+          class: 'cluutch-bg-img__img cluutch-bg-img__img--mobile'
+      -}}
+    {% endif %}
+    <div class="cluutch-bg-img__text-wrapper">
+      <div class="cluutch-bg-img__title">
+        {{ section.settings.title }}
+      </div>
+      <div class="cluutch-bg-img__text">
+        {{ section.settings.text }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cluutch-background-img",
+  "class": "cluutch-bg-img",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Recommended image size: 2720px 1200px"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Image mobile",
+      "info": "Recommended image size: 770px 1260px"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cluutch-background-img"
+    }
+  ]
+}
+{% endschema %}

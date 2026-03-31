@@ -1,0 +1,756 @@
+{% doc %}
+  @prompt
+    create a custom Shopify Liquid section for a horizontal grid of rounded cards. Each card must be pure white with a 40px border-radius and feature an optional image picker, a main title in Raleway, and a body text in DM Sans that supports line breaks and bold or italic text (text added in the body text should display as it is). When an image is included, it must appear at the top of the card with the option to have themain title overlaid at the bottom of the image area on a subtle white gradient for readability (option to change colors), followed vertically by the body text. The section must include a global section title with schema options for left, right, or center alignment. Both the main title and body text must have independent font-size sliders in the settings, and if the image is left blank, the text components should automatically expand to fill the card's full width. For mobile devices, the cards must remain on a single horizontal line using scroll-snap to ensure the next card is partially visible, strictly avoiding any vertical stacking., Add the alignment options for the card title and body text.
+    the mobile version should enable native touch scrolling, allowing users to swipe from right to left with their thumb.
+    
+    The cards must be automatically centered within the section if their total width is less than the screen width, On mobile card 1 and 2 are not displaying, correct this, card 1 is not displaying in mobile, correct this, The first card to display on mobile should be card 1, The section title should be Raleway regular, The section title font should be raleway weight 600, The card title font should be Raleway weight 600, use a rich text editor for the body text field instead of a plain text area, allowing the user to apply bold and italic formatting directly. Ensure the CSS preserves these styles so that any formatted text displays correctly within the DM Sans body section of each card while maintaining the line break functionality., Please update the section so that if the total width of the cards exceeds the screen width on desktop, a horizontal scrollbar becomes visible at the bottom of the grid. This scrollbar must be fully customizable through the Shopify schema, allowing the user to modify its color, Make sure that the scrolling bar works correctly and the customization too, This scrollbar must allow for manual positioning, meaning that when a user clicks and drags the scroller, it must remain exactly where it is released rather than snapping back to a default position., The card 1 doesn't display completely on desktop, it's cropped, The first card is cropped on desktop, correct this bug, Please fix the layout bug where the first card is being cut off on smaller screens by ensuring the grid container has adequate side padding and that cards do not overflow the left edge of the viewport. The first cards in the sequence must always be fully visible upon page load, with the horizontal scrollbar only enabling access to subsequent cards., Please fix the alignment bug where the first card is cut off on the left even on large screens. This is likely caused by using justify-content: center on a scrollable container; please switch to justify-content: flex-start or use a centered inner container with padding-left and padding-right so the grid always starts correctly from the first card. The first card must be fully visible and aligned with the site's standard container margins upon page load, with the horizontal scrollbar allowing access to the rest of the cards.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-card-grid-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 40px 0;
+    background-color: {{ block.settings.section_background_color }};
+  }
+
+  .ai-card-grid-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.page_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-card-grid-title-{{ ai_gen_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: {{ block.settings.section_title_size }}px;
+    margin: 0 0 30px;
+    text-align: {{ block.settings.section_title_alignment }};
+    color: {{ block.settings.section_title_color }};
+  }
+
+  .ai-card-grid-wrapper-{{ ai_gen_id }} {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ai-card-grid-wrapper-inner-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.card_gap }}px;
+    width: fit-content;
+    {% if block.settings.cards_total_width_less == 'center' %}
+      margin: 0 auto;
+    {% elsif block.settings.cards_total_width_less == 'flex-end' %}
+      margin-left: auto;
+    {% endif %}
+  }
+
+  .ai-card-grid-wrapper-{{ ai_gen_id }}::-webkit-scrollbar {
+    height: {{ block.settings.scrollbar_height }}px;
+  }
+
+  .ai-card-grid-wrapper-{{ ai_gen_id }}::-webkit-scrollbar-track {
+    background: {{ block.settings.scrollbar_track_color }};
+    border-radius: {{ block.settings.scrollbar_border_radius }}px;
+  }
+
+  .ai-card-grid-wrapper-{{ ai_gen_id }}::-webkit-scrollbar-thumb {
+    background: {{ block.settings.scrollbar_color }};
+    border-radius: {{ block.settings.scrollbar_border_radius }}px;
+  }
+
+  .ai-card-grid-wrapper-{{ ai_gen_id }}::-webkit-scrollbar-thumb:hover {
+    background: {{ block.settings.scrollbar_hover_color }};
+  }
+
+  .ai-card-grid-card-{{ ai_gen_id }} {
+    flex: 0 0 {{ block.settings.card_width }}px;
+    background-color: {{ block.settings.card_background_color }};
+    border-radius: 40px;
+    overflow: hidden;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ai-card-grid-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .ai-card-grid-image-wrapper-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-card-grid-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-card-grid-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-card-grid-overlay-title-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(to top, {{ block.settings.overlay_gradient_color }}, transparent);
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: {{ block.settings.card_title_size }}px;
+    color: {{ block.settings.overlay_text_color }};
+    margin: 0;
+    text-align: {{ block.settings.card_title_alignment }};
+  }
+
+  .ai-card-grid-content-{{ ai_gen_id }} {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ai-card-grid-card-title-{{ ai_gen_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: {{ block.settings.card_title_size }}px;
+    color: {{ block.settings.card_title_color }};
+    margin: 0 0 15px;
+    text-align: {{ block.settings.card_title_alignment }};
+  }
+
+  .ai-card-grid-card-body-{{ ai_gen_id }} {
+    font-family: 'DM Sans', sans-serif;
+    font-size: {{ block.settings.card_body_size }}px;
+    color: {{ block.settings.card_body_color }};
+    line-height: 1.6;
+    text-align: {{ block.settings.card_body_alignment }};
+  }
+
+  .ai-card-grid-card-body-{{ ai_gen_id }} p {
+    margin: 0 0 10px;
+  }
+
+  .ai-card-grid-card-body-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-card-grid-card-body-{{ ai_gen_id }} strong {
+    font-weight: 700;
+  }
+
+  .ai-card-grid-card-body-{{ ai_gen_id }} em {
+    font-style: italic;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-card-grid-wrapper-{{ ai_gen_id }} {
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .ai-card-grid-wrapper-{{ ai_gen_id }}::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ai-card-grid-wrapper-inner-{{ ai_gen_id }} {
+      gap: {{ block.settings.card_gap_mobile }}px;
+      margin: 0;
+    }
+
+    .ai-card-grid-card-{{ ai_gen_id }} {
+      flex: 0 0 {{ block.settings.card_width_mobile }}px;
+    }
+
+    .ai-card-grid-card-{{ ai_gen_id }}:first-child {
+      margin-left: 20px;
+    }
+
+    .ai-card-grid-card-{{ ai_gen_id }}:last-child {
+      margin-right: 20px;
+    }
+  }
+{% endstyle %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
+<horizontal-card-grid-{{ ai_gen_id }} class="ai-card-grid-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-card-grid-container-{{ ai_gen_id }}">
+    {% if block.settings.section_title != blank %}
+      <h2 class="ai-card-grid-title-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+    {% endif %}
+
+    <div class="ai-card-grid-wrapper-{{ ai_gen_id }}">
+      <div class="ai-card-grid-wrapper-inner-{{ ai_gen_id }}">
+        {% for i in (1..6) %}
+          {% liquid
+            assign card_image_key = 'card_' | append: i | append: '_image'
+            assign card_title_key = 'card_' | append: i | append: '_title'
+            assign card_body_key = 'card_' | append: i | append: '_body'
+            assign card_overlay_key = 'card_' | append: i | append: '_overlay_title'
+
+            assign card_image = block.settings[card_image_key]
+            assign card_title = block.settings[card_title_key]
+            assign card_body = block.settings[card_body_key]
+            assign card_overlay = block.settings[card_overlay_key]
+
+            assign has_content = false
+            if card_title != blank or card_body != blank
+              assign has_content = true
+            endif
+            if card_image
+              assign has_content = true
+            endif
+          %}
+
+          {% if has_content %}
+            <div class="ai-card-grid-card-{{ ai_gen_id }}">
+              {% if card_image %}
+                <div class="ai-card-grid-image-wrapper-{{ ai_gen_id }}">
+                  <img
+                    src="{{ card_image | image_url: width: 800 }}"
+                    alt="{{ card_image.alt | escape }}"
+                    loading="lazy"
+                    width="{{ card_image.width }}"
+                    height="{{ card_image.height }}"
+                  >
+                  {% if card_overlay and card_title != blank %}
+                    <h3 class="ai-card-grid-overlay-title-{{ ai_gen_id }}">{{ card_title }}</h3>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              <div class="ai-card-grid-content-{{ ai_gen_id }}">
+                {% if card_title != blank %}
+                  {% unless card_overlay and card_image %}
+                    <h3 class="ai-card-grid-card-title-{{ ai_gen_id }}">{{ card_title }}</h3>
+                  {% endunless %}
+                {% endif %}
+
+                {% if card_body != blank %}
+                  <div class="ai-card-grid-card-body-{{ ai_gen_id }}">{{ card_body }}</div>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</horizontal-card-grid-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class HorizontalCardGrid{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.wrapper = this.querySelector('.ai-card-grid-wrapper-{{ ai_gen_id }}');
+        this.ensureStartPosition();
+        this.setupMobileScrollSnap();
+      }
+
+      ensureStartPosition() {
+        if (!this.wrapper) return;
+        
+        if (window.innerWidth <= 749) {
+          this.wrapper.scrollLeft = 0;
+        }
+      }
+
+      setupMobileScrollSnap() {
+        if (!this.wrapper) return;
+        if (window.innerWidth > 749) return;
+
+        let isScrolling;
+        this.wrapper.addEventListener('scroll', () => {
+          window.clearTimeout(isScrolling);
+          isScrolling = setTimeout(() => {
+            this.snapToNearestCard();
+          }, 150);
+        }, false);
+      }
+
+      snapToNearestCard() {
+        if (window.innerWidth > 749) return;
+
+        const cards = this.querySelectorAll('.ai-card-grid-card-{{ ai_gen_id }}');
+        if (cards.length === 0) return;
+
+        const scrollLeft = this.wrapper.scrollLeft;
+        const cardWidth = cards[0].offsetWidth;
+        const gap = {{ block.settings.card_gap_mobile }};
+        const cardWithGap = cardWidth + gap;
+
+        const nearestIndex = Math.round(scrollLeft / cardWithGap);
+        const targetScroll = nearestIndex * cardWithGap;
+
+        this.wrapper.scrollTo({
+          left: targetScroll,
+          behavior: 'smooth'
+        });
+      }
+    }
+
+    customElements.define('horizontal-card-grid-{{ ai_gen_id }}', HorizontalCardGrid{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Horizontal card grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section settings"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section title",
+      "default": "Featured cards"
+    },
+    {
+      "type": "range",
+      "id": "section_title_size",
+      "label": "Section title size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "section_title_alignment",
+      "label": "Section title alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "section_title_color",
+      "label": "Section title color",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Section background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Maximum section width",
+      "min": 1000,
+      "max": 2000,
+      "step": 100,
+      "unit": "px",
+      "default": 1900
+    },
+    {
+      "type": "select",
+      "id": "cards_total_width_less",
+      "label": "Card alignment when total width is less than screen",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Scrollbar style (desktop only)"
+    },
+    {
+      "type": "range",
+      "id": "scrollbar_height",
+      "label": "Scrollbar height",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "scrollbar_color",
+      "label": "Scrollbar color",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "scrollbar_hover_color",
+      "label": "Scrollbar hover color",
+      "default": "#005557"
+    },
+    {
+      "type": "color",
+      "id": "scrollbar_track_color",
+      "label": "Scrollbar track color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "range",
+      "id": "scrollbar_border_radius",
+      "label": "Scrollbar border radius",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "label": "Card width (desktop)",
+      "min": 200,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "card_width_mobile",
+      "label": "Card width (mobile)",
+      "min": 200,
+      "max": 400,
+      "step": 20,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards (desktop)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_gap_mobile",
+      "label": "Gap between cards (mobile)",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Card title"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Card title size",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card title color",
+      "default": "#003435"
+    },
+    {
+      "type": "select",
+      "id": "card_title_alignment",
+      "label": "Card title alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Card body"
+    },
+    {
+      "type": "range",
+      "id": "card_body_size",
+      "label": "Card body size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "card_body_color",
+      "label": "Card body color",
+      "default": "#003435"
+    },
+    {
+      "type": "select",
+      "id": "card_body_alignment",
+      "label": "Card body alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Overlay settings"
+    },
+    {
+      "type": "color",
+      "id": "overlay_gradient_color",
+      "label": "Overlay gradient color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_text_color",
+      "label": "Overlay text color",
+      "default": "#003435"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_1_overlay_title",
+      "label": "Overlay title on image",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Card title 1"
+    },
+    {
+      "type": "richtext",
+      "id": "card_1_body",
+      "label": "Body text",
+      "default": "<p>This is the body text for card 1. You can add <strong>bold</strong> and <em>italic</em> formatting.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_2_overlay_title",
+      "label": "Overlay title on image",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Card title 2"
+    },
+    {
+      "type": "richtext",
+      "id": "card_2_body",
+      "label": "Body text",
+      "default": "<p>This is the body text for card 2. You can add <strong>bold</strong> and <em>italic</em> formatting.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_3_overlay_title",
+      "label": "Overlay title on image",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Card title 3"
+    },
+    {
+      "type": "richtext",
+      "id": "card_3_body",
+      "label": "Body text",
+      "default": "<p>This is the body text for card 3. You can add <strong>bold</strong> and <em>italic</em> formatting.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_4_overlay_title",
+      "label": "Overlay title on image",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "card_4_body",
+      "label": "Body text"
+    },
+    {
+      "type": "header",
+      "content": "Card 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_5_overlay_title",
+      "label": "Overlay title on image",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "card_5_title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "card_5_body",
+      "label": "Body text"
+    },
+    {
+      "type": "header",
+      "content": "Card 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_6_overlay_title",
+      "label": "Overlay title on image",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "card_6_title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "card_6_body",
+      "label": "Body text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Horizontal card grid"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

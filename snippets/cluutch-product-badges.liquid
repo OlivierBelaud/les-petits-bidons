@@ -1,0 +1,83 @@
+{%- liquid
+  if product.compare_at_price > product.price and show_save_amount
+    if save_type == 'label'
+      assign saved_amount = save_type
+    elsif save_type == 'dollar'
+      assign saved_amount = product.compare_at_price | minus: product.price | money
+    else
+      assign saved_amount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+      assign saved_amount = saved_amount | append: '%'
+    endif
+  endif
+-%}
+
+<div class="cluutch-badges-wrapper">
+  {% if product.metafields.theme.label.value != blank and product.metafields.theme.label_color.value != blank %}
+    {%- for label in product.metafields.theme.label.value -%}
+      <p class="cluutch-badge" style="background: {{ product.metafields.theme.label_color.value }}; color: #ffffff;">
+        {{ label | escape }}
+      </p>
+    {%- endfor -%}
+  {% else %}
+    {% if product.metafields.custom.cluutch_meilleure != blank %}
+      <p class="cluutch-badge cluutch-badge--yellow">
+        {{ product.metafields.custom.cluutch_meilleure }}
+      </p>
+    {% endif %}
+    {% if product.metafields.custom.cluutch_sans != blank %}
+      <p class="cluutch-badge cluutch-badge--blue">
+        {{ product.metafields.custom.cluutch_sans }}
+      </p>
+    {% endif %}
+    {% if product.metafields.custom.cluutch_lavande != blank %}
+      <p class="cluutch-badge cluutch-badge--blue-lava">
+        {{ product.metafields.custom.cluutch_lavande }}
+      </p>
+    {% endif %}
+    {% if product.metafields.custom.cluutch_fleurs != blank %}
+      <p class="cluutch-badge cluutch-badge--orange">
+        {{ product.metafields.custom.cluutch_fleurs }}
+      </p>
+    {% endif %}
+    {% if product.metafields.custom.cluutch_eucalyptus != blank %}
+      <p class="cluutch-badge cluutch-badge--mint">
+        {{ product.metafields.custom.cluutch_eucalyptus }}
+      </p>
+    {% endif %}
+  {% endif %}
+</div>
+
+{% comment %}
+  <div class="badges{% if class != blank %} {{ class }}{% endif %} pointer-events-none">
+    {%- if product.metafields.theme.label.value != blank -%}
+      {%- capture styles -%}
+        {%- if product.metafields.theme.label_color.value != blank -%}
+          --badge-background: {{ product.metafields.theme.label_color.value }}; --badge-foreground: #ffffff;
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- for label in product.metafields.theme.label.value -%}
+        <span
+          class="badge flex items-center gap-1d5 font-medium leading-none rounded-full"
+          {% if styles != blank %}
+            style="{{ styles }}"
+          {% endif %}
+        >
+          {{- label | escape -}}
+        </span>
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- if saved_amount != blank -%}
+      <span class="badge badge--onsale flex items-center gap-1d5 font-medium leading-none rounded-full">
+        {%- liquid
+          if save_type == 'label'
+            echo 'products.general.sale' | t
+          else
+            echo 'products.general.save_html' | t: saved_amount: saved_amount
+          endif
+        -%}
+      </span>
+    {%- endif -%}
+  </div>
+{% endcomment %}
+

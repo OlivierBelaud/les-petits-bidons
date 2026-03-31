@@ -1,0 +1,260 @@
+{% if product.variants.size > 1 %}
+  <div class="variant-buttons">
+    {% for variant in product.variants %}
+      <div class="variant-button-wrapper">
+        <input
+          type="radio"
+          style="display: none;"
+          class="variant-button"
+          data-images="{{ product.selected_or_first_available_variant.metafields.custom.cluutch_media_list.value }}"
+          data-variant="{{ variant.id }}"
+          id="variant-radio-{{ variant.id }}"
+          name="variant-radio"
+          {% if forloop.index == 1 %}
+            checked
+          {% endif %}
+        >
+        <label
+          for="variant-radio-{{ variant.id }}"
+          style="color: {{ variant.metafields.custom.variant_text_color }}; background-color: {{ variant.metafields.custom.cluutch_variant_button_color }};"
+        >
+          <div
+            class="variant-button-outer"
+            style="border: 2px solid {{ variant.metafields.custom.variant_text_color }};"
+          >
+            <div
+              class="variant-button-inner"
+              style="background-color: {{ variant.metafields.custom.variant_text_color }};"
+            ></div>
+          </div>
+          {{ variant.title | split: ' /' | first }}
+        </label>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<style>
+  .variant-button-outer {
+    position: relative;
+    width: 20px;
+    border-radius: 100%;
+    display: block !important;
+    height: 20px;
+  }
+
+  .variant-button:checked + label .variant-button-inner {
+    opacity: 1;
+  }
+
+  .variant-button-inner {
+    width: 12px;
+    border-radius: 100%;
+    display: block !important;
+    transition: 0.4s ease all;
+    position: absolute;
+    top: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    height: 12px;
+  }
+
+  .variant-button-wrapper label {
+    display: flex !important;
+    align-items: center;
+    width: 100%;
+  }
+</style>
+
+<script>
+  let thumbsSwiper, mainSwiper;
+
+    function initializeSliders() {
+    const mediaList = document.querySelectorAll('.imgswiper .swiper-slide');
+
+    if (mediaList.length <= 1) {
+      console.log('Only 1 image, Swiper disabled');
+      return;
+    }
+
+    if (window.innerWidth > 768) {
+      thumbsSwiper = new Swiper('.thumb-swiper', {
+        slidesPerView: 2,
+        initialSlide: 3,
+        spaceBetween: 12,
+        direction: 'vertical',
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
+
+      mainSwiper = new Swiper('.imgswiper', {
+        spaceBetween: 12,
+        slidesPerView: 1,
+        loop: true,
+        thumbs: {
+          swiper: thumbsSwiper,
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
+    } else {
+      mainSwiper = new Swiper('.imgswiper', {
+        spaceBetween: 12,
+        slidesPerView: 1,
+        loop: true,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          type: 'bullets',
+        },
+      });
+    }
+  }
+  
+  document.querySelectorAll('.variant-button').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      const variantId = radio.dataset.variant;
+      const sliderWrapper = document.querySelector('.main-product-section');
+
+      if (sliderWrapper) {
+        sliderWrapper.classList.add('reloading');
+      }
+
+      const handle = '{{ product.handle }}';
+      const url = `/products/${handle}?variant=${variantId}`;
+
+      fetch(url)
+        .then((res) => res.text())
+        .then((html) => {
+          const temp = document.createElement('div');
+          temp.innerHTML = html;
+
+          const newGallery = temp.querySelector('#media-gallery');
+          const existingGallery = document.getElementById('media-gallery');
+          if (newGallery && existingGallery) {
+            existingGallery.innerHTML = newGallery.innerHTML;
+            initializeSliders();
+            existingGallery.classList.remove('reloading');
+          }
+
+          const existingTitleBread = document.querySelector('.main-bread-crumb');
+          const existingTitle = document.querySelector('.main-product-title');
+          const existingParagraph = document.querySelector('.cluutch-main-product__paragraphe');
+          const titleIsAboveViewport = existingTitle && existingTitle.getBoundingClientRect().bottom < 0;
+
+          // Measure total height before replacing
+          const oldBreadH = existingTitleBread ? existingTitleBread.offsetHeight : 0;
+          const oldTitleH = existingTitle ? existingTitle.offsetHeight : 0;
+          const oldParaH = existingParagraph ? existingParagraph.offsetHeight : 0;
+
+          const newTitleBread = temp.querySelector('.main-bread-crumb');
+          if (newTitleBread && existingTitleBread) {
+            existingTitleBread.innerHTML = newTitleBread.innerHTML;
+          }
+
+          const newTitle = temp.querySelector('.main-product-title');
+          if (newTitle && existingTitle) {
+            existingTitle.innerHTML = newTitle.innerHTML;
+          }
+
+          const newParagraph = temp.querySelector('.cluutch-main-product__paragraphe');
+          if (newParagraph && existingParagraph) {
+            existingParagraph.innerHTML = newParagraph.innerHTML;
+          }
+
+          // Compensate scroll when title area is above viewport.
+          // The header's scroll handler uses rAF-throttle, so it won't fire
+          // until the next frame. We update scrollTop + header state synchronously
+          // before that happens.
+          if (titleIsAboveViewport) {
+            const diff =
+              (existingTitleBread ? existingTitleBread.offsetHeight : 0) - oldBreadH +
+              (existingTitle ? existingTitle.offsetHeight : 0) - oldTitleH +
+              (existingParagraph ? existingParagraph.offsetHeight : 0) - oldParaH;
+            if (diff !== 0) {
+              const headerSection = document.querySelector('.header-section');
+              const wasHidden = headerSection?.classList.contains('header-hidden');
+
+              document.documentElement.scrollTop += diff;
+
+              // Restore header state and sync its internal scroll reference
+              // so the rAF-throttled handler sees no direction change
+              if (wasHidden && headerSection) {
+                headerSection.classList.add('header-hidden');
+              }
+              const stickyHeader = document.querySelector('header[is="sticky-header"]');
+              if (stickyHeader) {
+                stickyHeader.currentScrollTop = window.scrollY;
+              }
+            }
+          }
+          const newSpoilers = temp.querySelector('.product-spoilers');
+          const existingSpoilers = document.querySelector('.product-spoilers');
+          if (newSpoilers && existingSpoilers) {
+            existingSpoilers.innerHTML = newSpoilers.innerHTML;
+          }
+          const newPrices = temp.querySelectorAll('.data-main-price');
+          const existingPrices = document.querySelectorAll('.data-main-price');
+
+          if (newPrices.length === existingPrices.length) {
+            newPrices.forEach((newEl, index) => {
+              const existingEl = existingPrices[index];
+              existingEl.setAttribute('data-price', newEl.getAttribute('data-price'));
+              existingEl.setAttribute('data-compare', newEl.getAttribute('data-compare'));
+            });
+          }
+
+          // Update add-to-cart buttons (disabled state + text) based on variant availability
+          const newButtons = temp.querySelectorAll('.cluutch-add-to-cart');
+          const existingButtons = document.querySelectorAll('.cluutch-add-to-cart');
+          if (newButtons.length === existingButtons.length) {
+            newButtons.forEach((newBtn, index) => {
+              const existingBtn = existingButtons[index];
+              if (newBtn.hasAttribute('disabled')) {
+                existingBtn.setAttribute('disabled', 'disabled');
+              } else {
+                existingBtn.removeAttribute('disabled');
+              }
+              const newText = newBtn.querySelector('.btn-text');
+              const existingText = existingBtn.querySelector('.btn-text');
+              if (newText && existingText) {
+                existingText.innerHTML = newText.innerHTML;
+              }
+            });
+          }
+
+          // Update sticky bottom bar button
+          const newStickyBtn = temp.querySelector('product-sticky-form button[name="add"]');
+          const existingStickyBtn = document.querySelector('product-sticky-form button[name="add"]');
+          if (newStickyBtn && existingStickyBtn) {
+            if (newStickyBtn.hasAttribute('disabled')) {
+              existingStickyBtn.setAttribute('disabled', 'disabled');
+            } else {
+              existingStickyBtn.removeAttribute('disabled');
+            }
+            const newStickyText = newStickyBtn.querySelector('.btn-text');
+            const existingStickyText = existingStickyBtn.querySelector('.btn-text');
+            if (newStickyText && existingStickyText) {
+              existingStickyText.innerHTML = newStickyText.innerHTML;
+            }
+          }
+
+        })
+        .catch((err) => {
+          console.error(err);
+          if (sliderWrapper) sliderWrapper.classList.remove('reloading');
+        });
+    });
+  });
+
+  initializeSliders();
+</script>
+

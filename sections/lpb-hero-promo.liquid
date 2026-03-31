@@ -1,0 +1,868 @@
+{% assign section_id = section.id | replace: '_', '' | replace: '-', '' | downcase %}
+
+{% style %}
+  .lpb-hero-promo-{{ section_id }} {
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .lpb-hero-promo__background-{{ section_id }} {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .lpb-hero-promo__background-{{ section_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .lpb-hero-promo__container-{{ section_id }} {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__container-{{ section_id }} {
+      padding: 40px;
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  /* Mobile: image en haut */
+  .lpb-hero-promo__mobile-image-{{ section_id }} {
+    height: 250px;
+    overflow: hidden;
+  }
+
+  .lpb-hero-promo__mobile-image-{{ section_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__mobile-image-{{ section_id }} {
+      display: none;
+    }
+  }
+
+  /* Mobile: pleine largeur */
+  @media screen and (max-width: 749px) {
+    .lpb-hero-promo__background-{{ section_id }} {
+      display: none;
+    }
+
+    .lpb-hero-promo-{{ section_id }} {
+      min-height: auto;
+    }
+
+    .lpb-hero-promo__container-{{ section_id }} {
+      padding: 0;
+    }
+  }
+
+  .lpb-hero-promo__card-{{ section_id }} {
+    background-color: {{ section.settings.card_background }};
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__card-{{ section_id }} {
+      padding: 48px 40px;
+      max-width: 500px;
+      text-align: center;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .lpb-hero-promo__card-{{ section_id }} {
+      border-radius: 24px 24px 0 0;
+      margin-top: -24px;
+      position: relative;
+      z-index: 2;
+      padding: 32px 20px;
+    }
+  }
+
+  /* Badge optionnel */
+  .lpb-hero-promo__badge-{{ section_id }} {
+    display: inline-block;
+    background-color: {{ section.settings.badge_background }};
+    color: {{ section.settings.badge_text_color }};
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__badge-{{ section_id }} {
+      font-size: 16px;
+      padding: 10px 24px;
+      margin-bottom: 20px;
+    }
+  }
+
+  /* Titre */
+  .lpb-hero-promo__title-{{ section_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: {{ section.settings.title_color }};
+    margin: 0 0 8px 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__title-{{ section_id }} {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+  }
+
+  /* Sous-titre — FIX: uses text_color, not title_color */
+  .lpb-hero-promo__subtitle-{{ section_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 16px 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__subtitle-{{ section_id }} {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  }
+
+  /* Description */
+  .lpb-hero-promo__description-{{ section_id }} {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 12px 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__description-{{ section_id }} {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+  }
+
+  /* Code promo */
+  .lpb-hero-promo__coupon-{{ section_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: {{ section.settings.coupon_background }};
+    border: 2px dashed {{ section.settings.coupon_border_color }};
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__coupon-{{ section_id }} {
+      margin-bottom: 28px;
+    }
+  }
+
+  .lpb-hero-promo__coupon-{{ section_id }}:hover {
+    background-color: {{ section.settings.coupon_border_color }}15;
+  }
+
+  .lpb-hero-promo__coupon-code-{{ section_id }} {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    letter-spacing: 1px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__coupon-code-{{ section_id }} {
+      font-size: 20px;
+    }
+  }
+
+  .lpb-hero-promo__coupon-icon-{{ section_id }} {
+    width: 20px;
+    height: 20px;
+    color: {{ section.settings.title_color }};
+  }
+
+  .lpb-hero-promo__coupon-{{ section_id }}.copied .lpb-hero-promo__coupon-icon-{{ section_id }} {
+    color: {{ section.settings.button_background }};
+  }
+
+  /* Bouton CTA */
+  .lpb-hero-promo__button-wrapper-{{ section_id }} {
+    display: block;
+    margin-top: 0;
+  }
+
+  .lpb-hero-promo__button-{{ section_id }} {
+    display: inline-block;
+    background-color: {{ section.settings.button_background }};
+    color: {{ section.settings.button_text_color }};
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 16px 48px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .lpb-hero-promo__button-{{ section_id }}:hover {
+    opacity: 0.9;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__button-{{ section_id }} {
+      padding: 16px 60px;
+    }
+  }
+
+  /* Toast notification */
+  .lpb-hero-promo__toast-{{ section_id }} {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: {{ section.settings.title_color }};
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 9999;
+  }
+
+  .lpb-hero-promo__toast-{{ section_id }}.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* Sticky Banner */
+  .lpb-hero-promo__sticky-{{ section_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background-color: {{ section.settings.sticky_background }};
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .lpb-hero-promo__sticky-{{ section_id }}.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .lpb-hero-promo__sticky-container-{{ section_id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__sticky-container-{{ section_id }} {
+      padding: 12px 24px;
+      gap: 16px;
+      flex-wrap: nowrap;
+    }
+  }
+
+  .lpb-hero-promo__sticky-title-{{ section_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: {{ section.settings.sticky_text_color }};
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__sticky-title-{{ section_id }} {
+      font-size: 16px;
+    }
+  }
+
+  .lpb-hero-promo__sticky-subtitle-{{ section_id }} {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: {{ section.settings.sticky_text_color }};
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__sticky-subtitle-{{ section_id }} {
+      font-size: 14px;
+    }
+  }
+
+  .lpb-hero-promo__sticky-coupon-{{ section_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: {{ section.settings.coupon_background }};
+    border: 1px dashed {{ section.settings.coupon_border_color }};
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .lpb-hero-promo__sticky-coupon-{{ section_id }}:hover {
+    background-color: {{ section.settings.coupon_border_color }}20;
+  }
+
+  .lpb-hero-promo__sticky-coupon-code-{{ section_id }} {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: {{ section.settings.sticky_text_color }};
+    letter-spacing: 0.5px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__sticky-coupon-code-{{ section_id }} {
+      font-size: 14px;
+    }
+  }
+
+  .lpb-hero-promo__sticky-coupon-icon-{{ section_id }} {
+    width: 14px;
+    height: 14px;
+    color: {{ section.settings.sticky_text_color }};
+  }
+
+  .lpb-hero-promo__sticky-coupon-{{ section_id }}.copied .lpb-hero-promo__sticky-coupon-icon-{{ section_id }} {
+    color: {{ section.settings.button_background }};
+  }
+
+  .lpb-hero-promo__sticky-button-{{ section_id }} {
+    display: inline-block;
+    background-color: {{ section.settings.button_background }};
+    color: {{ section.settings.button_text_color }};
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .lpb-hero-promo__sticky-button-{{ section_id }}:hover {
+    opacity: 0.9;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lpb-hero-promo__sticky-button-{{ section_id }} {
+      font-size: 14px;
+      padding: 10px 24px;
+    }
+  }
+{% endstyle %}
+
+<section class="lpb-hero-promo-{{ section_id }}">
+  <!-- Background image desktop -->
+  {% if section.settings.background_image != blank %}
+    <div class="lpb-hero-promo__background-{{ section_id }}">
+      <img
+        src="{{ section.settings.background_image | image_url: width: 1920 }}"
+        alt=""
+        loading="eager"
+      >
+    </div>
+  {% endif %}
+
+  <div class="lpb-hero-promo__container-{{ section_id }}">
+    <!-- Image mobile -->
+    {% assign mobile_image = section.settings.background_image_mobile | default: section.settings.background_image %}
+    {% if mobile_image != blank %}
+      <div class="lpb-hero-promo__mobile-image-{{ section_id }}">
+        <img
+          src="{{ mobile_image | image_url: width: 750 }}"
+          srcset="{{ mobile_image | image_url: width: 375 }} 375w,
+                  {{ mobile_image | image_url: width: 500 }} 500w,
+                  {{ mobile_image | image_url: width: 750 }} 750w"
+          sizes="100vw"
+          alt=""
+          loading="eager"
+        >
+      </div>
+    {% endif %}
+
+    <div class="lpb-hero-promo__card-{{ section_id }}">
+      {% if section.settings.show_badge and section.settings.badge_text != blank %}
+        <div class="lpb-hero-promo__badge-{{ section_id }}">
+          {{ section.settings.badge_text }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.title != blank %}
+        <h1 class="lpb-hero-promo__title-{{ section_id }}">{{ section.settings.title }}</h1>
+      {% endif %}
+
+      {% if section.settings.subtitle != blank %}
+        <p class="lpb-hero-promo__subtitle-{{ section_id }}">{{ section.settings.subtitle }}</p>
+      {% endif %}
+
+      {% if section.settings.description != blank %}
+        <p class="lpb-hero-promo__description-{{ section_id }}">{{ section.settings.description }}</p>
+      {% endif %}
+
+      <!-- FIX: coupon block now gated by show_coupon_code toggle -->
+      {% if section.settings.show_coupon_code and section.settings.coupon_code != blank %}
+        <div class="lpb-hero-promo__coupon-{{ section_id }}" onclick="copyCoupon_{{ section_id }}()" id="coupon-{{ section_id }}">
+          <span class="lpb-hero-promo__coupon-code-{{ section_id }}">{{ section.settings.coupon_code }}</span>
+          <svg class="lpb-hero-promo__coupon-icon-{{ section_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </div>
+      {% endif %}
+
+      {% if section.settings.button_text != blank and section.settings.button_link != blank %}
+        {% if section.settings.button_apply_coupon and section.settings.coupon_code != blank %}
+          {% assign button_href = '/discount/' | append: section.settings.coupon_code | append: '?redirect=' | append: section.settings.button_link %}
+        {% else %}
+          {% assign button_href = section.settings.button_link %}
+        {% endif %}
+        <div class="lpb-hero-promo__button-wrapper-{{ section_id }}">
+          <a href="{{ button_href }}" class="lpb-hero-promo__button-{{ section_id }}">
+            {{ section.settings.button_text }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="lpb-hero-promo__toast-{{ section_id }}" id="toast-{{ section_id }}">
+    Code copié !
+  </div>
+</section>
+
+{% if section.settings.show_sticky_banner %}
+  <!-- Sticky Banner -->
+  <div class="lpb-hero-promo__sticky-{{ section_id }}" id="sticky-banner-{{ section_id }}">
+    <div class="lpb-hero-promo__sticky-container-{{ section_id }}">
+      {% if section.settings.sticky_show_title and section.settings.title != blank %}
+        <span class="lpb-hero-promo__sticky-title-{{ section_id }}">{{ section.settings.title }}</span>
+      {% endif %}
+
+      {% if section.settings.sticky_show_subtitle and section.settings.subtitle != blank %}
+        <span class="lpb-hero-promo__sticky-subtitle-{{ section_id }}">{{ section.settings.subtitle }}</span>
+      {% endif %}
+
+      <!-- FIX: sticky coupon also gated by show_coupon_code toggle -->
+      {% if section.settings.sticky_show_coupon and section.settings.show_coupon_code and section.settings.coupon_code != blank %}
+        <div class="lpb-hero-promo__sticky-coupon-{{ section_id }}" onclick="copyCouponSticky_{{ section_id }}()" id="sticky-coupon-{{ section_id }}">
+          <span class="lpb-hero-promo__sticky-coupon-code-{{ section_id }}">{{ section.settings.coupon_code }}</span>
+          <svg class="lpb-hero-promo__sticky-coupon-icon-{{ section_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </div>
+      {% endif %}
+
+      {% if section.settings.sticky_show_button and section.settings.button_text != blank and section.settings.button_link != blank %}
+        {% if section.settings.button_apply_coupon and section.settings.coupon_code != blank %}
+          {% assign sticky_button_href = '/discount/' | append: section.settings.coupon_code | append: '?redirect=' | append: section.settings.button_link %}
+        {% else %}
+          {% assign sticky_button_href = section.settings.button_link %}
+        {% endif %}
+        <a href="{{ sticky_button_href }}" class="lpb-hero-promo__sticky-button-{{ section_id }}">
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+<script>
+  function copyCoupon_{{ section_id }}() {
+    const couponCode = '{{ section.settings.coupon_code }}';
+    const couponEl = document.getElementById('coupon-{{ section_id }}');
+    const toastEl = document.getElementById('toast-{{ section_id }}');
+    const shouldApply = {{ section.settings.coupon_apply_on_click | default: false }};
+
+    function applyAndRedirect() {
+      if (shouldApply) {
+        const currentUrl = window.location.pathname + window.location.search;
+        const discountUrl = '/discount/' + encodeURIComponent(couponCode) + '?redirect=' + encodeURIComponent(currentUrl);
+        setTimeout(function() {
+          window.location.href = discountUrl;
+        }, 10);
+      }
+    }
+
+    navigator.clipboard.writeText(couponCode).then(function() {
+      couponEl.classList.add('copied');
+      toastEl.classList.add('show');
+      applyAndRedirect();
+
+      setTimeout(function() {
+        toastEl.classList.remove('show');
+      }, 2000);
+
+      setTimeout(function() {
+        couponEl.classList.remove('copied');
+      }, 2500);
+    }).catch(function() {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = couponCode;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      couponEl.classList.add('copied');
+      toastEl.classList.add('show');
+      applyAndRedirect();
+
+      setTimeout(function() {
+        toastEl.classList.remove('show');
+      }, 2000);
+    });
+  }
+
+  {% if section.settings.show_sticky_banner %}
+  // Sticky banner copy function
+  function copyCouponSticky_{{ section_id }}() {
+    const couponCode = '{{ section.settings.coupon_code }}';
+    const couponEl = document.getElementById('sticky-coupon-{{ section_id }}');
+    const toastEl = document.getElementById('toast-{{ section_id }}');
+    const shouldApply = {{ section.settings.coupon_apply_on_click | default: false }};
+
+    function applyAndRedirect() {
+      if (shouldApply) {
+        const currentUrl = window.location.pathname + window.location.search;
+        const discountUrl = '/discount/' + encodeURIComponent(couponCode) + '?redirect=' + encodeURIComponent(currentUrl);
+        setTimeout(function() {
+          window.location.href = discountUrl;
+        }, 10);
+      }
+    }
+
+    navigator.clipboard.writeText(couponCode).then(function() {
+      couponEl.classList.add('copied');
+      toastEl.classList.add('show');
+      applyAndRedirect();
+
+      setTimeout(function() {
+        toastEl.classList.remove('show');
+      }, 2000);
+
+      setTimeout(function() {
+        couponEl.classList.remove('copied');
+      }, 2500);
+    }).catch(function() {
+      const textArea = document.createElement('textarea');
+      textArea.value = couponCode;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      couponEl.classList.add('copied');
+      toastEl.classList.add('show');
+      applyAndRedirect();
+
+      setTimeout(function() {
+        toastEl.classList.remove('show');
+      }, 2000);
+    });
+  }
+
+  // Scroll listener for sticky banner
+  (function() {
+    const heroSection = document.querySelector('.lpb-hero-promo-{{ section_id }}');
+    const stickyBanner = document.getElementById('sticky-banner-{{ section_id }}');
+
+    if (!heroSection || !stickyBanner) return;
+
+    let ticking = false;
+
+    function updateStickyBanner() {
+      const heroRect = heroSection.getBoundingClientRect();
+      const heroBottom = heroRect.bottom;
+
+      if (heroBottom < 0) {
+        stickyBanner.classList.add('visible');
+      } else {
+        stickyBanner.classList.remove('visible');
+      }
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(updateStickyBanner);
+        ticking = true;
+      }
+    });
+
+    // Initial check
+    updateStickyBanner();
+  })();
+  {% endif %}
+</script>
+
+{% schema %}
+{
+  "name": "LPB Hero Promo",
+  "tag": "section",
+  "class": "lpb-hero-promo-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Badge (optionnel)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Afficher le badge",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Texte du badge",
+      "default": "DERNIERS JOURS"
+    },
+    {
+      "type": "header",
+      "content": "Contenu"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Mois du Blanc"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sous-titre",
+      "default": "-20% sur tout le site dès 25€ d'achat"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description",
+      "default": "Utilisez le code ci-dessous lors du paiement :"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_coupon_code",
+      "label": "Afficher le bouton code promo",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "coupon_code",
+      "label": "Code promo",
+      "default": "BLANC20"
+    },
+    {
+      "type": "checkbox",
+      "id": "coupon_apply_on_click",
+      "label": "Appliquer le code au clic",
+      "default": true,
+      "info": "Copie le code et recharge la page avec le code appliqué automatiquement"
+    },
+    {
+      "type": "header",
+      "content": "Bouton"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texte du bouton",
+      "default": "J'en profite"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Lien du bouton"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_apply_coupon",
+      "label": "Appliquer le code promo via le bouton",
+      "default": false,
+      "info": "Si activé, le bouton appliquera le code promo avant de rediriger vers le lien choisi"
+    },
+    {
+      "type": "header",
+      "content": "Image de fond"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Image de fond (Desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_mobile",
+      "label": "Image de fond (Mobile)",
+      "info": "Si non définie, l'image desktop sera utilisée"
+    },
+    {
+      "type": "header",
+      "content": "Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Fond de la carte",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte (sous-titre & description)",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Fond du badge",
+      "default": "#FADADD"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Texte du badge",
+      "default": "#C0392B"
+    },
+    {
+      "type": "color",
+      "id": "coupon_background",
+      "label": "Fond du code promo",
+      "default": "#FDF6E3"
+    },
+    {
+      "type": "color",
+      "id": "coupon_border_color",
+      "label": "Bordure du code promo",
+      "default": "#E5D9C3"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Fond du bouton",
+      "default": "#E5A83B"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texte du bouton",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Bandeau sticky"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sticky_banner",
+      "label": "Afficher le bandeau sticky",
+      "default": true,
+      "info": "Apparaît quand on scroll et que le hero n'est plus visible"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_show_title",
+      "label": "Afficher le titre",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_show_subtitle",
+      "label": "Afficher le sous-titre",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_show_coupon",
+      "label": "Afficher le code promo",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_show_button",
+      "label": "Afficher le bouton",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "sticky_background",
+      "label": "Fond du bandeau sticky",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "sticky_text_color",
+      "label": "Texte du bandeau sticky",
+      "default": "#003435"
+    }
+  ],
+  "presets": [
+    {
+      "name": "LPB Hero Promo"
+    }
+  ]
+}
+{% endschema %}

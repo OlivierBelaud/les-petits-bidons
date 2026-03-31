@@ -1,0 +1,194 @@
+.cluutch-links-images__flex {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    max-width: 500px;
+    margin: auto;
+    row-gap: 8px;
+
+    @media (min-width:1024px) {
+        display: flex;
+        gap: 12px;
+        max-width: none;
+    }
+}
+
+.cluutch-links-images {
+    margin-bottom: 48px;
+
+    @media (min-width:768px) {
+        margin-bottom: 100px;
+    }
+}
+
+.cluutch-links-images__image {
+    aspect-ratio: 1;
+    border-radius: 12px 12px 0 0;
+
+    @media (min-width:768px) {
+        border-radius: 24px 24px 0 0;
+    }
+}
+
+.cluutch-links-images__title {
+    text-align: center;
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 24px;
+
+
+    font-size: 28px;
+    line-height: 121.429%;
+    letter-spacing: -0.56px;
+
+    @media (min-width:768px) {
+        font-size: 48px;
+        line-height: 112.5%;
+        letter-spacing: -0.96px;
+        margin-bottom: 40px;
+    }
+}
+
+.cluutch-links-images__title h2{
+    font-family: Raleway;
+    max-width: 1084px;
+    margin: auto;
+    font-size: 28px;
+    line-height: 121.429%;
+    letter-spacing: -0.56px;
+    font-weight: 600;
+
+    @media (min-width:768px) {
+        font-size: 48px;
+        line-height: 112.5%;
+        letter-spacing: -0.96px;
+        margin-bottom: 40px;
+    }
+}
+
+.cluutch-links-images__title p, .cluutch-links-images__title h2 {
+    max-width: 1084px;
+    margin: auto;
+}
+
+.cluutch-links-images__title strong {
+    color: var(--mint-secondary, #007E7F);
+    font-weight: 600;
+}
+
+.cluutch-links-images__card-description {
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 400;
+    margin-top: 4px;
+
+    font-size: 10px;
+    line-height: 140%;
+
+    @media (min-width:768px) {
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    @media (min-width:1260px) {
+        font-size: 14px;
+        margin-top: 8px;
+    }
+}
+
+.cluutch-links-images__card-description p {
+    margin: 0;
+}
+
+.cluutch-links-images__text {
+    text-align: center;
+    background: #FFFFFA;
+    font-size: 20px;
+    font-style: normal;
+
+    font-family: Raleway;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: -0.24px;
+    padding: 12px;
+    border-radius: 0 0 12px 12px;
+
+    @media (min-width:1260px) {
+        padding: 24px;
+        border-radius: 0 0 24px 24px;
+        font-family: "DM Sans";
+        line-height: 110%;
+        font-weight: 500;
+        letter-spacing: normal;
+        font-size: 20px;
+    }
+}
+
+/* Styles titre et description en mode single-row - toutes tailles d'ecran */
+.cluutch-links-images__flex--single-row .cluutch-links-images__text {
+    padding: 12px;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.3;
+    letter-spacing: normal;
+    color: rgb(var(--color-foreground));
+}
+
+.cluutch-links-images__flex--single-row .cluutch-links-images__text p {
+    margin: 0 0 8px;
+}
+
+.cluutch-links-images__flex--single-row .cluutch-links-images__text p:last-child {
+    margin: 0;
+}
+
+.cluutch-links-images__flex--single-row .cluutch-links-images__card-description {
+    margin: 0;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgb(var(--color-foreground));
+}
+
+.cluutch-links-images__flex--single-row .cluutch-links-images__card-description p {
+    margin: 0;
+}
+
+/* Mode une seule ligne sur mobile - N'affecte QUE les elements avec la classe --single-row */
+@media (max-width:1023px) {
+    .cluutch-links-images:has(.cluutch-links-images__flex--single-row) .page-width {
+        padding-right: 0;
+    }
+
+    .cluutch-links-images__flex.cluutch-links-images__flex--single-row {
+        display: grid;
+        grid-template-columns: none;
+        grid: auto / auto-flow 250px;
+        gap: 10px;
+        row-gap: 0;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        max-width: none;
+        margin: 0;
+        padding-right: 20px;
+    }
+
+    .cluutch-links-images__flex.cluutch-links-images__flex--single-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .cluutch-links-images__flex.cluutch-links-images__flex--single-row > a {
+        scroll-snap-align: start;
+    }
+}

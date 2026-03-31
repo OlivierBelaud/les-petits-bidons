@@ -1,0 +1,674 @@
+{% doc %}
+  @prompt
+    Please create a custom Shopify Liquid section for a "Features" layout using the Raleway font throughout. The section must allow up to 6 blocks, each containing a text field with an adjustable font-size slider and an optional image picker for a PNG or SVG icon. The design should automatically adapt its layout based on whether an icon is present or not. On desktop, the blocks should be arranged in a grid, but on mobile, they must stack vertically, appearing one below the other., Add the option to add svg in addition to an image
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-features-block-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-features-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-features-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+  }
+
+  .ai-feature-item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: {{ block.settings.alignment }};
+    text-align: {{ block.settings.text_alignment }};
+    padding: {{ block.settings.item_padding }}px;
+    background-color: {{ block.settings.item_background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-feature-icon-wrapper-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.icon_spacing }}px;
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-feature-icon-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ai-feature-svg-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-feature-svg-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    fill: {{ block.settings.svg_color }};
+  }
+
+  .ai-feature-text-1-{{ ai_gen_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: {{ block.settings.text_size_1 }}px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-feature-text-2-{{ ai_gen_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: {{ block.settings.text_size_2 }}px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-feature-text-3-{{ ai_gen_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: {{ block.settings.text_size_3 }}px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-feature-text-4-{{ ai_gen_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: {{ block.settings.text_size_4 }}px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-feature-text-5-{{ ai_gen_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: {{ block.settings.text_size_5 }}px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-feature-text-6-{{ ai_gen_id }} {
+    font-family: 'Raleway', sans-serif;
+    font-size: {{ block.settings.text_size_6 }}px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-features-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.grid_gap_mobile }}px;
+    }
+
+    .ai-features-block-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_top | times: 0.6 }}px 16px {{ block.settings.section_padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-feature-item-{{ ai_gen_id }} {
+      padding: {{ block.settings.item_padding | times: 0.8 }}px;
+    }
+
+    .ai-feature-icon-wrapper-{{ ai_gen_id }} {
+      width: {{ block.settings.icon_size | times: 0.8 }}px;
+      height: {{ block.settings.icon_size | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<ai-features-{{ ai_gen_id }} class="ai-features-block-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-features-container-{{ ai_gen_id }}">
+    <div class="ai-features-grid-{{ ai_gen_id }}">
+      {% if block.settings.text_1 != blank or block.settings.icon_1 != blank or block.settings.svg_code_1 != blank %}
+        <div class="ai-feature-item-{{ ai_gen_id }}">
+          {% if block.settings.svg_code_1 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <div class="ai-feature-svg-{{ ai_gen_id }}">
+                {{ block.settings.svg_code_1 }}
+              </div>
+            </div>
+          {% elsif block.settings.icon_1 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.icon_1 | image_url: width: 200 }}"
+                alt="{{ block.settings.icon_1.alt | escape }}"
+                class="ai-feature-icon-{{ ai_gen_id }}"
+                loading="lazy"
+                width="200"
+                height="200"
+              >
+            </div>
+          {% endif %}
+          {% if block.settings.text_1 != blank %}
+            <p class="ai-feature-text-1-{{ ai_gen_id }}">
+              {{ block.settings.text_1 }}
+            </p>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.text_2 != blank or block.settings.icon_2 != blank or block.settings.svg_code_2 != blank %}
+        <div class="ai-feature-item-{{ ai_gen_id }}">
+          {% if block.settings.svg_code_2 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <div class="ai-feature-svg-{{ ai_gen_id }}">
+                {{ block.settings.svg_code_2 }}
+              </div>
+            </div>
+          {% elsif block.settings.icon_2 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.icon_2 | image_url: width: 200 }}"
+                alt="{{ block.settings.icon_2.alt | escape }}"
+                class="ai-feature-icon-{{ ai_gen_id }}"
+                loading="lazy"
+                width="200"
+                height="200"
+              >
+            </div>
+          {% endif %}
+          {% if block.settings.text_2 != blank %}
+            <p class="ai-feature-text-2-{{ ai_gen_id }}">
+              {{ block.settings.text_2 }}
+            </p>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.text_3 != blank or block.settings.icon_3 != blank or block.settings.svg_code_3 != blank %}
+        <div class="ai-feature-item-{{ ai_gen_id }}">
+          {% if block.settings.svg_code_3 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <div class="ai-feature-svg-{{ ai_gen_id }}">
+                {{ block.settings.svg_code_3 }}
+              </div>
+            </div>
+          {% elsif block.settings.icon_3 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.icon_3 | image_url: width: 200 }}"
+                alt="{{ block.settings.icon_3.alt | escape }}"
+                class="ai-feature-icon-{{ ai_gen_id }}"
+                loading="lazy"
+                width="200"
+                height="200"
+              >
+            </div>
+          {% endif %}
+          {% if block.settings.text_3 != blank %}
+            <p class="ai-feature-text-3-{{ ai_gen_id }}">
+              {{ block.settings.text_3 }}
+            </p>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.text_4 != blank or block.settings.icon_4 != blank or block.settings.svg_code_4 != blank %}
+        <div class="ai-feature-item-{{ ai_gen_id }}">
+          {% if block.settings.svg_code_4 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <div class="ai-feature-svg-{{ ai_gen_id }}">
+                {{ block.settings.svg_code_4 }}
+              </div>
+            </div>
+          {% elsif block.settings.icon_4 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.icon_4 | image_url: width: 200 }}"
+                alt="{{ block.settings.icon_4.alt | escape }}"
+                class="ai-feature-icon-{{ ai_gen_id }}"
+                loading="lazy"
+                width="200"
+                height="200"
+              >
+            </div>
+          {% endif %}
+          {% if block.settings.text_4 != blank %}
+            <p class="ai-feature-text-4-{{ ai_gen_id }}">
+              {{ block.settings.text_4 }}
+            </p>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.text_5 != blank or block.settings.icon_5 != blank or block.settings.svg_code_5 != blank %}
+        <div class="ai-feature-item-{{ ai_gen_id }}">
+          {% if block.settings.svg_code_5 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <div class="ai-feature-svg-{{ ai_gen_id }}">
+                {{ block.settings.svg_code_5 }}
+              </div>
+            </div>
+          {% elsif block.settings.icon_5 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.icon_5 | image_url: width: 200 }}"
+                alt="{{ block.settings.icon_5.alt | escape }}"
+                class="ai-feature-icon-{{ ai_gen_id }}"
+                loading="lazy"
+                width="200"
+                height="200"
+              >
+            </div>
+          {% endif %}
+          {% if block.settings.text_5 != blank %}
+            <p class="ai-feature-text-5-{{ ai_gen_id }}">
+              {{ block.settings.text_5 }}
+            </p>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.text_6 != blank or block.settings.icon_6 != blank or block.settings.svg_code_6 != blank %}
+        <div class="ai-feature-item-{{ ai_gen_id }}">
+          {% if block.settings.svg_code_6 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <div class="ai-feature-svg-{{ ai_gen_id }}">
+                {{ block.settings.svg_code_6 }}
+              </div>
+            </div>
+          {% elsif block.settings.icon_6 != blank %}
+            <div class="ai-feature-icon-wrapper-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.icon_6 | image_url: width: 200 }}"
+                alt="{{ block.settings.icon_6.alt | escape }}"
+                class="ai-feature-icon-{{ ai_gen_id }}"
+                loading="lazy"
+                width="200"
+                height="200"
+              >
+            </div>
+          {% endif %}
+          {% if block.settings.text_6 != blank %}
+            <p class="ai-feature-text-6-{{ ai_gen_id }}">
+              {{ block.settings.text_6 }}
+            </p>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</ai-features-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Features",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container width",
+      "min": 800,
+      "max": 1900,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid gap on desktop",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "label": "Grid gap on mobile",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "item_padding",
+      "label": "Item padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "icon_spacing",
+      "label": "Icon spacing",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "item_background_color",
+      "label": "Item background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#003435"
+    },
+    {
+      "type": "color",
+      "id": "svg_color",
+      "label": "SVG color",
+      "default": "#003435"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 30,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Feature 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_1",
+      "label": "Icon image"
+    },
+    {
+      "type": "html",
+      "id": "svg_code_1",
+      "label": "SVG code"
+    },
+    {
+      "type": "textarea",
+      "id": "text_1",
+      "label": "Text",
+      "default": "Add your feature text here"
+    },
+    {
+      "type": "range",
+      "id": "text_size_1",
+      "label": "Text size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Feature 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_2",
+      "label": "Icon image"
+    },
+    {
+      "type": "html",
+      "id": "svg_code_2",
+      "label": "SVG code"
+    },
+    {
+      "type": "textarea",
+      "id": "text_2",
+      "label": "Text"
+    },
+    {
+      "type": "range",
+      "id": "text_size_2",
+      "label": "Text size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Feature 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_3",
+      "label": "Icon image"
+    },
+    {
+      "type": "html",
+      "id": "svg_code_3",
+      "label": "SVG code"
+    },
+    {
+      "type": "textarea",
+      "id": "text_3",
+      "label": "Text"
+    },
+    {
+      "type": "range",
+      "id": "text_size_3",
+      "label": "Text size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Feature 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_4",
+      "label": "Icon image"
+    },
+    {
+      "type": "html",
+      "id": "svg_code_4",
+      "label": "SVG code"
+    },
+    {
+      "type": "textarea",
+      "id": "text_4",
+      "label": "Text"
+    },
+    {
+      "type": "range",
+      "id": "text_size_4",
+      "label": "Text size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Feature 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_5",
+      "label": "Icon image"
+    },
+    {
+      "type": "html",
+      "id": "svg_code_5",
+      "label": "SVG code"
+    },
+    {
+      "type": "textarea",
+      "id": "text_5",
+      "label": "Text"
+    },
+    {
+      "type": "range",
+      "id": "text_size_5",
+      "label": "Text size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Feature 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_6",
+      "label": "Icon image"
+    },
+    {
+      "type": "html",
+      "id": "svg_code_6",
+      "label": "SVG code"
+    },
+    {
+      "type": "textarea",
+      "id": "text_6",
+      "label": "Text"
+    },
+    {
+      "type": "range",
+      "id": "text_size_6",
+      "label": "Text size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Features"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,125 @@
+.cluutch-cart-drawer .free-shipping-bar progress-bar::before {
+    background-color: #37B6AD;
+}
+
+.cluutch-cart-drawer .jdgm-all-reviews-text>a {
+    justify-content: center;
+}
+
+.cluutch-cart-drawer .jdgm-widget.jdgm-all-reviews-text {
+    background-color: rgb(var(--color-foreground)/ 0.045);
+    padding-top: 15px;
+}
+
+.cluutch-cart-drawer .jdgm-all-reviews-text__text {
+    padding-left: 20px;
+}
+
+.icon-block__wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid rgb(var(--color-border-light));
+}
+
+.icon-block__image {
+    max-width: 60px;
+}
+
+.icon-block {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    text-align: center;
+}
+
+.cluutch-cart-drawer .cluutch-horizontal-product {
+    max-width: 230px;
+    gap: 5px;
+    margin-inline-end: 20px !important;
+}
+
+.cluutch-cart-drawer .cluutch-horizontal-product .horizontal-product__title {
+    font-size: 12px;
+}
+
+.cluutch-cart-drawer .cluutch-horizontal-product .price__regular {
+    font-size: 12px;
+}
+
+.cluutch-cart-drawer .cluutch-horizontal-product .horizontal-product__details {
+    gap: 4px;
+}
+
+.cluutch-cart-drawer .horizontal-product__details {
+    width: 100%;
+}
+
+.rec-button {
+    padding: 5px;
+}
+
+.cluutch-button-cart {
+    background: #37B6AD;
+}
+
+.cluutch-button-cart::after {
+    border-color: #37B6AD;
+}
+
+.cart-product__content {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.cart-product__link {
+    font-size: 16px;
+    text-decoration: underline;
+    width: fit-content;
+    padding-top: 5px;
+    text-align: center;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+
+}
+
+.cart-product__link:hover {
+    text-decoration: none;
+}
+
+.cart-product__flex {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+    margin-bottom: 9px;
+}
+
+.cart-product__flex .review-text {
+    font-size: 16px;
+    font-style: normal;
+}
+
+/* Fix iOS: empêcher le scroll du body derrière le cart drawer */
+.cart-drawer .drawer__scrollable {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+html.touch .has-modal-open .cart-drawer .drawer__inner {
+    touch-action: pan-y;
+}
+
+@media (min-width:1024px) {
+
+    .cluutch-cart-drawer .drawer__scrollable,
+    .cluutch-cart-drawer .drawer__header,
+    .cluutch-cart-drawer .drawer__footer-bottom {
+        padding-inline: 20px;
+    }
+}

@@ -1,0 +1,67 @@
+.cluutch-banner {
+    margin-bottom: -23px;
+    scale: 1 !important;
+}
+
+.cluutch-banner__image-wrapper,
+.cluutch-banner__wrapper {
+    position: relative;
+}
+
+.cluutch-banner__image-wrapper img {
+    width: 100%;
+    min-height: 240px;
+    max-height: 300px;
+    object-fit: cover;
+    object-position: right;
+}
+
+.cluutch-banner__image.cluutch-banner__image--mobile {
+    display: block;
+
+    @media (min-width:768px) {
+        display: none;
+    }
+}
+
+.cluutch-banner__text-wrapper {
+    position: absolute;
+    width: 100%;
+    top: 40px;
+
+    /* make back */
+    /* scale: .95;
+    transform-origin: top; */
+    @media (min-width:768px) {
+        top: 50%;
+        transform: translate(0, -50%);
+    }
+}
+
+.cluutch-banner__text h1 {
+    color: var(--TEXT, #003435);
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    /* H1 60 semi -4 raleway */
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 20px;
+
+    font-size: 24px;
+    line-height: 133.333%;
+    letter-spacing: -0.48px;
+
+    @media (min-width:768px) {
+        line-height: 110%;
+        letter-spacing: -1.2px;
+        font-size: 48px;
+        padding-inline: 40px;
+    }
+}
+
+.cluutch-banner__text h1 {
+    // max-width: 974px;
+}

@@ -1,0 +1,305 @@
+{{ 'lpb-scrolling-banner.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign show_banner = true
+
+  if section.settings.enable_schedule
+    assign now_utc = 'now' | date: '%s' | plus: 0
+    comment
+      Paris = UTC+1 (hiver) ou UTC+2 (été)
+      On ajoute 1h (3600s) par défaut
+    endcomment
+    assign paris_offset = 3600
+    assign now_paris = now_utc | plus: paris_offset
+
+    if section.settings.start_date != blank
+      comment
+        Convertir JJ/MM/AAAA en AAAA-MM-JJ pour le parsing
+      endcomment
+      assign start_parts = section.settings.start_date | split: '/'
+      assign start_date_iso = start_parts[2] | append: '-' | append: start_parts[1] | append: '-' | append: start_parts[0]
+      assign start_datetime = start_date_iso | append: ' ' | append: section.settings.start_time
+      assign start_timestamp = start_datetime | date: '%s' | plus: 0
+      if now_paris < start_timestamp
+        assign show_banner = false
+      endif
+    endif
+
+    if section.settings.end_date != blank
+      assign end_parts = section.settings.end_date | split: '/'
+      assign end_date_iso = end_parts[2] | append: '-' | append: end_parts[1] | append: '-' | append: end_parts[0]
+      assign end_datetime = end_date_iso | append: ' ' | append: section.settings.end_time
+      assign end_timestamp = end_datetime | date: '%s' | plus: 0
+      if now_paris > end_timestamp
+        assign show_banner = false
+      endif
+    endif
+  endif
+-%}
+
+{%- if show_banner -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      --lpb-banner-bg: {{ section.settings.color_background }};
+      --lpb-banner-color: {{ section.settings.color_text }};
+      --lpb-banner-speed: {{ section.settings.speed }}s;
+      --lpb-banner-padding: {{ section.settings.padding_mobile }}px;
+
+      @media (min-width: 768px) {
+        --lpb-banner-padding: {{ section.settings.padding }}px;
+      }
+    }
+
+    {% if section.settings.enable_sticky %}
+      #shopify-section-{{ section.id }} .lpb-scrolling-banner.lpb-fixed {
+        position: fixed;
+        top: var(--sticky-header-height, 60px);
+        left: 0;
+        right: 0;
+        z-index: 19;
+        transition: top 0.3s ease;
+      }
+
+      #shopify-section-{{ section.id }} .lpb-scrolling-banner.lpb-fixed.lpb-header-hidden {
+        top: 0;
+      }
+
+      #shopify-section-{{ section.id }} .lpb-scrolling-banner-placeholder {
+        display: none;
+      }
+
+      #shopify-section-{{ section.id }} .lpb-scrolling-banner-placeholder.active {
+        display: block;
+      }
+    {% endif %}
+  </style>
+
+  {% if section.settings.enable_sticky %}
+    <div class="lpb-scrolling-banner-placeholder" id="lpb-placeholder-{{ section.id }}"></div>
+  {% endif %}
+
+  <div class="lpb-scrolling-banner" id="lpb-banner-{{ section.id }}">
+    <div class="lpb-scrolling-banner__track">
+      <span>{{ section.settings.text }}</span>
+      <span>{{ section.settings.text }}</span>
+      <span>{{ section.settings.text }}</span>
+      <span>{{ section.settings.text }}</span>
+    </div>
+  </div>
+
+  {% if section.settings.enable_sticky %}
+    <script>
+      (function() {
+        const banner = document.getElementById('lpb-banner-{{ section.id }}');
+        const placeholder = document.getElementById('lpb-placeholder-{{ section.id }}');
+        const headerSection = document.querySelector('.header-section');
+
+        if (!banner || !placeholder) return;
+
+        let bannerHeight = banner.offsetHeight;
+        let initialTop = banner.getBoundingClientRect().top + window.scrollY;
+
+        placeholder.style.height = bannerHeight + 'px';
+
+        function updateBannerPosition() {
+          const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sticky-header-height')) || 60;
+          const headerHidden = headerSection && headerSection.classList.contains('header-hidden');
+
+          if (window.scrollY > 0) {
+            banner.classList.add('lpb-fixed');
+            placeholder.classList.add('active');
+            if (headerHidden) {
+              banner.classList.add('lpb-header-hidden');
+            } else {
+              banner.classList.remove('lpb-header-hidden');
+            }
+          } else {
+            banner.classList.remove('lpb-fixed', 'lpb-header-hidden');
+            placeholder.classList.remove('active');
+          }
+        }
+
+        window.addEventListener('scroll', updateBannerPosition, { passive: true });
+        window.addEventListener('resize', function() {
+          bannerHeight = banner.offsetHeight;
+          placeholder.style.height = bannerHeight + 'px';
+        });
+
+        if (headerSection) {
+          const observer = new MutationObserver(updateBannerPosition);
+          observer.observe(headerSection, { attributes: true, attributeFilter: ['class'] });
+        }
+
+        updateBannerPosition();
+      })();
+    </script>
+  {% endif %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "LPB scrolling banner",
+  "class": "lpb-scrolling-banner-section",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Texte",
+      "default": "<p>Livraison gratuite dès 30€ d'achat</p>"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 5,
+      "max": 40,
+      "step": 1,
+      "unit": "s",
+      "label": "Vitesse de défilement",
+      "default": 20,
+      "info": "Plus le nombre est petit, plus c'est rapide"
+    },
+    {
+      "type": "header",
+      "content": "Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "Couleur de fond",
+      "default": "#37B6AD"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Couleur du texte",
+      "default": "#FFFFFA"
+    },
+    {
+      "type": "header",
+      "content": "Espacement"
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding (mobile)",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 4,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding (desktop)",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Programmation"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_schedule",
+      "label": "Activer la programmation",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "start_date",
+      "label": "Date de début",
+      "info": "Format : JJ/MM/AAAA (ex : 15/01/2025)"
+    },
+    {
+      "type": "select",
+      "id": "start_time",
+      "label": "Heure de début",
+      "default": "00:00",
+      "options": [
+        { "value": "00:00", "label": "00h00" },
+        { "value": "01:00", "label": "01h00" },
+        { "value": "02:00", "label": "02h00" },
+        { "value": "03:00", "label": "03h00" },
+        { "value": "04:00", "label": "04h00" },
+        { "value": "05:00", "label": "05h00" },
+        { "value": "06:00", "label": "06h00" },
+        { "value": "07:00", "label": "07h00" },
+        { "value": "08:00", "label": "08h00" },
+        { "value": "09:00", "label": "09h00" },
+        { "value": "10:00", "label": "10h00" },
+        { "value": "11:00", "label": "11h00" },
+        { "value": "12:00", "label": "12h00" },
+        { "value": "13:00", "label": "13h00" },
+        { "value": "14:00", "label": "14h00" },
+        { "value": "15:00", "label": "15h00" },
+        { "value": "16:00", "label": "16h00" },
+        { "value": "17:00", "label": "17h00" },
+        { "value": "18:00", "label": "18h00" },
+        { "value": "19:00", "label": "19h00" },
+        { "value": "20:00", "label": "20h00" },
+        { "value": "21:00", "label": "21h00" },
+        { "value": "22:00", "label": "22h00" },
+        { "value": "23:00", "label": "23h00" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "Date de fin",
+      "info": "Format : JJ/MM/AAAA (ex : 31/01/2025)"
+    },
+    {
+      "type": "select",
+      "id": "end_time",
+      "label": "Heure de fin",
+      "default": "23:00",
+      "options": [
+        { "value": "00:00", "label": "00h00" },
+        { "value": "01:00", "label": "01h00" },
+        { "value": "02:00", "label": "02h00" },
+        { "value": "03:00", "label": "03h00" },
+        { "value": "04:00", "label": "04h00" },
+        { "value": "05:00", "label": "05h00" },
+        { "value": "06:00", "label": "06h00" },
+        { "value": "07:00", "label": "07h00" },
+        { "value": "08:00", "label": "08h00" },
+        { "value": "09:00", "label": "09h00" },
+        { "value": "10:00", "label": "10h00" },
+        { "value": "11:00", "label": "11h00" },
+        { "value": "12:00", "label": "12h00" },
+        { "value": "13:00", "label": "13h00" },
+        { "value": "14:00", "label": "14h00" },
+        { "value": "15:00", "label": "15h00" },
+        { "value": "16:00", "label": "16h00" },
+        { "value": "17:00", "label": "17h00" },
+        { "value": "18:00", "label": "18h00" },
+        { "value": "19:00", "label": "19h00" },
+        { "value": "20:00", "label": "20h00" },
+        { "value": "21:00", "label": "21h00" },
+        { "value": "22:00", "label": "22h00" },
+        { "value": "23:00", "label": "23h00" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Position"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky",
+      "label": "Activer le mode sticky",
+      "default": false,
+      "info": "Le banner restera visible en haut lors du défilement"
+    }
+  ],
+  "presets": [
+    {
+      "name": "LPB scrolling banner"
+    }
+  ]
+}
+{% endschema %}

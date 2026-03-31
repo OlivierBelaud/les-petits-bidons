@@ -1,0 +1,23 @@
+.cluutch-topbar {
+    position: relative;
+    z-index: 21;
+}
+
+.cluutch-topbar .announcement__content {
+    gap: 10px;
+
+    @media (min-width:768px) {
+        gap: 16px;
+    }
+}
+
+.cluutch-topbar .announcement-text {
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    line-height: 180%;
+
+    @media (min-width:768px) {
+        line-height: 150%;
+    }
+}

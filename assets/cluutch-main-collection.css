@@ -1,0 +1,254 @@
+.cluutch-collection-button {
+    border-radius: 40px;
+    background: var(--mint-light, #E4F7F6);
+    color: var(--TEXT, #003435);
+    position: relative;
+    /* button */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+
+    padding: 12px 32px;
+    font-size: 14px;
+    line-height: 157.143%;
+    height: 46px;
+
+    @media (min-width:768px) {
+        padding: 16px 40px;
+        line-height: 133.333%;
+        font-size: 18px;
+
+        height: auto;
+    }
+
+}
+
+.cluutch-collection-button.active {
+    border-radius: 40px;
+    background: var(--mint-main, #37B6AD);
+    color: var(--white, #FFFFFA);
+    /* button */
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    line-height: 133.333%;
+    font-size: 14px;
+
+    @media (min-width:768px) {
+        font-size: 18px;
+    }
+
+}
+
+.cluutch-collection-section .section:before {
+    background: #F5F5F5;
+}
+
+.cluutch-collection-section .card-grid {
+    gap: 4px;
+    row-gap: 8px;
+
+    @media (min-width:768px) {
+        gap: 12px;
+    }
+}
+
+.cluutch-collection-buttons {
+    display: flex;
+    overflow: scroll;
+    gap: 12px;
+
+    @media (min-width:768px) {
+        gap: 24px;
+    }
+}
+
+
+.cluutch-collection-buttons::-webkit-scrollbar {
+
+    display: none;
+}
+
+.cluutch-collection-section .btn-fill {
+    background: var(--white, #FFFFFA);
+}
+
+.cluutch-collection-button:hover .cluutch-button--text {
+    color: var(--mint-main, #37B6AD);
+
+}
+
+.cluutch-collection-section .cluutch-button--more:hover:after {
+    border: 0;
+}
+
+.cluutch-collection-section .cluutch-collection-button.active {
+    pointer-events: none;
+}
+
+.cluutch-collection-buttons a {
+    display: block;
+    width: fit-content;
+}
+
+.cluutch-collection-section .button--primary {
+
+    background: var(--mint-main, #37B6AD);
+}
+
+.cluutch-collection-section .button[disabled] {
+    background: var(--mint-main, #37B6AD);
+    opacity: .6 !important;
+}
+
+.cluutch-collection-section .button[disabled]:hover .btn-text {
+    color: white !important;
+}
+
+.cluutch-collection-section .button--primary:hover .btn-text {
+    color: var(--mint-main, #37B6AD);
+}
+
+.cluutch-collection-section .button--primary::after {
+    border-color: var(--mint-main, #37B6AD);
+}
+
+.js [data-button-hover=standard] .cluutch-collection-section .button--primary:hover:not([disabled], .self-button) {
+    color: #003435;
+}
+
+.cluutch-collection-section .promo-subtitle {
+    color: var(--TEXT, #003435);
+    text-align: center;
+    font-variant-numeric: lining-nums proportional-nums;
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+
+    font-size: 14px;
+    letter-spacing: -0.28px;
+
+    @media (min-width:768px) {
+        line-height: 128.571%;
+        letter-spacing: -0.84px;
+        font-size: 24px;
+    }
+}
+
+.cluutch-collection-section .promo-subtitle p {
+    margin-bottom: 12px;
+    margin-top: 0;
+
+    @media (min-width:768px) {
+        margin-bottom: 32px;
+    }
+}
+
+.cluutch-collection-section .promo-subtitle p:last-child {
+    margin-bottom: 0;
+}
+
+.cluutch-collection-section .promo-img {
+    max-width: 64px;
+
+    @media (min-width:768px) {
+        max-width: none;
+    }
+}
+
+.cluutch-collection-section .promo-title {
+    text-align: center;
+    font-variant-numeric: lining-nums proportional-nums;
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+
+    font-size: 14px;
+    line-height: 128.571%;
+    letter-spacing: -0.28px;
+
+    @media (min-width:768px) {
+        font-size: 24px;
+        line-height: 112.5%;
+        letter-spacing: -0.96px;
+    }
+}
+
+.cluutch-collection-section .grid.gap-3 {
+    margin-top: 20px;
+
+    @media (min-width:768px) {
+        margin-top: 24px;
+    }
+}
+
+@media (max-width:767px) {
+    .cluutch-collection-section .cluutch-price__sale {
+        font-size: 12px;
+    }
+}
+
+#loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #FFFFFA;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    z-index: 1000;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.collection-link:has(.active) {
+    order: -1;
+}
+
+.collection-link.loading {
+    pointer-events: none;
+    position: relative;
+}
+
+.collection-link.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-top-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.collection-link.collection-link.loading .cluutch-button--text {
+    opacity: 0;
+}
+
+.collection__content {
+    margin-top: 24px;
+
+    @media (min-width:768px) {
+        margin-top: 40px;
+    }
+}
+
+.product-card--promo {
+    grid-column: auto;
+}
+
+@media (max-width:767px) {
+    .product-card--promo .product-card__content {
+        padding: 8px;
+    }
+}

@@ -1,0 +1,56 @@
+.cluutch-featured .cluutch-grid {
+    gap: 12px;
+}
+
+/* @media (min-width:1400px) {
+    .cluutch-featured .slider--desktop .card-grid {
+        --slider-item-width: 445px;
+    }
+} */
+
+.cluutch-collections .title-wrapper {
+    /* margin-bottom: 40px; */
+    margin-bottom: 24px;
+
+    @media (min-width: 768px) {
+        margin-bottom: 15px;
+    }
+
+}
+
+.cluutch-collections .title-wrapper .grid.gap-4 {
+    gap: 20px;
+
+    @media (min-width: 768px) {
+        gap: 16px;
+    }
+
+}
+
+@media (min-width: 1441px) {
+    .cluutch-collections .page-width {
+        max-width: 1360px;
+        padding: 0;
+    }
+}
+
+.cluutch-collections .cluutch-sold-out-button {
+    width: 100%;
+    margin-top: auto;
+    padding: 0;
+    inset-inline-end: 0;
+    inset-block-end: var(--sp-7);
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y));
+}
+
+@media screen and (pointer: fine) {
+    .cluutch-collections .product-card:hover .cluutch-sold-out-button {
+        --tw-translate-y: 0;
+    }
+
+    .cluutch-collections .cluutch-sold-out-button {
+        --tw-translate-y: var(--sp-2);
+        transition: var(--animation-primary);
+        transition-property: opacity, transform;
+    }
+}

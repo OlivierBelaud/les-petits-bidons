@@ -1,0 +1,56 @@
+.cluutch-portfolio__content {
+    position: static;
+    padding: 24px;
+    gap: 12px;
+}
+
+.cluutch-portfolio__heading {
+    text-align: center;
+    font-variant-numeric: lining-nums proportional-nums;
+    font-feature-settings: 'liga' off;
+    font-family: Raleway;
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 112.5%;
+    letter-spacing: -0.96px;
+    margin-bottom: 40px;
+    max-width: 1084px;
+}
+
+.cluutch-portfolio__heading strong {
+    color: #007E7F;
+    font-weight: 600;
+}
+
+.cluutch-portfolio .title-wrapper {
+    margin-bottom: 0;
+}
+
+.cluutch-portfolio .profile .media {
+    border-radius: 24px 24px 0 0;
+}
+
+.cluutch-portfolio .cluutch-portfolio__card-text {
+    font-family: "DM Sans";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 110%;
+}
+
+.cluutch-portfolio .profile__button {
+    border-radius: 60px;
+    background: var(--golden-yellow, #FB1);
+    color: #003435;
+    width: 48px;
+    height: 48px;
+}
+
+.cluutch-portfolio .card-grid {
+    --card-grid-gap: 12px;
+}
+
+.cluutch-portfolio .media>img {
+    aspect-ratio: 331 / 304;
+}

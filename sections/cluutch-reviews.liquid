@@ -1,0 +1,123 @@
+{{ 'cluutch-reviews.css' | asset_url | stylesheet_tag }}
+<script defer src="{{ 'cluutch-reviews.js' | asset_url }}"></script>
+
+<style>
+  .cluutch-reviews__{{section.id}}{
+
+    margin-bottom: {{section.settings.space_bot}}px;
+    @media (max-width:768px) {
+     margin-bottom: {{section.settings.space_bot_mobile}}px;
+    }
+  }
+</style>
+
+<div class="page-width cluutch-reviews__{{section.id}}">
+  <div class="h2">
+    {{ section.settings.title }}
+  </div>
+  <div class="swiper swiper-reviews" data-single-row="{{ section.settings.single_row }}" data-columns-desktop="{{ section.settings.columns_desktop }}">
+    <div class="swiper-wrapper">
+      {% for block in section.blocks %}
+        <div class="swiper-slide">
+          <div class="cluutch-reviews__content">
+            <div class="cluutch-reviews__stars">
+              {% assign range = '1,2,3,4,5' | split: ',' %}
+              {% for i in range %}
+                {% render 'cluutch-icon', icon: 'star-white' %}
+              {% endfor %}
+            </div>
+            <div class="cluutch-reviews__text">
+              {{ block.settings.text }}
+            </div>
+            <div class="cluutch-reviews__name med16">
+              {{ block.settings.name }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="swiper-button-next">{% render 'cluutch-icon', icon: 'arrow-right-long' %}</div>
+    <div class="swiper-button-prev">{% render 'cluutch-icon', icon: 'arrow-left-long' %}</div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cluutch-reviews",
+  "class": "cluutch-reviews",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "header",
+      "content": "Affichage"
+    },
+    {
+      "type": "checkbox",
+      "id": "single_row",
+      "label": "Afficher sur une seule ligne",
+      "default": false,
+      "info": "Désactivé = 2 lignes (par défaut). Activé = 1 ligne avec scroll horizontal."
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Colonnes sur desktop",
+      "default": 3,
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "info": "Uniquement si 'Afficher sur une seule ligne' est activé"
+    },
+    {
+      "type": "header",
+      "content": "Espacement"
+    },
+    {
+      "type": "range",
+      "id": "space_bot",
+      "label": "Space bottom desktop",
+      "default": 0,
+      "min": 0,
+      "max": 120,
+      "step": 2
+    },
+    {
+      "type": "range",
+      "id": "space_bot_mobile",
+      "label": "Space bottom mobile",
+      "default": 0,
+      "min": 0,
+      "max": 120,
+      "step": 2
+    }
+  ],
+  "blocks": [
+    {
+      "type": "content",
+      "name": "Content",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cluutch-reviews"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,484 @@
+<section class="pt-[42px] overflow-hidden faq-page md:pt-[72px]">
+  <div class="container relative">
+    <div data-aos="zoom-in-up" class="contact__title text-center">
+      {{ section.settings.title }}
+    </div>
+    <p
+      data-aos="zoom-in-down"
+      class="md:mt-[12px] text-center md:mt-[24px] font-bold text-[16px] md:text-[18px] text-[#808693]"
+    >
+      {{ section.settings.subtitle }}
+    </p>
+    <div data-aos="zoom-in-down" class="relative mt-[66px] md:mt-[104px] relative z-[4] max-w-[480px] mx-auto">
+      <h3 class="text-center text-[#131416] text-[16px] md:text-[18px] leading-[133%] font-bold">
+        Search your question
+      </h3>
+      <p class="text-center mt-[8px] text-[14px] md:text-[16px] text-[#808693] leading-[150%]">
+        Or choose one of the subjects below
+      </p>
+      <div class="relative mt-[20px] md:mt-[32px]">
+        <div class="absolute search-icon left-[16px] top-[50%] translate-top">
+          {% render 'icon-search-input' %}
+        </div>
+        <input
+          type="text"
+          class="myInput z-[2]"
+          onkeyup="searchFunction()"
+          onfocus="searchFunction()"
+          on
+          placeholder="Search"
+        >
+        <button
+          onclick="clearInput()"
+          class="absolute reset-button opacity-0 z-[-1] transition-all top-[50%] translate-top right-[20px]"
+        >
+          {% render 'icon-close', class: 'max-w-[30px] fill-[#808693]' %}
+        </button>
+        <ul class="search-question__list">
+          {% for block in section.blocks %}
+            {% assign item = block.settings %}
+            <div>
+              <li class="question p-[9px] md:p-[12px]">
+                <h4 class="text-[12px] md:text-[16px] leading-[150%] text-[#131416]">{{ item.title }}</h4>
+                <h3 class="hidden">{{ item.title }}</h3>
+                <p class="hidden">{{ item.title }}</p>
+              </li>
+            </div>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="container mt-[48px] md:mt-[64px] max-w-[600px]">
+    <div data-aos="fade-left" class="w-fit max-w-[56px] md:max-w-[64px] mx-auto">
+      {% render 'icon-faq-page' %}
+    </div>
+    <h3
+      data-aos="fade-right"
+      class="text-[20px] md:text-[24px] mt-[12px] md:mt-[16px] font-bold text-center text-[#131416] leading-[133%]"
+    >
+      Categories
+    </h3>
+    <div data-aos="zoom-in-down" class="tabs-block _scr-item _tabs mt-[32px] md:mt-[48px]">
+      <nav class="tabs-block__nav">
+        <div data-aos="fade-right" class="flex items-center gap-[16px]">
+          <div class="tabs-block__item cursor-pointer _tabs-item _active border border-[#E7E9EE] rounded-[12px] transition-all">
+            <div class="flex items-center py-[12px]">
+              <p class="px-[16px] text-[16px] font-normal md:border-r border-[#E7E9EE]">
+                {{ section.settings.all_tab }}
+              </p>
+              <p class="px-[16px] faq-count text-[#808693] text-[12px] font-normal">
+                <span class="all-tabs"></span> Questions
+              </p>
+            </div>
+          </div>
+          <div class="tabs-block__item cursor-pointer _tabs-item border border-[#E7E9EE] rounded-[12px] transition-all">
+            <div class="flex items-center py-[12px]">
+              <p class="px-[16px] text-[16px] font-normal border-r border-[#E7E9EE]">
+                {{ section.settings.purchase }}
+              </p>
+              <p class="px-[16px] faq-count text-[#808693] text-[12px] font-normal">
+                <span class="purchase-tab"></span> Questions
+              </p>
+            </div>
+          </div>
+          <div class="tabs-block__item cursor-pointer _tabs-item border border-[#E7E9EE] rounded-[12px] transition-all">
+            <div class="flex items-center py-[12px]">
+              <p class="px-[16px] text-[16px] font-normal border-r border-[#E7E9EE]">
+                {{ section.settings.return }}
+              </p>
+              <p class="px-[16px] faq-count text-[#808693] text-[12px] font-normal">
+                <span class="return-tab"></span> Questions
+              </p>
+            </div>
+          </div>
+        </div>
+        <div data-aos="fade-left" class="flex mt-[16px] items-center gap-[16px]">
+          <div class="tabs-block__item cursor-pointer _tabs-item border border-[#E7E9EE] rounded-[12px] transition-all">
+            <div class="flex items-center py-[12px]">
+              <p class="px-[16px] text-[16px] font-normal border-r border-[#E7E9EE]">
+                {{ section.settings.checkout }}
+              </p>
+              <p class="px-[16px] faq-count text-[#808693] text-[12px] font-normal">
+                <span class="checkout-tab"></span> Questions
+              </p>
+            </div>
+          </div>
+          <div class="tabs-block__item cursor-pointer _tabs-item border border-[#E7E9EE] rounded-[12px] transition-all">
+            <div class="flex items-center py-[12px]">
+              <p class="px-[16px] text-[16px] font-normal border-r border-[#E7E9EE]">
+                {{ section.settings.account }}
+              </p>
+              <p class="px-[16px] faq-count text-[#808693] text-[12px] font-normal">
+                <span class="account-tab"></span>
+                Questions
+              </p>
+            </div>
+          </div>
+        </div>
+        <div data-aos="fade-right" class="flex mt-[16px] items-center gap-[16px]">
+          <div class="tabs-block__item cursor-pointer _tabs-item border border-[#E7E9EE] rounded-[12px] transition-all">
+            <div class="flex items-center py-[12px]">
+              <p class="px-[16px] text-[16px] font-normal border-r border-[#E7E9EE]">
+                {{ section.settings.tracking }}
+              </p>
+              <p class="px-[16px] faq-count text-[#808693] text-[12px] font-normal">
+                <span class="tracking-tab"></span>
+                Questions
+              </p>
+            </div>
+          </div>
+          <div class="tabs-block__item cursor-pointer _tabs-item border border-[#E7E9EE] rounded-[12px] transition-all">
+            <div class="flex items-center py-[12px]">
+              <p class="px-[16px] text-[16px] font-normal border-r border-[#E7E9EE]">
+                {{ section.settings.other }}
+              </p>
+              <p class="px-[16px] faq-count text-[#808693] text-[12px] font-normal">
+                <span class="other-tab"></span>
+                Questions
+              </p>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div class="tabs-block__body mb-[32px] md:mb-[0] mt-[32px] md:mt-[48px]">
+        <div class="tabs-block__block _tabs-block _active hidden">
+          {% for block in section.blocks %}
+            {% assign item = block.settings %}
+            <details
+              data-aos="fade-right"
+              class="py-[24px] faq-details faq-details-all border-b border-t border-[#E7E9EE]"
+            >
+              <summary class="cursor-pointer relative">
+                <h3 class="font-bold text-[18px] md:text-[20px] text-[#131416]">
+                  {{ item.title }}
+                </h3>
+              </summary>
+              <p class="mt-[12px] text-[16px] md:text-[18px] leading-[156%] mt-[12px]">{{ item.text }}</p>
+            </details>
+          {% endfor %}
+        </div>
+        <div class="tabs-block__block _tabs-block hidden">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'purchase' %}
+                {% assign item = block.settings %}
+                <details
+                  class="py-[24px] faq-details faq-details-purchase border-b border-t border-[#E7E9EE]"
+                >
+                  <summary class="cursor-pointer relative">
+                    <h3 class="font-bold text-[18px] md:text-[20px] text-[#131416]">
+                      {{ item.title }}
+                    </h3>
+                  </summary>
+                  <p class="mt-[12px] text-[16px] md:text-[18px] leading-[156%] mt-[12px]">{{ item.text }}</p>
+                </details>
+            {% endcase %}
+          {% endfor %}
+        </div>
+        <div class="tabs-block__block _tabs-block hidden">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'return' %}
+                {% assign item = block.settings %}
+                <details
+                  class="py-[24px] faq-details faq-details-return border-b border-t border-[#E7E9EE]"
+                >
+                  <summary class="cursor-pointer relative">
+                    <h3 class="font-bold text-[18px] md:text-[20px] text-[#131416]">
+                      {{ item.title }}
+                    </h3>
+                  </summary>
+                  <p class="mt-[12px] text-[16px] md:text-[18px] leading-[156%] mt-[12px]">{{ item.text }}</p>
+                </details>
+            {% endcase %}
+          {% endfor %}
+        </div>
+        <div class="tabs-block__block _tabs-block hidden">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'checkout' %}
+                {% assign item = block.settings %}
+                <details
+                  class="py-[24px] faq-details faq-details-checkout border-b border-t border-[#E7E9EE]"
+                >
+                  <summary class="cursor-pointer relative">
+                    <h3 class="font-bold text-[18px] md:text-[20px] text-[#131416]">
+                      {{ item.title }}
+                    </h3>
+                  </summary>
+                  <p class="mt-[12px] text-[16px] md:text-[18px] leading-[156%] mt-[12px]">{{ item.text }}</p>
+                </details>
+            {% endcase %}
+          {% endfor %}
+        </div>
+        <div class="tabs-block__block _tabs-block hidden">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'account' %}
+                {% assign item = block.settings %}
+                <details
+                  class="py-[24px] faq-details faq-details-account border-b border-t border-[#E7E9EE]"
+                >
+                  <summary class="cursor-pointer relative">
+                    <h3 class="font-bold text-[18px] md:text-[20px] text-[#131416]">
+                      {{ item.title }}
+                    </h3>
+                  </summary>
+                  <p class="mt-[12px] text-[16px] md:text-[18px] leading-[156%] mt-[12px]">{{ item.text }}</p>
+                </details>
+            {% endcase %}
+          {% endfor %}
+        </div>
+        <div class="tabs-block__block _tabs-block hidden">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'tracking' %}
+                {% assign item = block.settings %}
+                <details
+                  class="py-[24px] faq-details faq-details-tracking border-b border-t border-[#E7E9EE]"
+                >
+                  <summary class="cursor-pointer relative">
+                    <h3 class="font-bold text-[18px] md:text-[20px] text-[#131416]">
+                      {{ item.title }}
+                    </h3>
+                  </summary>
+                  <p class="mt-[12px] text-[16px] md:text-[18px] leading-[156%] mt-[12px]">{{ item.text }}</p>
+                </details>
+            {% endcase %}
+          {% endfor %}
+        </div>
+        <div class="tabs-block__block _tabs-block hidden">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'other' %}
+                {% assign item = block.settings %}
+                <details
+                  class="py-[24px] faq-details faq-details-other border-b border-t border-[#E7E9EE]"
+                >
+                  <summary class="cursor-pointer relative">
+                    <h3 class="font-bold text-[18px] md:text-[20px] text-[#131416]">
+                      {{ item.title }}
+                    </h3>
+                  </summary>
+                  <p class="mt-[12px] text-[16px] md:text-[18px] leading-[156%] mt-[12px]">{{ item.text }}</p>
+                </details>
+            {% endcase %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% for block in section.blocks %}
+  {% assign item = block.settings %}
+  <div>
+    <div class="question__popup-wrapper">
+      <div class="question__popup">
+        <div class="flex items-center pb-[8px] md:pb-[12px] border-b border-[#E7E9EE] justify-between">
+          <h2 class="text-[16px] md:text-[18px] font-bold text-[#808693]">FAQ</h2>
+          <h4 class="question__popup-close cursor-pointer">
+            {% render 'icon-close', class: 'max-w-[24px] fill-[#131416]' %}
+          </h4>
+        </div>
+        <h3 class="mt-[20px] md:mt-[24px] font-bold text-[18px] md:text-[20px] leading-[140%] text-[#131416]">
+          {{ item.title }}
+        </h3>
+        <p class="mt-[8px] md:mt-[12px] text-[#575C66] text-[16px] md:text-[18px] font-normal leading-[156%]">
+          {{ item.text }}
+        </p>
+        <div class="md:flex justify-end mt-[20px] md:mt-[24px]">
+          <button class="got-button w-full md:w-fit text-center rounded-[12px] bg-[#3B4932] text-white hover:bg-accent py-[12px] px-[16px] transition-all text-[16px] font-normal leading-[130%]">
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+<script
+  src="https://code.jquery.com/jquery-3.6.4.js"
+  integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
+  crossorigin="anonymous"
+></script>
+
+{{ 'faq.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "Faq",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "<h2>Have any <strong>question</strong>?</h2>"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "We’re here to help."
+    },
+    {
+      "type": "text",
+      "id": "all_tab",
+      "label": "All Tab Title",
+      "default": "All"
+    },
+    {
+      "type": "text",
+      "id": "purchase",
+      "label": "Purchase Title",
+      "default": "Purchase"
+    },
+    {
+      "type": "text",
+      "id": "return",
+      "label": "Return Title",
+      "default": "Return"
+    },
+    {
+      "type": "text",
+      "id": "checkout",
+      "label": "Checkout Title",
+      "default": "Checkout"
+    },
+    {
+      "type": "text",
+      "id": "account",
+      "label": "Account Title",
+      "default": "Account"
+    },
+    {
+      "type": "text",
+      "id": "tracking",
+      "label": "Tracking Title",
+      "default": "Tracking"
+    },
+    {
+      "type": "text",
+      "id": "other",
+      "label": "Other Title",
+      "default": "Other"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "purchase",
+      "name": "purchase",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Lorem ipsum dolor sit amet consectetur"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "default": "Lorem ipsum dolor sit amet consectetur. Ac suscipit suspendisse viverra amet suspendisse nibh tellus. Quisque vestibulum suspendisse phasellus ipsum scelerisque vitae semper.",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "return",
+      "name": "return",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Lorem ipsum dolor sit amet consectetur"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "default": "Lorem ipsum dolor sit amet consectetur. Ac suscipit suspendisse viverra amet suspendisse nibh tellus. Quisque vestibulum suspendisse phasellus ipsum scelerisque vitae semper.",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "checkout",
+      "name": "checkout",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Lorem ipsum dolor sit amet consectetur"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "default": "Lorem ipsum dolor sit amet consectetur. Ac suscipit suspendisse viverra amet suspendisse nibh tellus. Quisque vestibulum suspendisse phasellus ipsum scelerisque vitae semper.",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "account",
+      "name": "account",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Lorem ipsum dolor sit amet consectetur"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "default": "Lorem ipsum dolor sit amet consectetur. Ac suscipit suspendisse viverra amet suspendisse nibh tellus. Quisque vestibulum suspendisse phasellus ipsum scelerisque vitae semper.",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "tracking",
+      "name": "tracking",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Lorem ipsum dolor sit amet consectetur"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "default": "Lorem ipsum dolor sit amet consectetur. Ac suscipit suspendisse viverra amet suspendisse nibh tellus. Quisque vestibulum suspendisse phasellus ipsum scelerisque vitae semper.",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "other",
+      "name": "other",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Lorem ipsum dolor sit amet consectetur"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "default": "Lorem ipsum dolor sit amet consectetur. Ac suscipit suspendisse viverra amet suspendisse nibh tellus. Quisque vestibulum suspendisse phasellus ipsum scelerisque vitae semper.",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Faq"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,228 @@
+@media (min-width: 1450px) {
+
+    .cluutch-header-section .page-width {
+        padding-inline: 70px;
+        max-width: 1500px;
+    }
+}
+
+.cluutch-header-section .header__buttons>:is(a, button) {
+    width: auto;
+    height: auto;
+}
+
+.cluutch-header-section .header__buttons {
+    margin-inline: 0;
+    gap: 12px;
+
+    @media (min-width:768px) {
+        gap: 16px;
+    }
+}
+
+.cluutch-header-section {
+    background-color: rgb(var(--color-background));
+    /* height: 100%; */
+    transition: all .4s ease;
+}
+
+.cluutch-header-section .header__menu>ul.with-block .menu__item .btn-duplicate {
+    padding: 0;
+}
+
+
+.cluutch-header-section .mega-menu__list.page-width {
+    overflow: auto;
+}
+
+/* 
+details[open] .icon-chevron-menu {
+    color: rgb(var(--color-background));
+} */
+.cluutch-header-section .header.page-width {
+    overflow: visible;
+}
+
+.cluutch-header-section.header-hidden {
+    /* height: 0; */
+    background-color: transparent;
+}
+
+.cluutch-header-section .header__wrapper {
+    /* height: 0; */
+    transform: translateY(0);
+    transition: all .3s ease;
+}
+
+.cluutch-header-section.header-hidden .header__wrapper {
+    /* height: 0; */
+    transform: translateY(-100%);
+}
+
+.cluutch-header-section .header__menu>ul.with-block .menu__item {
+    padding-inline: 12px;
+}
+
+.cluutch-header-section .header__menu>ul.with-block {
+    gap: 6px;
+}
+
+.has-dropdown-menu .header__wrapper~.overlay {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0.1s;
+    cursor: none;
+}
+
+.header__wrapper~.overlay {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgb(var(--color-drawer-overlay)/ 0.1) 40%, rgb(var(--color-drawer-overlay)/ 0.5) 80%);
+    transition: .8s cubic-bezier(.7, 0, .2, 1);
+    transition-property: opacity, visibility;
+}
+
+.header__wrapper {
+    position: relative;
+    z-index: 20;
+    background-color: rgb(var(--color-background));
+}
+
+.header__wrapper .mega-menu__nav {
+    justify-content: center;
+}
+
+.header__wrapper .mega-menu__nav .media {
+    border-radius: 12px;
+    width: 220px;
+}
+
+.header__wrapper .mega-menu__nav img {
+    aspect-ratio: 1;
+}
+
+.header__wrapper .mega-menu__item {
+    padding-top: 0;
+    padding-right: 0;
+    flex: calc(14% - var(--header-nav-gap) * 5 / 6);
+}
+
+.mega-menu__item:nth-child(6) {
+    transition-delay: .8s
+}
+
+.mega-menu__item:nth-child(6) .media-card__text {
+    transition-delay: .95s
+}
+
+.mega-menu__item:nth-child(7) {
+    transition-delay: .9s
+}
+
+.mega-menu__item:nth-child(7) .media-card__text {
+    transition-delay: 1.05s
+}
+
+.header__wrapper .media-card__content {
+    padding-inline: 12px;
+    gap: 8px;
+
+    @media (max-width:1300px) {
+        padding-inline: 8px;
+    }
+}
+
+.cluutch-header-section .menu-drawer-button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 10.3px !important;
+
+    @media (min-width:1024px) {
+        display: none;
+    }
+}
+
+.menu-drawer-line,
+.menu-drawer-button::before,
+.menu-drawer-button::after {
+    width: 14px;
+    height: 1.5px;
+    border-radius: 10px;
+    transition: all .3s ease;
+    background: #003435;
+}
+
+.menu-drawer-button::before,
+.menu-drawer-button::after {
+    position: absolute;
+    content: '';
+
+}
+
+.menu-drawer-button::before {
+    top: 0;
+}
+
+.menu-drawer-button::after {
+    bottom: 0;
+}
+
+.menu-drawer-button[aria-expanded="true"]::before,
+.menu-drawer-button[aria-expanded="true"]::after {
+    top: 50%;
+}
+
+.menu-drawer-button[aria-expanded="true"] .menu-drawer-line {
+    opacity: 0;
+}
+
+.menu-drawer-button[aria-expanded="true"]::before {
+    transform: translateY(-50%) rotate(45deg);
+}
+
+.menu-drawer-button[aria-expanded="true"]::after {
+    transform: translateY(-50%) rotate(-45deg);
+}
+
+.menu-drawer-line {
+    display: block !important;
+}
+
+@media (max-width:768px) {
+    .cluutch-header-section .header__icons svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* Style bouton pour le lien Abonnement dans le menu (desktop + mobile) */
+.header__menu a[href="/pages/abonnement-lessive-les-petits-bidons"],
+.drawer__menu-item[href="/pages/abonnement-lessive-les-petits-bidons"] {
+    background: var(--mint-main, #37B6AD);
+    color: var(--white, #FFFFFA) !important;
+    border-radius: 40px;
+    padding: 10px 24px !important;
+    transition: all .3s ease;
+    display: inline-block;
+}
+
+.header__menu a[href="/pages/abonnement-lessive-les-petits-bidons"]:hover,
+.drawer__menu-item[href="/pages/abonnement-lessive-les-petits-bidons"]:hover {
+    background: #003435;
+    color: var(--white, #FFFFFA) !important;
+}
+
+/* Desktop - espace à gauche */
+.header__menu a[href="/pages/abonnement-lessive-les-petits-bidons"] {
+    margin-left: 16px;
+}
+
+/* Mobile - espace en haut */
+.drawer__menu-item[href="/pages/abonnement-lessive-les-petits-bidons"] {
+    margin-top: 24px;
+}

@@ -1,0 +1,139 @@
+{{ 'cluutch-banner.css' | asset_url | stylesheet_tag }}
+{% if template.name == 'collection' %}
+  {% assign desktop_image = section.settings.img | default: collection.metafields.custom.cluutch_banner %}
+{% else %}
+  {% assign desktop_image = section.settings.img | default: collection.image %}
+{% endif %}
+
+{% if section.settings.img_mobile != blank %}
+  <style>
+    @media (max-width: 767px) {
+      .cluutch-banner__image {
+        display: none;
+      }
+    }
+  </style>
+{% endif %}
+{% if page.title == 'Сluutch-subscription' %}
+  <style>
+    @media (max-width: 767px) {
+      .cluutch-banner__image-wrapper img {
+        min-height: 300px;
+      }
+    }
+  </style>
+{% endif %}
+<div class="cluutch-banner__wrapper">
+  <div class="cluutch-banner__image-wrapper">
+    {% if section.settings.img == blank %}
+      {{- desktop_image | image_url: width: master | image_tag: loading: eager, class: 'cluutch-banner__image' -}}
+
+      {% if section.settings.img_mobile == blank %}
+        {% if collection.metafields.custom.cluutch_mobile_banner != blank %}
+          <img
+            src="{{ collection.metafields.custom.cluutch_mobile_banner | file_url }}"
+            alt="Banner"
+            class="cluutch-banner__image cluutch-banner__image--mobile"
+            loading="eager"
+          >
+
+          <style>
+            @media (max-width: 767px) {
+              .cluutch-banner__image {
+                display: none;
+              }
+              .cluutch-banner__image--mobile {
+                display: block;
+              }
+            }
+            @media (min-width: 768px) {
+              .cluutch-banner__image {
+                display: block;
+              }
+              .cluutch-banner__image--mobile {
+                display: none;
+              }
+            }
+          </style>
+        {% endif %}
+      {% else %}
+        {{-
+          section.settings.img_mobile
+          | image_url: width: master
+          | image_tag: loading: eager, class: 'cluutch-banner__image cluutch-banner__image--mobile'
+        -}}
+      {%- endif %}
+
+    {% else %}
+      {% if section.settings.img != blank %}
+        {{
+          section.settings.img
+          | image_url: width: master
+          | image_tag: loading: eager, class: 'cluutch-banner__image'
+        -}}
+        {% if section.settings.img_mobile != blank %}
+          {% if section.settings.img_mobile == blank %}
+            <img
+              src="{{ collection.metafields.custom.cluutch_banner | file_url }}"
+              alt="Banner"
+              class="cluutch-banner__image cluutch-banner__image--mobile"
+              loading="eager"
+            >
+          {% else %}
+            {{-
+              section.settings.img_mobile
+              | image_url: width: master
+              | image_tag: loading: eager, class: 'cluutch-banner__image cluutch-banner__image--mobile'
+            -}}
+          {%- endif %}
+        {% endif %}
+      {% else %}
+        {{ collection.image | image_url: width: master | image_tag: loading: eager, class: 'cluutch-banner__image' -}}
+      {% endif %}
+    {% endif %}
+    <div
+      class="cluutch-banner__text-wrapper"
+      {% if page.title == 'Cluutch-our engagements' %}
+        style="padding-right: 20px;"
+      {% endif %}
+    >
+      <div class="cluutch-banner__text">
+        {% if section.settings.text != blank %}
+          {{ section.settings.text }}
+        {% else %}
+          {{ collection.title }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Cluutch banner",
+  "class": "cluutch-banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "img",
+      "label": "Image",
+      "info": "Recommended image size: 2880px 600px"
+    },
+    {
+      "type": "image_picker",
+      "id": "img_mobile",
+      "label": "Image mobile",
+      "info": "Recommended image size: 750px 480px"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cluutch banner"
+    }
+  ]
+}
+{% endschema %}
