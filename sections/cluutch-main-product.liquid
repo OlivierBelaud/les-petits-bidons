@@ -1650,17 +1650,20 @@
                 }
                 .reassurance-{{ block.id }} .reassurance-swiper {
                   overflow: hidden;
-                  height: 28px;
+                  height: 28px !important;
+                  flex: 1 1 auto;
+                  min-width: 0;
+                  width: 100%;
+                }
+                .reassurance-{{ block.id }} .swiper-wrapper {
+                  height: 28px !important;
                 }
                 .reassurance-{{ block.id }} .swiper-slide {
-                  display: flex;
+                  display: flex !important;
                   align-items: center;
                   gap: 8px;
                   white-space: nowrap;
-                  height: auto;
-                }
-                .reassurance-{{ block.id }} .swiper-wrapper {
-                  min-height: 28px;
+                  height: 28px !important;
                 }
                 .reassurance-{{ block.id }} .reassurance-icon {
                   flex-shrink: 0;
@@ -1684,13 +1687,9 @@
                 }
                 .reassurance-{{ block.id }} .reassurance-wrapper {
                   display: flex;
-                  align-items: center;
-                  gap: 12px;
-                }
-                .reassurance-{{ block.id }} .reassurance-swiper {
-                  flex: 1 1 auto;
-                  min-width: 0;
-                  width: 100%;
+                  flex-direction: column;
+                  align-items: flex-start;
+                  gap: 8px;
                 }
                 .reassurance-{{ block.id }} .reassurance-dots {
                   display: flex;
@@ -1712,9 +1711,7 @@
                 }
                 @media (max-width: 767px) {
                   .reassurance-{{ block.id }} .reassurance-wrapper {
-                    flex-direction: column;
                     align-items: center;
-                    gap: 8px;
                   }
                   .reassurance-{{ block.id }} .swiper-slide {
                     justify-content: center;
