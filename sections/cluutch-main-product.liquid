@@ -1664,6 +1664,7 @@
                   gap: 8px;
                   white-space: nowrap;
                   height: 28px !important;
+                  width: 100% !important;
                 }
                 .reassurance-{{ block.id }} .reassurance-icon {
                   flex-shrink: 0;
@@ -1771,6 +1772,8 @@
                       slidesPerView: 1,
                       loop: true,
                       speed: 500,
+                      observer: true,
+                      observeParents: true,
                       autoplay: {
                         delay: {{ block.settings.autoplay_speed }},
                         disableOnInteraction: false,
