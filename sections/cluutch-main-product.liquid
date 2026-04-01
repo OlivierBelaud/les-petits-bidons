@@ -1648,24 +1648,6 @@
                 .reassurance-{{ block.id }} {
                   padding: 16px 0;
                 }
-                .reassurance-{{ block.id }} .reassurance-swiper {
-                  overflow: hidden;
-                  height: 28px !important;
-                  flex: 1 1 auto;
-                  min-width: 0;
-                  width: 100%;
-                }
-                .reassurance-{{ block.id }} .swiper-wrapper {
-                  height: 28px !important;
-                }
-                .reassurance-{{ block.id }} .swiper-slide {
-                  display: flex !important;
-                  align-items: center;
-                  gap: 8px;
-                  white-space: nowrap;
-                  height: 28px !important;
-                  width: 100% !important;
-                }
                 .reassurance-{{ block.id }} .reassurance-icon {
                   flex-shrink: 0;
                   display: flex;
@@ -1686,20 +1668,7 @@
                 .reassurance-{{ block.id }} .reassurance-text p {
                   margin: 0;
                 }
-                .reassurance-{{ block.id }} .reassurance-wrapper {
-                  display: flex;
-                  flex-direction: row;
-                  align-items: center;
-                  justify-content: space-between;
-                  gap: 12px;
-                }
-                .reassurance-{{ block.id }} .reassurance-dots {
-                  display: flex;
-                  align-items: center;
-                  gap: 6px;
-                  flex-shrink: 0;
-                }
-                .reassurance-{{ block.id }} .reassurance-dots .swiper-pagination-bullet {
+                .reassurance-dot {
                   width: 6px;
                   height: 6px;
                   border-radius: 50%;
@@ -1708,55 +1677,153 @@
                   transition: opacity 0.3s ease;
                   cursor: pointer;
                 }
-                .reassurance-{{ block.id }} .reassurance-dots .swiper-pagination-bullet-active {
+                .reassurance-dot.active {
                   opacity: 1;
                 }
-                @media (max-width: 767px) {
-                  .reassurance-{{ block.id }} .reassurance-wrapper {
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 8px;
-                  }
-                  .reassurance-{{ block.id }} .swiper-slide {
-                    justify-content: center;
-                  }
-                  .reassurance-{{ block.id }} .reassurance-dots {
-                    justify-content: center;
-                  }
+
+                /* --- DESKTOP --- */
+                .reassurance-{{ block.id }} .reassurance-desktop {
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 12px;
+                  height: 28px;
                 }
-                .no-js .reassurance-{{ block.id }} .reassurance-swiper .swiper-wrapper {
+                .reassurance-{{ block.id }} .reassurance-desktop .reassurance-slide {
+                  display: none;
+                  align-items: center;
+                  gap: 8px;
+                  white-space: nowrap;
+                }
+                .reassurance-{{ block.id }} .reassurance-desktop .reassurance-slide.active {
+                  display: flex;
+                }
+                .reassurance-{{ block.id }} .reassurance-desktop .reassurance-dots {
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                  flex-shrink: 0;
+                }
+
+                /* --- MOBILE --- */
+                .reassurance-{{ block.id }} .reassurance-mobile {
+                  display: none;
+                }
+                .reassurance-{{ block.id }} .reassurance-mobile .reassurance-wrapper {
+                  display: flex;
                   flex-direction: column;
+                  align-items: center;
                   gap: 8px;
                 }
-                .no-js .reassurance-{{ block.id }} .reassurance-dots {
-                  display: none;
+                .reassurance-{{ block.id }} .reassurance-mobile .reassurance-swiper {
+                  overflow: hidden;
+                  width: 100%;
+                }
+                .reassurance-{{ block.id }} .reassurance-mobile .swiper-slide {
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 8px;
+                  white-space: nowrap;
+                }
+                .reassurance-{{ block.id }} .reassurance-mobile .reassurance-dots {
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 6px;
+                }
+
+                @media (max-width: 767px) {
+                  .reassurance-{{ block.id }} .reassurance-desktop { display: none; }
+                  .reassurance-{{ block.id }} .reassurance-mobile { display: block; }
                 }
               </style>
 
               <div class="reassurance-{{ block.id }}" {{ block.shopify_attributes }}>
-                <div class="reassurance-wrapper">
-                  <div class="reassurance-swiper swiper">
-                    <div class="swiper-wrapper">
-                      {%- for i in (1..5) -%}
-                        {%- assign icon_key = 'item_' | append: i | append: '_icon' -%}
-                        {%- assign text_key = 'item_' | append: i | append: '_text' -%}
-                        {%- if block.settings[text_key] != blank -%}
-                          <div class="swiper-slide">
-                            {%- if block.settings[icon_key] != blank -%}
-                              <span class="reassurance-icon">{{ block.settings[icon_key] }}</span>
-                            {%- endif -%}
-                            <span class="reassurance-text">{{ block.settings[text_key] }}</span>
-                          </div>
-                        {%- endif -%}
-                      {%- endfor -%}
-                    </div>
+                <!-- DESKTOP: simple JS, pas de Swiper -->
+                <div class="reassurance-desktop">
+                  <div class="reassurance-slides">
+                    {%- assign slide_index = 0 -%}
+                    {%- for i in (1..5) -%}
+                      {%- assign icon_key = 'item_' | append: i | append: '_icon' -%}
+                      {%- assign text_key = 'item_' | append: i | append: '_text' -%}
+                      {%- if block.settings[text_key] != blank -%}
+                        <div class="reassurance-slide{% if slide_index == 0 %} active{% endif %}" data-index="{{ slide_index }}">
+                          {%- if block.settings[icon_key] != blank -%}
+                            <span class="reassurance-icon">{{ block.settings[icon_key] }}</span>
+                          {%- endif -%}
+                          <span class="reassurance-text">{{ block.settings[text_key] }}</span>
+                        </div>
+                        {%- assign slide_index = slide_index | plus: 1 -%}
+                      {%- endif -%}
+                    {%- endfor -%}
                   </div>
-                  <div class="reassurance-dots reassurance-pagination-{{ block.id }}"></div>
+                  <div class="reassurance-dots">
+                    {%- assign dot_index = 0 -%}
+                    {%- for i in (1..5) -%}
+                      {%- assign text_key = 'item_' | append: i | append: '_text' -%}
+                      {%- if block.settings[text_key] != blank -%}
+                        <span class="reassurance-dot{% if dot_index == 0 %} active{% endif %}" data-index="{{ dot_index }}"></span>
+                        {%- assign dot_index = dot_index | plus: 1 -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                </div>
+
+                <!-- MOBILE: Swiper -->
+                <div class="reassurance-mobile">
+                  <div class="reassurance-wrapper">
+                    <div class="reassurance-swiper swiper">
+                      <div class="swiper-wrapper">
+                        {%- for i in (1..5) -%}
+                          {%- assign icon_key = 'item_' | append: i | append: '_icon' -%}
+                          {%- assign text_key = 'item_' | append: i | append: '_text' -%}
+                          {%- if block.settings[text_key] != blank -%}
+                            <div class="swiper-slide">
+                              {%- if block.settings[icon_key] != blank -%}
+                                <span class="reassurance-icon">{{ block.settings[icon_key] }}</span>
+                              {%- endif -%}
+                              <span class="reassurance-text">{{ block.settings[text_key] }}</span>
+                            </div>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                    <div class="reassurance-dots reassurance-pagination-{{ block.id }}"></div>
+                  </div>
                 </div>
               </div>
 
               <script>
                 (function() {
+                  /* --- DESKTOP: simple interval --- */
+                  var desktop = document.querySelector('.reassurance-{{ block.id }} .reassurance-desktop');
+                  if (desktop) {
+                    var slides = desktop.querySelectorAll('.reassurance-slide');
+                    var dots = desktop.querySelectorAll('.reassurance-dot');
+                    var current = 0;
+                    var total = slides.length;
+                    if (total > 1) {
+                      setInterval(function() {
+                        slides[current].classList.remove('active');
+                        dots[current].classList.remove('active');
+                        current = (current + 1) % total;
+                        slides[current].classList.add('active');
+                        dots[current].classList.add('active');
+                      }, {{ block.settings.autoplay_speed }});
+                    }
+                    dots.forEach(function(dot, idx) {
+                      dot.addEventListener('click', function() {
+                        slides[current].classList.remove('active');
+                        dots[current].classList.remove('active');
+                        current = idx;
+                        slides[current].classList.add('active');
+                        dots[current].classList.add('active');
+                      });
+                    });
+                  }
+
+                  /* --- MOBILE: Swiper --- */
                   var attempts = 0;
                   function initReassurance() {
                     attempts++;
@@ -1764,7 +1831,7 @@
                       if (attempts < 50) setTimeout(initReassurance, 200);
                       return;
                     }
-                    var container = document.querySelector('.reassurance-{{ block.id }} .reassurance-swiper');
+                    var container = document.querySelector('.reassurance-{{ block.id }} .reassurance-mobile .reassurance-swiper');
                     if (!container) return;
                     var slideCount = container.querySelectorAll('.swiper-slide').length;
                     if (slideCount <= 1) return;
@@ -1772,8 +1839,6 @@
                       slidesPerView: 1,
                       loop: true,
                       speed: 500,
-                      observer: true,
-                      observeParents: true,
                       autoplay: {
                         delay: {{ block.settings.autoplay_speed }},
                         disableOnInteraction: false,
