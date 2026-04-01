@@ -1656,6 +1656,10 @@
                   align-items: center;
                   gap: 8px;
                   white-space: nowrap;
+                  height: auto;
+                }
+                .reassurance-{{ block.id }} .swiper-wrapper {
+                  min-height: 28px;
                 }
                 .reassurance-{{ block.id }} .reassurance-icon {
                   flex-shrink: 0;
@@ -1751,8 +1755,13 @@
 
               <script>
                 (function() {
+                  var attempts = 0;
                   function initReassurance() {
-                    if (typeof Swiper === 'undefined') return;
+                    attempts++;
+                    if (typeof Swiper === 'undefined') {
+                      if (attempts < 50) setTimeout(initReassurance, 200);
+                      return;
+                    }
                     var container = document.querySelector('.reassurance-{{ block.id }} .reassurance-swiper');
                     if (!container) return;
                     var slideCount = container.querySelectorAll('.swiper-slide').length;
