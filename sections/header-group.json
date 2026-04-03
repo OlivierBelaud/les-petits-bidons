@@ -352,7 +352,6 @@
     },
     "lpb_scrolling_banner_giKLhH": {
       "type": "lpb-scrolling-banner",
-      "disabled": true,
       "name": "LPB scrolling banner",
       "settings": {
         "text": "<p>⏳ PROLONGATION EXCEPTIONNELLE ⏳ <strong>-15% dès 20€ d'achat</strong></p>",
