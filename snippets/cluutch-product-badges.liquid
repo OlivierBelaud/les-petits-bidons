@@ -10,13 +10,17 @@
     endif
   endif
 
-  assign current_variant = product.selected_or_first_available_variant
+  if badge_source == 'product'
+    assign badge_owner = product
+  else
+    assign badge_owner = product.selected_or_first_available_variant
+  endif
 -%}
 
 <div class="cluutch-badges-wrapper">
-  {% if current_variant.metafields.custom.label_texte != blank and current_variant.metafields.custom.label_color != blank %}
-    <p class="cluutch-badge" style="background: {{ current_variant.metafields.custom.label_color }}; color: #ffffff;">
-      {{ current_variant.metafields.custom.label_texte | escape }}
+  {% if badge_owner.metafields.custom.label_texte != blank and badge_owner.metafields.custom.label_color != blank %}
+    <p class="cluutch-badge" style="background: {{ badge_owner.metafields.custom.label_color }}; color: #ffffff;">
+      {{ badge_owner.metafields.custom.label_texte | escape }}
     </p>
   {% endif %}
   {% if product.metafields.custom.cluutch_meilleure != blank %}
