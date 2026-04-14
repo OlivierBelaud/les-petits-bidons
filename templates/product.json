@@ -31,23 +31,6 @@
     "cluutch_main_product_7yzPKV": {
       "type": "cluutch-main-product",
       "blocks": {
-        "reassurance_XwTnFm": {
-          "type": "reassurance",
-          "settings": {
-            "item_1_icon": "🚚",
-            "item_1_text": "<p><strong>Livraison offerte</strong> des 50€</p>",
-            "item_2_icon": "⭐",
-            "item_2_text": "<p><strong>4,8/5</strong> – 6 370 avis verifies</p>",
-            "item_3_icon": "💬",
-            "item_3_text": "<p><strong>SAV aux petits soins</strong> – 94% de satisfaction</p>",
-            "item_4_icon": "🔒",
-            "item_4_text": "<p><strong>Paiement securise</strong> – CB, Apple Pay...</p>",
-            "item_5_icon": "",
-            "item_5_text": "",
-            "text_color": "#003435",
-            "autoplay_speed": 3000
-          }
-        },
         "breadcrumb_8i89Xz": {
           "type": "breadcrumb",
           "settings": {
@@ -112,6 +95,23 @@
             "enable_back_in_stock": false,
             "show_back_in_stock_name": false,
             "show_back_in_stock_phone": false
+          }
+        },
+        "reassurance_XwTnFm": {
+          "type": "reassurance",
+          "settings": {
+            "item_1_icon": "🚚",
+            "item_1_text": "<p><strong>Livraison offerte</strong> des 50€</p>",
+            "item_2_icon": "⭐",
+            "item_2_text": "<p><strong>4,8/5</strong> – 6 370 avis verifies</p>",
+            "item_3_icon": "💬",
+            "item_3_text": "<p><strong>SAV aux petits soins</strong> – 94% de satisfaction</p>",
+            "item_4_icon": "🔒",
+            "item_4_text": "<p><strong>Paiement securise</strong> – CB, Apple Pay...</p>",
+            "item_5_icon": "",
+            "item_5_text": "",
+            "text_color": "#003435",
+            "autoplay_speed": 3000
           }
         },
         "essential_countdown_timer_app_block_tekEab": {
@@ -211,7 +211,6 @@
         }
       },
       "block_order": [
-        "reassurance_XwTnFm",
         "breadcrumb_8i89Xz",
         "vendor",
         "title",
@@ -221,6 +220,7 @@
         "cluutch_variant_picker_UwCP84",
         "variant_picker",
         "buy_buttons",
+        "reassurance_XwTnFm",
         "essential_countdown_timer_app_block_tekEab",
         "smile_io_smile_points_on_product_page_BKaK8T",
         "product_variations_BbLbWY",
