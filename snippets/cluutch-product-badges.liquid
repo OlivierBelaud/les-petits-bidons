@@ -9,41 +9,44 @@
       assign saved_amount = saved_amount | append: '%'
     endif
   endif
+
+  if badge_source == 'product'
+    assign badge_owner = product
+  else
+    assign badge_owner = product.selected_or_first_available_variant
+  endif
 -%}
 
 <div class="cluutch-badges-wrapper">
-  {% if product.metafields.theme.label.value != blank and product.metafields.theme.label_color.value != blank %}
-    {%- for label in product.metafields.theme.label.value -%}
-      <p class="cluutch-badge" style="background: {{ product.metafields.theme.label_color.value }}; color: #ffffff;">
-        {{ label | escape }}
-      </p>
-    {%- endfor -%}
-  {% else %}
-    {% if product.metafields.custom.cluutch_meilleure != blank %}
-      <p class="cluutch-badge cluutch-badge--yellow">
-        {{ product.metafields.custom.cluutch_meilleure }}
-      </p>
-    {% endif %}
-    {% if product.metafields.custom.cluutch_sans != blank %}
-      <p class="cluutch-badge cluutch-badge--blue">
-        {{ product.metafields.custom.cluutch_sans }}
-      </p>
-    {% endif %}
-    {% if product.metafields.custom.cluutch_lavande != blank %}
-      <p class="cluutch-badge cluutch-badge--blue-lava">
-        {{ product.metafields.custom.cluutch_lavande }}
-      </p>
-    {% endif %}
-    {% if product.metafields.custom.cluutch_fleurs != blank %}
-      <p class="cluutch-badge cluutch-badge--orange">
-        {{ product.metafields.custom.cluutch_fleurs }}
-      </p>
-    {% endif %}
-    {% if product.metafields.custom.cluutch_eucalyptus != blank %}
-      <p class="cluutch-badge cluutch-badge--mint">
-        {{ product.metafields.custom.cluutch_eucalyptus }}
-      </p>
-    {% endif %}
+  {% if badge_owner.metafields.custom.label_texte != blank and badge_owner.metafields.custom.label_color != blank %}
+    <p class="cluutch-badge" style="background: {{ badge_owner.metafields.custom.label_color }}; color: #ffffff;">
+      {{ badge_owner.metafields.custom.label_texte | escape }}
+    </p>
+  {% endif %}
+  {% if product.metafields.custom.cluutch_meilleure != blank %}
+    <p class="cluutch-badge cluutch-badge--yellow">
+      {{ product.metafields.custom.cluutch_meilleure }}
+    </p>
+  {% endif %}
+  {% if product.metafields.custom.cluutch_sans != blank %}
+    <p class="cluutch-badge cluutch-badge--blue">
+      {{ product.metafields.custom.cluutch_sans }}
+    </p>
+  {% endif %}
+  {% if product.metafields.custom.cluutch_lavande != blank %}
+    <p class="cluutch-badge cluutch-badge--blue-lava">
+      {{ product.metafields.custom.cluutch_lavande }}
+    </p>
+  {% endif %}
+  {% if product.metafields.custom.cluutch_fleurs != blank %}
+    <p class="cluutch-badge cluutch-badge--orange">
+      {{ product.metafields.custom.cluutch_fleurs }}
+    </p>
+  {% endif %}
+  {% if product.metafields.custom.cluutch_eucalyptus != blank %}
+    <p class="cluutch-badge cluutch-badge--mint">
+      {{ product.metafields.custom.cluutch_eucalyptus }}
+    </p>
   {% endif %}
 </div>
 
