@@ -1737,8 +1737,41 @@
                   .reassurance-{{ block.id }} .reassurance-desktop { display: none; }
                   .reassurance-{{ block.id }} .reassurance-mobile { display: block; }
                 }
+
+                /* --- LIST MODE --- */
+                .reassurance-{{ block.id }}.reassurance-list {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 10px;
+                }
+                .reassurance-{{ block.id }}.reassurance-list .reassurance-list-item {
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                }
+                @media (max-width: 767px) {
+                  .reassurance-{{ block.id }}.reassurance-list .reassurance-list-item {
+                    justify-content: center;
+                  }
+                }
               </style>
 
+              {%- if block.settings.display_as_list -%}
+                <div class="reassurance-{{ block.id }} reassurance-list" {{ block.shopify_attributes }}>
+                  {%- for i in (1..5) -%}
+                    {%- assign icon_key = 'item_' | append: i | append: '_icon' -%}
+                    {%- assign text_key = 'item_' | append: i | append: '_text' -%}
+                    {%- if block.settings[text_key] != blank -%}
+                      <div class="reassurance-list-item">
+                        {%- if block.settings[icon_key] != blank -%}
+                          <span class="reassurance-icon">{{ block.settings[icon_key] }}</span>
+                        {%- endif -%}
+                        <span class="reassurance-text">{{ block.settings[text_key] }}</span>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              {%- else -%}
               <div class="reassurance-{{ block.id }}" {{ block.shopify_attributes }}>
                 <!-- DESKTOP: simple JS, pas de Swiper -->
                 <div class="reassurance-desktop">
@@ -1858,6 +1891,7 @@
                   }
                 })();
               </script>
+              {%- endif -%}
             {%- endif -%}
 
           {%- endcase -%}
@@ -3417,6 +3451,13 @@
         {
           "type": "header",
           "content": "Style"
+        },
+        {
+          "type": "checkbox",
+          "id": "display_as_list",
+          "label": "Afficher en liste (sans slider)",
+          "default": false,
+          "info": "Si coche, les elements s'affichent les uns sous les autres (gauche sur desktop, centre sur mobile)"
         },
         {
           "type": "color",
