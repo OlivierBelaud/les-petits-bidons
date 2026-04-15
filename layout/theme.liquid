@@ -75,9 +75,12 @@
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+      media="print"
+      onload="this.media='all'"
     >
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script type="text/javascript" src="https://klaviyo.com/media/js/public/klaviyo_subscribe.js"></script>
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></noscript>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script type="text/javascript" src="https://klaviyo.com/media/js/public/klaviyo_subscribe.js" defer></script>
     {% comment %} swiper for some sections {% endcomment %}
 
     <link

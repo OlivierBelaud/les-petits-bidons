@@ -255,6 +255,13 @@
     });
   });
 
-  initializeSliders();
+  (function waitForSwiperThenInit(attempts) {
+    attempts = attempts || 0;
+    if (typeof Swiper !== 'undefined') {
+      initializeSliders();
+    } else if (attempts < 50) {
+      setTimeout(function () { waitForSwiperThenInit(attempts + 1); }, 100);
+    }
+  })();
 </script>
 
