@@ -251,7 +251,14 @@
     }
 
     html.js .cluutch-cart-drawer .drawer__close {
-        all: revert;
+        clip: auto !important;
+        height: var(--sp-12) !important;
+        width: var(--sp-12) !important;
+        margin: 0 0 0 auto !important;
+        padding: 0 !important;
+        position: relative !important;
+        white-space: normal !important;
+        overflow: hidden !important;
     }
 }
 
