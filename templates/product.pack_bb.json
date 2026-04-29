@@ -155,42 +155,6 @@
             "image": "shopify://shop_images/x1-bottle.svg",
             "discount_label": ""
           }
-        },
-        "quantity_4VpdJX": {
-          "type": "quantity-button",
-          "settings": {
-            "value": 2,
-            "price": "30.76",
-            "compare": "33.80",
-            "discount": "-9%",
-            "text": "x2",
-            "image": "shopify://shop_images/x2-bottle.svg",
-            "discount_label": "Remise sur quantité x2 (-9%)"
-          }
-        },
-        "quantity_xRefgx": {
-          "type": "quantity-button",
-          "settings": {
-            "value": 3,
-            "price": "45.12",
-            "compare": "50.70",
-            "discount": "-11%",
-            "text": "x3",
-            "image": "shopify://shop_images/x3-bottle.svg",
-            "discount_label": "Remise sur quantité x3 (-11%)"
-          }
-        },
-        "quantity_fE7pE4": {
-          "type": "quantity-button",
-          "settings": {
-            "value": 6,
-            "price": "89.23",
-            "compare": "101.40",
-            "discount": "-12%",
-            "text": "x6",
-            "image": "shopify://shop_images/x6-bottle.svg",
-            "discount_label": "Remise sur quantité x6 (-12%)"
-          }
         }
       },
       "block_order": [
@@ -208,10 +172,7 @@
         "product_variations_BbLbWY",
         "icons_BXhQD4",
         "collapsible_tab_xNp9JX",
-        "quantity_GgPj6j",
-        "quantity_4VpdJX",
-        "quantity_xRefgx",
-        "quantity_fE7pE4"
+        "quantity_GgPj6j"
       ],
       "settings": {
         "enable_sticky_info": true,
