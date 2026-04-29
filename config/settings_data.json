@@ -234,7 +234,7 @@
       },
       "1530068250781986104": {
         "type": "shopify://apps/fbp-fast-bundle/blocks/fast_bundle/9e87fbe2-9041-4c23-acf5-322413994cef",
-        "disabled": true,
+        "disabled": false,
         "settings": {
           "home": false
         }
