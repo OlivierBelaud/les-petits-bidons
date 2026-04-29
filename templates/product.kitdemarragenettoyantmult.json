@@ -12,12 +12,6 @@
     "cluutch_main_product_7yzPKV": {
       "type": "cluutch-main-product",
       "blocks": {
-        "price_4i3dPw": {
-          "type": "price",
-          "settings": {
-            "show_taxes_notice": false
-          }
-        },
         "breadcrumb_8i89Xz": {
           "type": "breadcrumb",
           "settings": {
@@ -185,7 +179,6 @@
         }
       },
       "block_order": [
-        "price_4i3dPw",
         "breadcrumb_8i89Xz",
         "vendor",
         "title",
