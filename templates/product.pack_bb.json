@@ -149,18 +149,6 @@
         "collapsible_tab_xNp9JX": {
           "type": "collapsible_tab",
           "settings": {}
-        },
-        "quantity_GgPj6j": {
-          "type": "quantity-button",
-          "settings": {
-            "value": 1,
-            "price": "16.90",
-            "compare": "",
-            "discount": "",
-            "text": "x1",
-            "image": "shopify://shop_images/x1-bottle.svg",
-            "discount_label": ""
-          }
         }
       },
       "block_order": [
@@ -178,8 +166,7 @@
         "smile_io_smile_points_on_product_page_BKaK8T",
         "product_variations_BbLbWY",
         "icons_BXhQD4",
-        "collapsible_tab_xNp9JX",
-        "quantity_GgPj6j"
+        "collapsible_tab_xNp9JX"
       ],
       "settings": {
         "enable_sticky_info": true,
