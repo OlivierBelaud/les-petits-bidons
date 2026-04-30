@@ -354,18 +354,18 @@
       "type": "lpb-scrolling-banner",
       "name": "LPB scrolling banner",
       "settings": {
-        "text": "<p>⏳ PROLONGATION EXCEPTIONNELLE ⏳ <strong>-15% dès 20€ d'achat</strong></p>",
-        "speed": 20,
-        "color_background": "#fcecbf",
-        "color_text": "#fca405",
+        "text": "<p>Important : les jours fériés peuvent rallonger votre livraison de 1 à 2 jours ! 🤗</p>",
+        "speed": 40,
+        "color_background": "#e4f7f6",
+        "color_text": "#007e7f",
         "padding_mobile": 14,
         "padding": 4,
-        "enable_schedule": true,
+        "enable_schedule": false,
         "start_date": "03/04/2026",
         "start_time": "09:00",
         "end_date": "05/04/2026",
         "end_time": "23:00",
-        "enable_sticky": true
+        "enable_sticky": false
       }
     }
   },
