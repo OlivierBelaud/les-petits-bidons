@@ -641,10 +641,46 @@
             "highlighted_scribble": "circle"
           }
         },
+        "question_gGHWtJ": {
+          "type": "question",
+          "settings": {
+            "title": "Quelle est la différence avec un produit WC conventionnel ?",
+            "text": "<p>Contrairement aux gels WC classiques, souvent formulés à base de javel, d’ingrédients pétrochimiques, de conservateurs et colorants, notre Gel WC naturel est composé uniquement d’ingrédients d’origine naturelle,<strong> sans aucune substance controversée</strong>.</p><p>Il est tout aussi efficace pour nettoyer et détartrer mais beaucoup plus doux pour l’environnement et plus sain pour un usage quotidien.</p><p>De plus, <strong>le flacon est composé de plastique 100% recyclé et recyclable.</strong></p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_tYFMqf": {
+          "type": "question",
+          "settings": {
+            "title": "Le Gel WC Les Petits Bidons est-il compatible avec les fosses septique ?",
+            "text": "<p>Le produit WC Les Petits Bidons est <strong>compatible avec les fosses septiques</strong>. </p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_7YYNrg": {
+          "type": "question",
+          "settings": {
+            "title": "Combien de temps faut-il laisser agir le Gel WC avec de frotter/tirer la chasse ?",
+            "text": "<p>Il est recommandé de laisser agir le produit WC Les Petits Bidons <strong>15mn minimum</strong>, avant de frotter les parois et le fond de la cuvette puis de tirer la chasse d’eau. Si vos toilettes sont très sales, vous pouvez le faire poser toute la nuit.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_RmjVrH": {
+          "type": "question",
+          "settings": {
+            "title": "Le Gel WC Les Petits Bidons est-il efficace en eau dure ?",
+            "text": "<p>Le produit WC naturel nettoie, détartre et désodorise vos toilettes. Il est possible qu’une eau très calcaire laisse des traces de tartre persistantes. Pour éviter cela, laissez agir le Gel WC au moins 1h, et frottez activement le fond de la cuvette. Vous pouvez également alterner avec l’utilisation de bicarbonate de soude et de vinaigre blanc.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
         "question_VWfyWi": {
           "type": "question",
           "settings": {
-            "title": "Les Nettoyants Multi-Surfaces écologiques sont ils aussi efficaces que les nettoyants classiques ?",
+            "title": "Le Nettoyant Multi-usages écologique Les Petits Bidons est-il aussi efficace qu'un spray classique ?",
             "text": "<p>Comme tous nos produits Les Petits Bidons, notre <strong>Nettoyant multi-surfaces</strong> écologique, rechargeable et réutilisable a été soumis à des tests d’efficacité en conditions d’utilisation réelles, réalisés par un laboratoire extérieur. En ce sens, ce produit est tout aussi efficace qu'un nettoyant classique, que vous trouvez traditionnellement dans vos magasins de proximité.</p><p>Notre nettoyant multi-surfaces écologique n'est pas <strong>désinfectant</strong> car la réglementation pour ce type de produits est très spécifique et les ingrédients utilisés peuvent être assez dangereux dans leur utilisation, on laisse donc certaines marques spécialistes de la désinfection s'en charger.</p><p>Toutefois, notre Nettoyant Multi-Surfaces a toutes les fonctions classiques d'un nettoyant : il nettoie, dégraisse et fait briller ! ✨</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
@@ -670,6 +706,7 @@
         },
         "question_eLEm7A": {
           "type": "question",
+          "disabled": true,
           "settings": {
             "title": "Le Nettoyant Multi-usages écologique Les Petits Bidons est-il aussi efficace qu'un spray classique ?",
             "text": "<p>Nous garantissons une efficacité au moins équivalente à celle des nettoyants conventionnels, mais avec 100% d’ingrédients d’origine naturelle ! Notre <strong>Nettoyant Multi-surfaces </strong>dégraisse, élimine le calcaire et fait briller votre salle de bain, votre cuisine, votre plan de travail, vos vitres...Son efficacité a été testée et validée en conditions réelles par un laboratoire indépendant.</p>",
@@ -697,9 +734,64 @@
         },
         "question_i78nnT": {
           "type": "question",
+          "disabled": true,
           "settings": {
             "title": "Puis-je cumuler un code promo avec mon abonnement ?",
             "text": "<p>L’abonnement vous donne déjà accès à -10% toute l’année, automatiquement appliqué à chaque commande. Les codes promo liés aux offres spéciales ou aux soldes ne sont donc pas cumulables avec l’abonnement.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_tAxn8m": {
+          "type": "question",
+          "settings": {
+            "title": "Que signifie la concentration du vinaigre ?",
+            "text": "<p>Il existe des vinaigres avec différentes concentrations d'acide acétique : 8°, 9,5° ou 14°. Plus le degré est élevé, plus le vinaigre est puissant. Un vinaigre concentré à 14° est idéal pour un détartrage intensif, tandis qu'un vinaigre à 9,5° est parfait pour un usage quotidien tout en restant efficace mais plus doux pour les surfaces.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_wNWcgP": {
+          "type": "question",
+          "settings": {
+            "title": "Puis-je utiliser le vinaigre Les Petits Bidons sur toutes les surfaces ?",
+            "text": "<p>Il est sans danger pour la plupart des surfaces comme le carrelage, les vitres, et les plans de travail. Évitez toutefois de l'utiliser sur le marbre et autres surfaces poreuses.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_Dr7qzp": {
+          "type": "question",
+          "settings": {
+            "title": "Quelle est la différence entre le vinaigre 14° et celui parfumé à la framboise ?",
+            "text": "<p>Les deux sont très efficaces pour nettoyer et détartrer. Le vinaigre concentré à 14° est idéal pour un détartrage puissant et en profondeur, tandis que le vinaigre parfumé à la framboise, plus doux, est parfait pour un usage quotidien tout en apportant une touche de fraîcheur fruitée à votre intérieur !</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_6epPgp": {
+          "type": "question",
+          "settings": {
+            "title": "Ce bicarbonate de soude est-il alimentaire ?",
+            "text": "<p>Non, le bicarbonate de soude Les Petits Bidons est spécifiquement formulé pour l’entretien ménager et n'est pas destiné à un usage alimentaire. Pour cuisiner ou préparer des recettes, il est recommandé d'utiliser du bicarbonate de soude alimentaire.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_YY3rCQ": {
+          "type": "question",
+          "settings": {
+            "title": "Quels sont les principaux usages du bicarbonate de soude ?",
+            "text": "<p>Le bicarbonate de soude est un produit polyvalent qui nettoie les surfaces comme les vitres, lavabos, sanitaires et éviers. Il désodorise, détache et ravive le linge. Il est idéal pour l’entretien de la maison, le soin des textiles et la neutralisation des mauvaises odeurs.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_ymUJPe": {
+          "type": "question",
+          "settings": {
+            "title": "Le bicarbonate de soude est-il sans danger pour les enfants et les animaux ?",
+            "text": "<p>Oui, le bicarbonate de soude est considéré comme sans danger lorsqu'il est utilisé correctement. C'est un produit naturel qui ne présente pas de risque pour les enfants ou les animaux domestiques. Toutefois, il est toujours préférable de le conserver hors de leur portée.</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -707,13 +799,23 @@
       },
       "block_order": [
         "question_9krc4H",
+        "question_gGHWtJ",
+        "question_tYFMqf",
+        "question_7YYNrg",
+        "question_RmjVrH",
         "question_VWfyWi",
         "question_QYJyaN",
         "question_BjtiYt",
         "question_eLEm7A",
         "question_B3RrTQ",
         "question_tRXxJf",
-        "question_i78nnT"
+        "question_i78nnT",
+        "question_tAxn8m",
+        "question_wNWcgP",
+        "question_Dr7qzp",
+        "question_6epPgp",
+        "question_YY3rCQ",
+        "question_ymUJPe"
       ],
       "settings": {
         "style": "with-background",
