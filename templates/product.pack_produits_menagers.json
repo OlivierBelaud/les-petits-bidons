@@ -253,9 +253,8 @@
         "collection": "best-sellers",
         "products": [
           "tablettes-lave-vaisselle-les-petits-bidons",
-          "liquide-vaisselle-500ml-les-petits-bidons",
-          "lessive-concentree-ecologique-1l-les-petits-bidons",
-          "lot-de-3-recharges-nettoyant-multi-surfaces"
+          "lot-de-3-recharges-nettoyant-multi-surfaces",
+          "lessive-concentree-ecologique-1l-les-petits-bidons"
         ],
         "product_limit": 6,
         "columns": 4,
