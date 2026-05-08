@@ -182,31 +182,26 @@
                               {%- endif -%}
                             </div>
                           </a>
-                          <a href="{{ product.url }}" class="cart-empty-product-card__title">
-                            {{- product.title | escape -}}
-                          </a>
+                          <div class="cart-empty-product-card__head">
+                            <a href="{{ product.url }}" class="cart-empty-product-card__title">
+                              {{- product.title | escape -}}
+                            </a>
+                            {%- if p_has_rating -%}
+                              <div class="cart-empty-product-card__rating">
+                                {% render 'cluutch-icon', icon: 'star' %}
+                                <span>{{ p_rating_clean }} ({{ p_rating_count }})</span>
+                              </div>
+                            {%- endif -%}
+                          </div>
                           <div class="cart-empty-product-card__price">
                             <span class="cart-empty-product-card__price-current">{{ p_variant.price | money }}</span>
                             {%- if p_on_sale -%}
                               <s class="cart-empty-product-card__price-compare">{{ p_variant.compare_at_price | money }}</s>
                             {%- endif -%}
                           </div>
-                          {%- if p_has_rating -%}
-                            <div class="cart-empty-product-card__rating">
-                              {% render 'cluutch-icon', icon: 'star' %}
-                              <span>{{ p_rating_clean }}/5</span>
-                            </div>
-                          {%- endif -%}
-                          {%- if product.available -%}
-                            {%- if product.variants.size == 1 -%}
-                              {%- form 'product', product, is: 'product-form', class: 'cart-empty-product-card__form' -%}
-                                <input type="hidden" name="id" value="{{ p_variant.id }}">
-                                <button type="submit" class="cart-empty-product-card__btn">+ Ajouter</button>
-                              {%- endform -%}
-                            {%- else -%}
-                              <a href="{{ product.url }}" class="cart-empty-product-card__btn">+ Ajouter</a>
-                            {%- endif -%}
-                          {%- endif -%}
+                          <a href="{{ product.url }}" class="cart-empty-product-card__btn" is="hover-link">
+                            Découvrir
+                          </a>
                         </div>
                       {%- endfor -%}
                     </div>
