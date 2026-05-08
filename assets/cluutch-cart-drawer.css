@@ -609,13 +609,13 @@ html.touch .has-modal-open {
     scroll-snap-align: start;
 }
 
-/* Slider produits incontournables: 2 cards visibles sur mobile */
+/* Slider produits incontournables: 4 cards visibles sur mobile (comme la maquette) */
 .cart-empty-state__slider--products {
-    gap: 10px;
+    gap: 6px;
 }
 
 .cart-empty-product-slide {
-    flex: 0 0 calc((100% - 10px) / 2);
+    flex: 0 0 calc((100% - 18px) / 4);
     scroll-snap-align: start;
     min-width: 0;
 }

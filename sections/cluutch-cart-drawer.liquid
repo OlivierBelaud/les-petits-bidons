@@ -80,26 +80,50 @@
                   {{ 'cart.general.empty' | t }}
                 </h2>
 
-                {%- if section.settings.empty_cart_collections != blank -%}
+                {%- comment -%}
+                  Sources hardcodees pour matcher les sections homepage:
+                  - cluutch_collection_list_4AHLEm: blocs collection (tous-les-produits, lessive, vaisselle, bebe, ...)
+                  - cluutch_featured_collections_63WKib: 1er bloc = best-sellers (produits)
+                  Si la liste 'empty_cart_collections' est configuree dans le theme editor, elle prend le dessus.
+                {%- endcomment -%}
+                {%- liquid
+                  assign essentials_handles_str = 'tous-les-produits-ecologiques-les-petits-bidons,lessive-les-petits-bidons,vaisselle-les-petits-bidons,bebe-les-petits-bidons,produit-menager-les-petits-bidons'
+                  assign essentials_handles = essentials_handles_str | split: ','
+
+                  assign essentials_collections = section.settings.empty_cart_collections
+                  if essentials_collections == blank
+                    assign essentials_collections = essentials_handles
+                  endif
+                -%}
+                {%- if essentials_collections.size > 0 -%}
                   <div class="cart-empty-state__section">
                     <p class="cart-empty-state__heading text-center">
                       Découvrez nos <strong>essentiels</strong> pour la maison 🌿
                     </p>
                     <div class="cart-empty-state__slider">
-                      {%- for col in section.settings.empty_cart_collections -%}
-                        <a class="cart-empty-collection-card" href="{{ col.url }}">
-                          <div class="cart-empty-collection-card__media">
-                            {%- if col.image -%}
-                              {{ col.image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
-                            {%- elsif col.products.first.featured_image -%}
-                              {{ col.products.first.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
-                            {%- endif -%}
-                            <span class="cart-empty-collection-card__arrow" aria-hidden="true">
-                              {%- render 'icon', icon: 'arrow-right', size: 'xs' -%}
-                            </span>
-                          </div>
-                          <span class="cart-empty-collection-card__label">{{ col.title }}</span>
-                        </a>
+                      {%- for entry in essentials_collections -%}
+                        {%- liquid
+                          if entry.url
+                            assign col = entry
+                          else
+                            assign col = collections[entry]
+                          endif
+                        -%}
+                        {%- if col != blank and col.url -%}
+                          <a class="cart-empty-collection-card" href="{{ col.url }}">
+                            <div class="cart-empty-collection-card__media">
+                              {%- if col.image -%}
+                                {{ col.image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                              {%- elsif col.products.first.featured_image -%}
+                                {{ col.products.first.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                              {%- endif -%}
+                              <span class="cart-empty-collection-card__arrow" aria-hidden="true">
+                                {%- render 'icon', icon: 'arrow-right', size: 'xs' -%}
+                              </span>
+                            </div>
+                            <span class="cart-empty-collection-card__label">{{ col.title }}</span>
+                          </a>
+                        {%- endif -%}
                       {%- endfor -%}
                     </div>
                   </div>
@@ -107,9 +131,6 @@
 
                 {%- liquid
                   assign best_sellers_products = collections['best-sellers'].products
-                  if best_sellers_products.size == 0
-                    assign best_sellers_products = section.settings.cart_recommendations_products
-                  endif
                 -%}
                 {%- if best_sellers_products.size > 0 -%}
                   <div class="cart-empty-state__section">
@@ -117,7 +138,7 @@
                       Nos Petits Bidons <strong>incontournables</strong> ✨️
                     </p>
                     <div class="cart-empty-state__slider cart-empty-state__slider--products">
-                      {%- for product in best_sellers_products limit: 8 -%}
+                      {%- for product in best_sellers_products limit: 12 -%}
                         <div class="cart-empty-product-slide">
                           {%- render 'cluutch-product-card',
                             product: product,
