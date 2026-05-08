@@ -129,7 +129,7 @@ console.log(
       );
     },
 
-    trapFocus: (container, elementToFocus = container) => {
+    trapFocus: (container, elementToFocus = container, options = {}) => {
       const elements = theme.a11y.getFocusableElements(container);
       const first = elements[0];
       const last = elements[elements.length - 1];
@@ -184,7 +184,7 @@ console.log(
         theme.a11y.trapFocusHandlers.focusin
       );
 
-      elementToFocus.focus();
+      elementToFocus.focus(options);
 
       if (
         elementToFocus.tagName === "INPUT" &&

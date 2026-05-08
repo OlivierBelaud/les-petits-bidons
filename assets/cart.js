@@ -193,18 +193,19 @@ class CartItems extends HTMLElement {
     }
 
     const lineItem = document.getElementById(`CartItem-${event.line}`) || document.getElementById(`CartDrawer-Item-${event.line}`);
+    // preventScroll: true so the browser doesn't auto-scroll the drawer to bring focus into view
     if (lineItem && lineItem.querySelector(`[name="${event.name}"]`)) {
-      theme.a11y.trapFocus(mainCart || miniCart, lineItem.querySelector(`[name="${event.name}"]`));
+      theme.a11y.trapFocus(mainCart || miniCart, lineItem.querySelector(`[name="${event.name}"]`), { preventScroll: true });
     }
     else if (event.cart.item_count === 0) {
       miniCart
-        ? theme.a11y.trapFocus(miniCart, miniCart.querySelector('a'))
-        : theme.a11y.trapFocus(document.querySelector('.empty-state'), document.querySelector('.empty-state__link'));
+        ? theme.a11y.trapFocus(miniCart, miniCart.querySelector('a'), { preventScroll: true })
+        : theme.a11y.trapFocus(document.querySelector('.empty-state'), document.querySelector('.empty-state__link'), { preventScroll: true });
     }
     // Do NOT trap focus on the first item title when the modified line still exists
     // (it scrolls the drawer back to the top). Trap focus on the modified line instead.
     else if (lineItem) {
-      theme.a11y.trapFocus(mainCart || miniCart, lineItem);
+      theme.a11y.trapFocus(mainCart || miniCart, lineItem, { preventScroll: true });
     }
 
     document.dispatchEvent(new CustomEvent('cart:updated', {
