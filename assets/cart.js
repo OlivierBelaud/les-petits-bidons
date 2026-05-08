@@ -172,10 +172,18 @@ class CartItems extends HTMLElement {
       if (updatedElement) {
         miniCart.innerHTML = updatedElement.innerHTML;
 
-        // Restore scroll position so the drawer doesn't jump to the top after a quantity update
+        // Restore scroll position so the drawer doesn't jump to the top after a quantity update.
+        // CSS sets `scroll-behavior: smooth` on .drawer__scrollable, which would animate the
+        // restore (visible "remonte/redescend"). We override it to instant for the restore,
+        // then revert on the next frame so user-initiated scrolling stays smooth.
         const newScrollable = miniCart.querySelector('.drawer__scrollable');
         if (newScrollable && savedScrollTop > 0) {
+          const prevScrollBehavior = newScrollable.style.scrollBehavior;
+          newScrollable.style.scrollBehavior = 'auto';
           newScrollable.scrollTop = savedScrollTop;
+          requestAnimationFrame(() => {
+            newScrollable.style.scrollBehavior = prevScrollBehavior;
+          });
         }
       }
     }
