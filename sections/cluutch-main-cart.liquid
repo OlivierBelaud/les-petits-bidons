@@ -175,7 +175,7 @@
                                         assign has_shopify_sale = true
                                       endif
                                     -%}
-                                    <div class="price{% if item.original_price != item.final_price or has_shopify_sale %} price--on-sale{% endif %} text-sm flex flex-wrap gap-1d5">
+                                    <div class="price{% if item.original_price != item.final_price or has_shopify_sale %} price--on-sale{% endif %} text-sm flex flex-wrap items-center gap-1d5">
                                       {%- liquid
                                       assign money_price = item.original_price | times: item.quantity | money
                                       if settings.currency_code_enabled
@@ -228,6 +228,39 @@
 
                                       {%- endif -%}
 
+                                      {%- if item.line_level_discount_allocations != blank -%}
+                                        {%- assign lot_pct = 0 -%}
+                                        {%- for discount in item.discount_allocations -%}
+                                          {%- if discount.discount_application.value_type == "percentage" -%}
+                                            {%- assign lot_pct = lot_pct | plus: discount.discount_application.value -%}
+                                          {%- endif -%}
+                                        {%- endfor -%}
+                                        <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
+                                          Lot de {{ item.quantity }} (-{{ lot_pct | round }}%)
+                                        </span>
+                                      {%- endif -%}
+
+                                      {%- if has_shopify_sale -%}
+                                        {%- assign shopify_diff = item.variant.compare_at_price | minus: item.variant.price -%}
+                                        {%- assign shopify_pct = shopify_diff | times: 100.0 | divided_by: item.variant.compare_at_price -%}
+                                        <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
+                                          Promo : -{{ shopify_pct | round }}%
+                                        </span>
+                                      {%- endif -%}
+
+                                      {%- if item.selling_plan_allocation != null -%}
+                                        {%- assign sp_name = item.selling_plan_allocation.selling_plan.name
+                                          | replace: 'Livraison tous les 1', 'Livré tous les'
+                                          | replace: 'Livraison tous les', 'Livré tous les'
+                                          | replace: 'Months', 'Mois'
+                                          | replace: 'Month', 'Mois'
+                                          | remove: ','
+                                        -%}
+                                        <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
+                                          {{ sp_name }} (-{{ item.selling_plan_allocation.selling_plan.price_adjustments.first.value }}%)
+                                        </span>
+                                      {%- endif -%}
+
                                       {%- if item.variant.available and item.unit_price_measurement -%}
                                         <span class="sr-only">{{ 'products.price.unit_price' | t }}</span>
                                         <span class="unit-price flex items-center">
@@ -248,51 +281,9 @@
                                         </span>
                                       {%- endif -%}
 
-                                    
+
                                   </div>
 
-                                        {%- if has_shopify_sale -%}
-                                            {%- assign shopify_diff = item.variant.compare_at_price | minus: item.variant.price -%}
-                                            {%- assign shopify_pct = shopify_diff | times: 100.0 | divided_by: item.variant.compare_at_price -%}
-                                            <p class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
-                                              Promo -{{ shopify_pct | round }}%
-                                            </p>
-                                        {%- endif -%}
-                                        {%- if item.line_level_discount_allocations != blank -%}
-                                            <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t | escape }}">
-                                            {%- for discount_allocation in item.line_level_discount_allocations -%}
-                                                <li class="discounts__discount text-xs flex flex-wrap items-center gap-1">
-                                                <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">{{ discount_allocation.discount_application.title |  replace: 'Réduction sur la quantité avec abonnement', 'Remise sur quantité'  }} 
-                                                    {% for discount in item.discount_allocations %}
-                                                    {% if discount.discount_application.value_type == "percentage" %}
-                                                    (-{{ discount.discount_application.value | round }}%)
-                                                    {% endif %}
-                                                {% endfor %}
-                                                </span>
-                                                {% comment %} <span class="badge badge--onsale flex items-center gap-1d5 font-medium leading-none rounded-full">-{{ discount_allocation.amount | money }}</span> {% endcomment %}
-                                                </li>
-                                            {%- endfor -%}
-                                            </ul>
-                                        {%- endif -%}
-                                        {%- if item.selling_plan_allocation != null -%}
-                                            <p class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full ">
-                                               
-                                            {% assign selling_plan_fixed = item.selling_plan_allocation.selling_plan.name 
-                                             | replace: 'Livraison tous les 1', 'Livré tous les'
-                                             | replace: 'Livraison tous les', 'Livré tous les'
-                                             | replace: 'Months', 'Mois'
-                                             | replace: 'Month', 'Mois'
-                                             | remove: ','
-                                              %}
-                                              {{ selling_plan_fixed }}
-                                              (-{{ item.selling_plan_allocation.selling_plan.price_adjustments.first.value }}%)
-                                          </p>
-                                          <script>
-                                            document.querySelectorAll('.cluutch-badge').forEach(el => {
-                                              el.innerHTML = el.innerHTML.replace('10&nbsp;%', '(-10%)');
-                                            });
-                                          </script>
-                                        {%- endif -%}
                                     </div>
                                     <div>
                                         <div class="cart-product__flex">
