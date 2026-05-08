@@ -308,13 +308,15 @@ html.touch .has-modal-open {
 /* Cards de recommandations panier (Figma design) */
 .cluutch-reco-card {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 10px;
     padding: 10px;
     background: #e4f7f6;
     border-radius: 20px;
     width: 100%;
+    height: 140px;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .cluutch-reco-card__media {
@@ -324,6 +326,7 @@ html.touch .has-modal-open {
     border-radius: 10px;
     overflow: hidden;
     display: block;
+    align-self: center;
 }
 
 .cluutch-reco-card__img {
@@ -389,8 +392,13 @@ html.touch .has-modal-open {
     font-weight: 500;
     color: var(--TEXT, #003435);
     opacity: 0.7;
-    line-height: 1;
+    line-height: 1.2;
     margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
 }
 
 .cluutch-reco-card__footer {
