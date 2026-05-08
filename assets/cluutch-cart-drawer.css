@@ -314,6 +314,7 @@ html.touch .has-modal-open {
     background: #e4f7f6;
     border-radius: 20px;
     width: 100%;
+    min-height: 130px;
     box-sizing: border-box;
 }
 
