@@ -380,6 +380,7 @@ html.touch .has-modal-open {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    min-height: 2.4em;
 }
 
 .cluutch-reco-card__title:hover {
