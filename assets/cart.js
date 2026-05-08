@@ -164,9 +164,19 @@ class CartItems extends HTMLElement {
 
     const miniCart = document.querySelector(`#MiniCart-${this.sectionId}`);
     if (miniCart) {
+      // Save scroll position of the drawer's scrollable area before innerHTML replace
+      const prevScrollable = miniCart.querySelector('.drawer__scrollable');
+      const savedScrollTop = prevScrollable ? prevScrollable.scrollTop : 0;
+
       const updatedElement = sectionToRender.querySelector(`#MiniCart-${this.sectionId}`);
       if (updatedElement) {
         miniCart.innerHTML = updatedElement.innerHTML;
+
+        // Restore scroll position so the drawer doesn't jump to the top after a quantity update
+        const newScrollable = miniCart.querySelector('.drawer__scrollable');
+        if (newScrollable && savedScrollTop > 0) {
+          newScrollable.scrollTop = savedScrollTop;
+        }
       }
     }
 
@@ -191,10 +201,10 @@ class CartItems extends HTMLElement {
         ? theme.a11y.trapFocus(miniCart, miniCart.querySelector('a'))
         : theme.a11y.trapFocus(document.querySelector('.empty-state'), document.querySelector('.empty-state__link'));
     }
-    else {
-      miniCart
-        ? theme.a11y.trapFocus(miniCart, miniCart.querySelector('.horizontal-product__title'))
-        : theme.a11y.trapFocus(mainCart, mainCart.querySelector('.cart__item-title'));
+    // Do NOT trap focus on the first item title when the modified line still exists
+    // (it scrolls the drawer back to the top). Trap focus on the modified line instead.
+    else if (lineItem) {
+      theme.a11y.trapFocus(mainCart || miniCart, lineItem);
     }
 
     document.dispatchEvent(new CustomEvent('cart:updated', {
