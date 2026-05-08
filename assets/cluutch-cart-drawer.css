@@ -349,7 +349,8 @@ html.touch .has-modal-open {
     font-size: 10px;
     line-height: 1;
     color: var(--TEXT, #003435);
-    min-height: 12px;
+    height: 14px;
+    flex-shrink: 0;
 }
 
 .cluutch-reco-card__rating svg {
