@@ -584,10 +584,10 @@ html.touch .has-modal-open {
 
 .cart-empty-collection-card__arrow {
     position: absolute;
-    bottom: 6px;
-    right: 6px;
-    width: 22px;
-    height: 22px;
+    bottom: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background: #f5b941;
     color: #003435;
@@ -597,15 +597,33 @@ html.touch .has-modal-open {
 }
 
 .cart-empty-collection-card__arrow svg {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
+}
+
+@media (min-width: 768px) {
+    .cart-empty-collection-card__arrow {
+        width: 22px;
+        height: 22px;
+    }
+
+    .cart-empty-collection-card__arrow svg {
+        width: 12px;
+        height: 12px;
+    }
 }
 
 .cart-empty-collection-card__label {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 500;
     line-height: 1.2;
     color: var(--TEXT, #003435);
+}
+
+@media (min-width: 768px) {
+    .cart-empty-collection-card__label {
+        font-size: 11px;
+    }
 }
 
 /* Slider horizontal pour les sections empty state (essentiels + incontournables) */
@@ -630,9 +648,18 @@ html.touch .has-modal-open {
     scrollbar-width: none;
 }
 
+/* Cards 'Decouvrez nos gammes naturelles'
+   Mobile: 2.5 visibles (un demi visible pour suggerer le scroll horizontal)
+   Tablet/desktop: 4 visibles */
 .cart-empty-state__slider .cart-empty-collection-card {
-    flex: 0 0 calc((100% - 18px) / 4);
+    flex: 0 0 calc((100% - 12px) / 2.5);
     scroll-snap-align: start;
+}
+
+@media (min-width: 768px) {
+    .cart-empty-state__slider .cart-empty-collection-card {
+        flex: 0 0 calc((100% - 18px) / 4);
+    }
 }
 
 /* Slider produits incontournables: 4 cards visibles sur mobile (comme la maquette) */
