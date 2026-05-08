@@ -228,31 +228,6 @@
 
                                       {%- endif -%}
 
-                                      
-                                      
-                                      {% if item.selling_plan_allocation or item.discount_allocations.size > 0 %}
-                                          {% assign total_discount = 0 %}
-
-                                          {% if item.selling_plan_allocation %}
-                                          {% assign selling_plan = item.selling_plan_allocation.selling_plan %}
-                                          {% if selling_plan.price_adjustments.first.value_type == 'percentage' %}
-                                              {% assign total_discount = total_discount | plus: selling_plan.price_adjustments.first.value %}
-                                          {% endif %}
-                                          {% endif %}
-                                          
-                                          {% for discount in item.discount_allocations %}
-                                            {% if discount.discount_application.value_type == "percentage" %}
-                                                {% assign total_discount = total_discount | plus: discount.discount_application.value %}
-                                            {% endif %}
-                                          {% endfor %}
-                                          
-                                          {% if total_discount > 0 %}
-                                            <div style="padding-inline: 5px; background: #E3F8F6; border-radius: 32px">
-                                                -{{ total_discount | round }}%
-                                            </div>
-                                          {% endif %}
-                                      {% endif %}
-                                  
                                       {%- if item.variant.available and item.unit_price_measurement -%}
                                         <span class="sr-only">{{ 'products.price.unit_price' | t }}</span>
                                         <span class="unit-price flex items-center">
@@ -275,7 +250,14 @@
 
                                     
                                   </div>
-        
+
+                                        {%- if has_shopify_sale -%}
+                                            {%- assign shopify_diff = item.variant.compare_at_price | minus: item.variant.price -%}
+                                            {%- assign shopify_pct = shopify_diff | times: 100.0 | divided_by: item.variant.compare_at_price -%}
+                                            <p class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
+                                              Promo -{{ shopify_pct | round }}%
+                                            </p>
+                                        {%- endif -%}
                                         {%- if item.line_level_discount_allocations != blank -%}
                                             <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t | escape }}">
                                             {%- for discount_allocation in item.line_level_discount_allocations -%}
@@ -303,7 +285,7 @@
                                              | remove: ','
                                               %}
                                               {{ selling_plan_fixed }}
-                                              (-{{ selling_plan.price_adjustments.first.value }}%)
+                                              (-{{ item.selling_plan_allocation.selling_plan.price_adjustments.first.value }}%)
                                           </p>
                                           <script>
                                             document.querySelectorAll('.cluutch-badge').forEach(el => {
