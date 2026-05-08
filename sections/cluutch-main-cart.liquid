@@ -95,9 +95,6 @@
                       <th colspan="1" scope="col">
                         {{- 'cart.headings.product' | t -}}
                       </th>
-                      <th class="hidden md:table-cell" colspan="1" scope="col">
-                        {{- 'cart.headings.quantity' | t -}}
-                      </th>
                       <th class="text-right hidden md:table-cell" colspan="1" scope="col">
                         {{- 'cart.headings.total' | t -}}
                       </th>
@@ -180,6 +177,7 @@
                                         assign has_shopify_sale = true
                                       endif
                                     -%}
+                                    <div class="cart-item__price-row flex flex-wrap items-center justify-between gap-3">
                                     <div class="price{% if item.original_price != item.final_price or has_shopify_sale %} price--on-sale{% endif %} text-sm flex flex-wrap items-center gap-1d5">
                                       {%- liquid
                                       assign money_price = item.original_price | times: item.quantity | money
@@ -288,69 +286,6 @@
 
 
                                   </div>
-
-                                    </div>
-                                    <div>
-                                        <div class="cart-product__flex">
-
-                                            {%- if item.product.metafields.reviews.rating.value != blank and item.product.metafields.reviews.rating_count.value > 0 -%}
-                                                {% liquid
-                                                  assign rating_decimal = 0
-                                                  assign decimal = item.product.metafields.reviews.rating.value.rating | modulo: 1
-                                                  if decimal >= 0.3 and decimal <= 0.7
-                                                    assign rating_decimal = 0.5
-                                                  elsif decimal > 0.7
-                                                    assign rating_decimal = 1
-                                                  endif
-                                                %}
-                                                <div class="product__rating cluutch-product__rating flex items-center gap-2" {{ block.shopify_attributes }}>
-                                                  {% comment %}
-                                                    <div
-                                                      class="rating text-lg leading-none"
-                                                      role="img"
-                                                      aria-label="{{ 'general.accessibility.star_reviews_info' | t: rating_value: product.metafields.reviews.rating.value, rating_max: product.metafields.reviews.rating.value.scale_max }}"
-                                                    >
-                                                      <span
-                                                        aria-hidden="true"
-                                                        class="rating-star{% if block == blank %} hidden lg:block{% endif %}"
-                                                        style="--rating: {{ product.metafields.reviews.rating.value.rating | floor }}; --rating-max: {{ product.metafields.reviews.rating.value.scale_max }}; --rating-decimal: {{ rating_decimal }};"
-                                                      ></span>
-                                                    </div>
-                                                  {% endcomment %}
-                                                  <div style="display: flex; gap 2px; align-items: center;">
-                                                    {% assign raw_rating = item.product.metafields.reviews.rating.value %}
-                                                    {% assign clean_rating = raw_rating | replace: ',', '.' | replace: ' ', '' | plus: 0 %}
-                                                    {% assign rounded_rating = clean_rating | round: 1 %}
-                                                    {% assign range = '1,2,3,4,5' | split: ',' %}
-
-                                                    {% render 'cluutch-icon', icon: 'star' %}
-                                                    <p class="rating-text text-sm leading-none">
-                                                      <span aria-hidden="true">{{ rounded_rating }}/5</span>
-                                                    </p>
-                                              
-           
-
-                                                  </div>
-                                                  <p class=" ">
-                                                    <span class="review-text" aria-hidden="true">
-                                                        ({{- item.product.metafields.reviews.rating_count.value }})
-                                                    </span>
-                                                   
-                                                  </p>
-                                                </div>
-                                              {%- endif -%}
-                                      
-                                        </div>
-
-                                   
-                                </div>
-                                    
-                                </div>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td class="cart-item__quantity text-sm text-right md:text-left">
                           {%- liquid
                             assign has_qty_rules = false
                             if item.variant.quantity_rule.increment > 1 or item.variant.quantity_rule.min > 1 or item.variant.quantity_rule.max != null
@@ -535,7 +470,69 @@
                               <a class="link" href="{{ item.url_to_remove }}"{% unless is_gift_wrap_item %} is="cart-remove-button"{% else %} is="remove-gift-wrap"{% endunless %} data-index="{{ item.key }}" data-no-instant>{{ 'cart.general.remove' | t }}</a>
                             </div>
                           </div>
+                                    </div>
+
+                                    </div>
+                                    <div>
+                                        <div class="cart-product__flex">
+
+                                            {%- if item.product.metafields.reviews.rating.value != blank and item.product.metafields.reviews.rating_count.value > 0 -%}
+                                                {% liquid
+                                                  assign rating_decimal = 0
+                                                  assign decimal = item.product.metafields.reviews.rating.value.rating | modulo: 1
+                                                  if decimal >= 0.3 and decimal <= 0.7
+                                                    assign rating_decimal = 0.5
+                                                  elsif decimal > 0.7
+                                                    assign rating_decimal = 1
+                                                  endif
+                                                %}
+                                                <div class="product__rating cluutch-product__rating flex items-center gap-2" {{ block.shopify_attributes }}>
+                                                  {% comment %}
+                                                    <div
+                                                      class="rating text-lg leading-none"
+                                                      role="img"
+                                                      aria-label="{{ 'general.accessibility.star_reviews_info' | t: rating_value: product.metafields.reviews.rating.value, rating_max: product.metafields.reviews.rating.value.scale_max }}"
+                                                    >
+                                                      <span
+                                                        aria-hidden="true"
+                                                        class="rating-star{% if block == blank %} hidden lg:block{% endif %}"
+                                                        style="--rating: {{ product.metafields.reviews.rating.value.rating | floor }}; --rating-max: {{ product.metafields.reviews.rating.value.scale_max }}; --rating-decimal: {{ rating_decimal }};"
+                                                      ></span>
+                                                    </div>
+                                                  {% endcomment %}
+                                                  <div style="display: flex; gap 2px; align-items: center;">
+                                                    {% assign raw_rating = item.product.metafields.reviews.rating.value %}
+                                                    {% assign clean_rating = raw_rating | replace: ',', '.' | replace: ' ', '' | plus: 0 %}
+                                                    {% assign rounded_rating = clean_rating | round: 1 %}
+                                                    {% assign range = '1,2,3,4,5' | split: ',' %}
+
+                                                    {% render 'cluutch-icon', icon: 'star' %}
+                                                    <p class="rating-text text-sm leading-none">
+                                                      <span aria-hidden="true">{{ rounded_rating }}/5</span>
+                                                    </p>
+                                              
+           
+
+                                                  </div>
+                                                  <p class=" ">
+                                                    <span class="review-text" aria-hidden="true">
+                                                        ({{- item.product.metafields.reviews.rating_count.value }})
+                                                    </span>
+                                                   
+                                                  </p>
+                                                </div>
+                                              {%- endif -%}
+                                      
+                                        </div>
+
+                                   
+                                </div>
+                                    
+                                </div>
+                            </div>
+                          </div>
                         </td>
+
 
                         <td class="text-right hidden md:table-cell">
                           <span class="price text-base-xl">
