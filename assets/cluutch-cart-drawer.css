@@ -626,7 +626,8 @@ html.touch .has-modal-open {
     }
 }
 
-/* Slider horizontal pour les sections empty state (essentiels + incontournables) */
+/* Slider horizontal pour les sections empty state (gammes naturelles + recommandations).
+   Les cards restent dans le padding du drawer (pas de debordement aux bords). */
 .cart-empty-state__slider {
     display: flex;
     gap: 6px;
@@ -636,8 +637,6 @@ html.touch .has-modal-open {
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     padding-bottom: 4px;
-    margin-inline: -16px;
-    padding-inline: 16px;
 }
 
 .cart-empty-state__slider::-webkit-scrollbar {
