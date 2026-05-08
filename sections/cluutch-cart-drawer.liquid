@@ -82,33 +82,60 @@
 
                 {%- if section.settings.empty_cart_collections != blank -%}
                   <div class="cart-empty-state__section">
-                    <p class="cart-empty-state__heading text-center">Découvrez nos gammes naturelles</p>
-                    <div class="cart-empty-state__collections">
-                      {%- for item in section.settings.empty_cart_collections limit: 4 -%}
-                        <a class="cart-empty-collection-card" href="{{ item.url }}">
+                    <p class="cart-empty-state__heading text-center">
+                      Découvrez nos <strong>essentiels</strong> pour la maison 🌿
+                    </p>
+                    <div class="cart-empty-state__slider">
+                      {%- for col in section.settings.empty_cart_collections -%}
+                        <a class="cart-empty-collection-card" href="{{ col.url }}">
                           <div class="cart-empty-collection-card__media">
-                            {%- if item.image -%}
-                              {{ item.image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
-                            {%- elsif item.products.first.featured_image -%}
-                              {{ item.products.first.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                            {%- if col.image -%}
+                              {{ col.image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                            {%- elsif col.products.first.featured_image -%}
+                              {{ col.products.first.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
                             {%- endif -%}
                             <span class="cart-empty-collection-card__arrow" aria-hidden="true">
                               {%- render 'icon', icon: 'arrow-right', size: 'xs' -%}
                             </span>
                           </div>
-                          <span class="cart-empty-collection-card__label">{{ item.title }}</span>
+                          <span class="cart-empty-collection-card__label">{{ col.title }}</span>
                         </a>
                       {%- endfor -%}
                     </div>
                   </div>
                 {%- endif -%}
 
-                {%- if section.settings.cart_recommendations_products != blank -%}
+                {%- liquid
+                  assign best_sellers_products = collections['best-sellers'].products
+                  if best_sellers_products.size == 0
+                    assign best_sellers_products = section.settings.cart_recommendations_products
+                  endif
+                -%}
+                {%- if best_sellers_products.size > 0 -%}
                   <div class="cart-empty-state__section">
-                    <p class="cart-empty-state__heading text-center">Nos recommandations</p>
-                    <div class="cart-empty-state__products">
-                      {%- for product in section.settings.cart_recommendations_products limit: 4 -%}
-                        {%- render 'cluutch-product-card-horizontal', product: product -%}
+                    <p class="cart-empty-state__heading text-center">
+                      Nos Petits Bidons <strong>incontournables</strong> ✨️
+                    </p>
+                    <div class="cart-empty-state__slider cart-empty-state__slider--products">
+                      {%- for product in best_sellers_products limit: 8 -%}
+                        <div class="cart-empty-product-slide">
+                          {%- render 'cluutch-product-card',
+                            product: product,
+                            product_id: product.id,
+                            section_id: section.id,
+                            lazy_load: true,
+                            image_ratio: 'square',
+                            image_fill: false,
+                            show_secondary_image: false,
+                            show_vendor: false,
+                            show_rating: true,
+                            show_color_swatches: false,
+                            show_countdown: false,
+                            show_quick_add: true,
+                            show_quick_view: false,
+                            show_save_amount: false
+                          -%}
+                        </div>
                       {%- endfor -%}
                     </div>
                   </div>

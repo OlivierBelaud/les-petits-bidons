@@ -582,18 +582,61 @@ html.touch .has-modal-open {
     color: var(--TEXT, #003435);
 }
 
-.cart-empty-state__products {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+/* Slider horizontal pour les sections empty state (essentiels + incontournables) */
+.cart-empty-state__slider {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 4px;
+    margin-inline: -16px;
+    padding-inline: 16px;
 }
 
-.cart-empty-state__products .horizontal-product.cluutch-reco-card {
+.cart-empty-state__slider::-webkit-scrollbar {
+    display: none;
+}
+
+.cart-empty-state__slider {
+    scrollbar-width: none;
+}
+
+.cart-empty-state__slider .cart-empty-collection-card {
+    flex: 0 0 calc((100% - 18px) / 4);
+    scroll-snap-align: start;
+}
+
+/* Slider produits incontournables: 2 cards visibles sur mobile */
+.cart-empty-state__slider--products {
+    gap: 10px;
+}
+
+.cart-empty-product-slide {
+    flex: 0 0 calc((100% - 10px) / 2);
+    scroll-snap-align: start;
+    min-width: 0;
+}
+
+.cart-empty-product-slide .product-card,
+.cart-empty-product-slide .cluutch-card {
     width: 100%;
-    max-width: none;
+}
+
+.cart-empty-product-slide .product-card__media,
+.cart-empty-product-slide .cluutch-card__media {
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .cart-empty-state__message {
     color: var(--TEXT, #003435);
     opacity: 0.7;
+}
+
+/* Strong styling on headings to match homepage */
+.cart-empty-state__heading strong {
+    font-weight: 700;
 }
