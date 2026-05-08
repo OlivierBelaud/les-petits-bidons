@@ -626,12 +626,39 @@ html.touch .has-modal-open {
 }
 
 .cart-empty-product-card__media {
+    position: relative;
     display: block;
     width: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 10px;
     overflow: hidden;
     background: rgba(0, 0, 0, 0.04);
+}
+
+/* Pastilles compactes overlay sur l'image (drawer scope only) */
+.cart-empty-product-card__media .cluutch-badges-wrapper {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-start;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cart-empty-product-card__media .cluutch-badge {
+    font-size: 8px;
+    line-height: 1;
+    padding: 3px 6px;
+    border-radius: 999px;
+    margin: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .cart-empty-product-card__img {
