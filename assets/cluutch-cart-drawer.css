@@ -494,17 +494,23 @@ html.touch .has-modal-open {
     opacity: 0.4;
 }
 
-/* === Cart drawer empty state === */
+/* === Cart drawer empty state ===
+   Cotes Figma node 44:871 (iPhone 16 - 4):
+   - Titre "Votre panier est vide": 30px Bold (DM Sans)
+   - Sous-titres "Découvrez nos gammes naturelles" / "Nos recommandations": 18px Medium
+*/
 .cart-empty-state {
     padding: 24px 16px;
-    gap: 24px;
+    gap: 28px;
 }
 
 .cart-empty-state__title {
-    font-size: 28px;
+    font-family: var(--font-body-family, 'DM Sans', sans-serif);
+    font-size: 30px;
     font-weight: 700;
+    line-height: 1.1;
     color: var(--TEXT, #003435);
-    margin: 8px 0 4px;
+    margin: 8px 0 0;
 }
 
 .cart-empty-state__section {
@@ -514,8 +520,10 @@ html.touch .has-modal-open {
 }
 
 .cart-empty-state__heading {
+    font-family: var(--font-body-family, 'DM Sans', sans-serif);
     font-size: 18px;
     font-weight: 500;
+    line-height: 1.3;
     color: var(--TEXT, #003435);
     margin: 0;
 }
