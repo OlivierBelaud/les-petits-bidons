@@ -139,23 +139,51 @@
                     </p>
                     <div class="cart-empty-state__slider cart-empty-state__slider--products">
                       {%- for product in best_sellers_products limit: 12 -%}
-                        <div class="cart-empty-product-slide">
-                          {%- render 'cluutch-product-card',
-                            product: product,
-                            product_id: product.id,
-                            section_id: section.id,
-                            lazy_load: true,
-                            image_ratio: 'square',
-                            image_fill: false,
-                            show_secondary_image: false,
-                            show_vendor: false,
-                            show_rating: true,
-                            show_color_swatches: false,
-                            show_countdown: false,
-                            show_quick_add: true,
-                            show_quick_view: false,
-                            show_save_amount: false
-                          -%}
+                        {%- liquid
+                          assign p_variant = product.selected_or_first_available_variant
+                          assign p_on_sale = false
+                          if p_variant.compare_at_price > p_variant.price
+                            assign p_on_sale = true
+                          endif
+                          assign p_rating_value = product.metafields.reviews.rating.value
+                          assign p_rating_count = product.metafields.reviews.rating_count.value
+                          assign p_has_rating = false
+                          if p_rating_value != blank and p_rating_count > 0
+                            assign p_has_rating = true
+                            assign p_rating_clean = p_rating_value | replace: ',', '.' | replace: ' ', '' | plus: 0 | round: 1
+                          endif
+                        -%}
+                        <div class="cart-empty-product-card">
+                          <a class="cart-empty-product-card__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+                            {%- if product.featured_image -%}
+                              {{ product.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-product-card__img', width: 88, height: 88 }}
+                            {%- endif -%}
+                          </a>
+                          <a href="{{ product.url }}" class="cart-empty-product-card__title">
+                            {{- product.title | escape -}}
+                          </a>
+                          <div class="cart-empty-product-card__price">
+                            <span class="cart-empty-product-card__price-current">{{ p_variant.price | money }}</span>
+                            {%- if p_on_sale -%}
+                              <s class="cart-empty-product-card__price-compare">{{ p_variant.compare_at_price | money }}</s>
+                            {%- endif -%}
+                          </div>
+                          {%- if p_has_rating -%}
+                            <div class="cart-empty-product-card__rating">
+                              {% render 'cluutch-icon', icon: 'star' %}
+                              <span>{{ p_rating_clean }}/5</span>
+                            </div>
+                          {%- endif -%}
+                          {%- if product.available -%}
+                            {%- if product.variants.size == 1 -%}
+                              {%- form 'product', product, is: 'product-form', class: 'cart-empty-product-card__form' -%}
+                                <input type="hidden" name="id" value="{{ p_variant.id }}">
+                                <button type="submit" class="cart-empty-product-card__btn">+ Ajouter</button>
+                              {%- endform -%}
+                            {%- else -%}
+                              <a href="{{ product.url }}" class="cart-empty-product-card__btn">+ Ajouter</a>
+                            {%- endif -%}
+                          {%- endif -%}
                         </div>
                       {%- endfor -%}
                     </div>
