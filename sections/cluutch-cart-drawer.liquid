@@ -183,6 +183,7 @@
                                       <a href="{{ item.url }}" class="horizontal-product__title reversed-link font-medium text-base leading-tight">{{ item.product.title | escape }}</a>
                                   </div>
                                   {%- if item.product.has_only_default_variant == false or item.properties.size != 0 or item.selling_plan_allocation != null -%}
+                                      <!-- DEBUG-CART-DRAWER-VARIANTS-INLINE -->
                                       <dl class="grid gap-1d5">
                                       {%- unless item.product.has_only_default_variant -%}
                                           {%- assign variant_inline = '' -%}
