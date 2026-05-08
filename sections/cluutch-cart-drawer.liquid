@@ -230,7 +230,7 @@
                                                   assign has_shopify_sale = true
                                                 endif
                                               -%}
-                                              <div class="cart-item__price-row flex items-start justify-between gap-3 w-full">
+                                              <div class="cart-item__price-row flex items-end justify-between gap-3 w-full">
                                               <div class="price{% if item.original_price != item.final_price or has_shopify_sale %} price--on-sale{% endif %} text-sm flex flex-wrap items-center gap-1d5">
                                                   {%- liquid
                                                   assign money_price = item.original_price | times: item.quantity | money

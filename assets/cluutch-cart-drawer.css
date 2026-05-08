@@ -283,3 +283,24 @@ html.touch .has-modal-open {
         padding-inline: 20px;
     }
 }
+/* Mobile: reduce qty selector size */
+@media (max-width: 767px) {
+    .cart-qty-pill {
+        padding: 3px 4px;
+    }
+    .cart-qty-pill__btn,
+    .cart-qty-pill__input {
+        width: 28px;
+        height: 28px;
+    }
+    .cart-qty-pill__btn {
+        font-size: 16px;
+    }
+    .cart-qty-pill__btn svg {
+        width: 14px;
+        height: 14px;
+    }
+    .cart-qty-pill__input {
+        font-size: 14px;
+    }
+}
