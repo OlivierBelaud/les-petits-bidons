@@ -493,3 +493,107 @@ html.touch .has-modal-open {
     height: 40px;
     opacity: 0.4;
 }
+
+/* === Cart drawer empty state === */
+.cart-empty-state {
+    padding: 24px 16px;
+    gap: 24px;
+}
+
+.cart-empty-state__title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--TEXT, #003435);
+    margin: 8px 0 4px;
+}
+
+.cart-empty-state__section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cart-empty-state__heading {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--TEXT, #003435);
+    margin: 0;
+}
+
+.cart-empty-state__collections {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.cart-empty-collection-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-decoration: none;
+    color: var(--TEXT, #003435);
+    font-size: 11px;
+    text-align: center;
+    transition: transform 0.15s ease;
+}
+
+.cart-empty-collection-card:hover {
+    transform: translateY(-2px);
+}
+
+.cart-empty-collection-card__media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.cart-empty-collection-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cart-empty-collection-card__arrow {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #f5b941;
+    color: #003435;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-empty-collection-card__arrow svg {
+    width: 12px;
+    height: 12px;
+}
+
+.cart-empty-collection-card__label {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--TEXT, #003435);
+}
+
+.cart-empty-state__products {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.cart-empty-state__products .horizontal-product.cluutch-reco-card {
+    width: 100%;
+    max-width: none;
+}
+
+.cart-empty-state__message {
+    color: var(--TEXT, #003435);
+    opacity: 0.7;
+}

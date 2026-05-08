@@ -75,40 +75,50 @@
           <span class="sr-only">{{ 'general.cart.title' | t }}</span>
           <div class="flex flex-col h-full">
             {%- if cart == empty -%}
-              <div class="drawer__scrollable relative flex justify-center items-start grow shrink text-center">
-                <div class="drawer__empty grid gap-5 md:gap-8">
-                  <h2 class="drawer__empty-text heading leading-none tracking-tight">{{ 'cart.general.empty' | t }}</h2>
-                  <div class="drawer__empty-message text-sm md:text-base leading-tight rte">
+              <div class="drawer__scrollable cart-empty-state relative flex flex-col grow shrink">
+                <h2 class="cart-empty-state__title heading leading-none tracking-tight text-center">
+                  {{ 'cart.general.empty' | t }}
+                </h2>
+
+                {%- if section.settings.empty_cart_collections != blank -%}
+                  <div class="cart-empty-state__section">
+                    <p class="cart-empty-state__heading text-center">Découvrez nos gammes naturelles</p>
+                    <div class="cart-empty-state__collections">
+                      {%- for item in section.settings.empty_cart_collections limit: 4 -%}
+                        <a class="cart-empty-collection-card" href="{{ item.url }}">
+                          <div class="cart-empty-collection-card__media">
+                            {%- if item.image -%}
+                              {{ item.image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                            {%- elsif item.products.first.featured_image -%}
+                              {{ item.products.first.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                            {%- endif -%}
+                            <span class="cart-empty-collection-card__arrow" aria-hidden="true">
+                              {%- render 'icon', icon: 'arrow-right', size: 'xs' -%}
+                            </span>
+                          </div>
+                          <span class="cart-empty-collection-card__label">{{ item.title }}</span>
+                        </a>
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+
+                {%- if section.settings.cart_recommendations_products != blank -%}
+                  <div class="cart-empty-state__section">
+                    <p class="cart-empty-state__heading text-center">Nos recommandations</p>
+                    <div class="cart-empty-state__products">
+                      {%- for product in section.settings.cart_recommendations_products limit: 4 -%}
+                        {%- render 'cluutch-product-card-horizontal', product: product -%}
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+
+                {%- if section.settings.empty_cart_message != blank -%}
+                  <div class="cart-empty-state__message text-sm leading-tight rte text-center">
                     {{- section.settings.empty_cart_message -}}
                   </div>
-                  <ul class="drawer__empty-collections grid gap-3">
-                    {%- if section.settings.empty_cart_collections == blank -%}
-                      <li>
-                        <a class="flex items-center justify-between" href="{{ routes.all_products_collection_url }}">
-                          <span class="flex items-center">{{ 'cart.general.continue_shopping' | t }}</span>
-                          {%- render 'icon', icon: 'arrow-right', size: 'sm', class: 'transform' -%}
-                        </a>
-                      </li>
-                    {%- else -%}
-                      {%- for item in section.settings.empty_cart_collections -%}
-                        <li>
-                          <a class="flex items-center justify-between" href="{{ item.url }}">
-                            <span class="flex items-center gap-3">
-                              {%- liquid
-                                if item.metafields.theme.icon.value != blank
-                                  echo item.metafields.theme.icon.value | image_url: width: item.metafields.theme.icon.value.width | image_tag: loading: 'lazy', widths: '80,96,160,192', is: 'lazy-image'
-                                endif
-
-                                echo item.title
-                              -%}
-                            </span>
-                            {%- render 'icon', icon: 'arrow-right', size: 'sm', class: 'transform' -%}
-                          </a>
-                        </li>
-                      {%- endfor -%}
-                    {%- endif -%}
-                  </ul>
-                </div>
+                {%- endif -%}
               </div>
             {%- endif -%}
             <div class="drawer__scrollable relative flex flex-col gap-9 grow shrink{% if cart == empty %} hidden{% endif %}">
@@ -654,7 +664,7 @@
             {% endfor %}
 
             <!-- Judge.me rating moved to footer bottom -->
-            <div class="drawer__footer grid w-full{% if cart == empty %} hidden{% endif %}">
+            <div class="drawer__footer grid w-full">
               {%- if section.settings.show_cart_note or section.settings.show_shipping_calculator -%}
                 <div class="drawer__footer-top flex">
                   {%- if section.settings.show_cart_note -%}
@@ -845,82 +855,98 @@
                 </div>
               {%- endif -%}
               <div class="drawer__footer-bottom grid gap-2">
-                <div class="grid gap-2 sm:grid-6" style="margin-bottom: 10px;">
-                  {%- if cart.cart_level_discount_applications.size > 0 -%}
-                    <ul
-                      class="discounts list-unstyled"
-                      role="list"
-                      aria-label="{{ 'customer.order.discount' | t | escape }}"
-                    >
-                      {%- for discount in cart.cart_level_discount_applications -%}
-                        <li class="discounts__discount text-sm sm:text-base flex flex-wrap items-center justify-between gap-1d5">
-                          {{- discount.title -}}
-                          <span class="badge badge--onsale flex items-center gap-1d5 font-medium leading-none rounded-full"
-                            >-{{ discount.total_allocated_amount | money -}}
-                          </span>
-                        </li>
-                      {%- endfor -%}
-                    </ul>
-                  {%- endif -%}
-                  <div class="flex items-center justify-between">
-                    <span class="totals__subtotal text-sm sm:text-base">{{ 'cart.general.subtotal' | t }}</span>
-                    <div class="totals__subtotal-value text-lg-2xl font-bold leading-none tracking-tight">
-                      {{ cart.total_price | money_with_currency }}
+                {%- if cart != empty -%}
+                  <div class="grid gap-2 sm:grid-6" style="margin-bottom: 10px;">
+                    {%- if cart.cart_level_discount_applications.size > 0 -%}
+                      <ul
+                        class="discounts list-unstyled"
+                        role="list"
+                        aria-label="{{ 'customer.order.discount' | t | escape }}"
+                      >
+                        {%- for discount in cart.cart_level_discount_applications -%}
+                          <li class="discounts__discount text-sm sm:text-base flex flex-wrap items-center justify-between gap-1d5">
+                            {{- discount.title -}}
+                            <span class="badge badge--onsale flex items-center gap-1d5 font-medium leading-none rounded-full"
+                              >-{{ discount.total_allocated_amount | money -}}
+                            </span>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                    <div class="flex items-center justify-between">
+                      <span class="totals__subtotal text-sm sm:text-base">{{ 'cart.general.subtotal' | t }}</span>
+                      <div class="totals__subtotal-value text-lg-2xl font-bold leading-none tracking-tight">
+                        {{ cart.total_price | money_with_currency }}
+                      </div>
                     </div>
                   </div>
-                </div>
+                {%- endif -%}
 
-                {%- if section.settings.show_checkout_button or section.settings.show_view_cart_button -%}
-                  <form
-                    action="{{ routes.cart_url }}"
-                    method="POST"
-                    novalidate
-                    class="drawer__footer-buttons grid gap-4"
-                  >
-                    {%- if section.settings.show_checkout_button -%}
-                      <button
-                        class="button button--primary icon-with-text col-span-full cart-drawer__checkout-btn"
-                        type="submit"
-                        name="checkout"
-                        is="hover-button"
-                      >
-                        <span class="btn-fill" data-fill></span>
-                        <span class="btn-text">
-                          {{- 'cart.general.checkout' | t -}}
-                        </span>
-                      </button>
-                    {%- endif -%}
-
-                    {%- if section.settings.show_view_cart_button -%}
-                      <a
-                        href="{{ routes.cart_url }}"
-                        class="button button--secondary col-span-full"
-                        is="hover-link"
-                        data-no-instant
-                      >
-                        <span class="btn-fill" data-fill></span>
-                        <span class="btn-text">{{ 'general.cart.view_cart' | t }}</span>
-                      </a>
-                    {%- endif -%}
-                  </form>
-
-                  <p class="cart-drawer__checkout-info text-center">
-                    Codes promos & choix du mode de livraison à l'étape suivante<br>
-                    Choix du point-relais après paiement
-                  </p>
-
-                  <hr class="cart-drawer__separator">
-
-                  <div class="cart-drawer__rating flex items-center justify-center gap-2">
-                    {% render 'cluutch-icon', icon: 'star' %}
-                    <span class="cart-drawer__rating-text jdgm-all-reviews-text__text"
-                      data-score="{{ shop.metafields.judgeme.all_reviews_rating }}"
-                      data-number-of-reviews="{{ shop.metafields.judgeme.all_reviews_count }}"
+                {%- if cart != empty -%}
+                  {%- if section.settings.show_checkout_button or section.settings.show_view_cart_button -%}
+                    <form
+                      action="{{ routes.cart_url }}"
+                      method="POST"
+                      novalidate
+                      class="drawer__footer-buttons grid gap-4"
                     >
-                      <strong>4,8/5</strong> – 5 170 avis vérifiés
-                    </span>
+                      {%- if section.settings.show_checkout_button -%}
+                        <button
+                          class="button button--primary icon-with-text col-span-full cart-drawer__checkout-btn"
+                          type="submit"
+                          name="checkout"
+                          is="hover-button"
+                        >
+                          <span class="btn-fill" data-fill></span>
+                          <span class="btn-text">
+                            {{- 'cart.general.checkout' | t -}}
+                          </span>
+                        </button>
+                      {%- endif -%}
+
+                      {%- if section.settings.show_view_cart_button -%}
+                        <a
+                          href="{{ routes.cart_url }}"
+                          class="button button--secondary col-span-full"
+                          is="hover-link"
+                          data-no-instant
+                        >
+                          <span class="btn-fill" data-fill></span>
+                          <span class="btn-text">{{ 'general.cart.view_cart' | t }}</span>
+                        </a>
+                      {%- endif -%}
+                    </form>
+
+                    <p class="cart-drawer__checkout-info text-center">
+                      Codes promos & choix du mode de livraison à l'étape suivante<br>
+                      Choix du point-relais après paiement
+                    </p>
+                  {%- endif -%}
+                {%- else -%}
+                  <div class="drawer__footer-buttons grid gap-4">
+                    <a
+                      href="{{ routes.all_products_collection_url }}"
+                      class="button button--primary icon-with-text col-span-full cart-drawer__checkout-btn"
+                      is="hover-link"
+                      data-no-instant
+                    >
+                      <span class="btn-fill" data-fill></span>
+                      <span class="btn-text">Continuer mon shopping</span>
+                    </a>
                   </div>
                 {%- endif -%}
+
+                <hr class="cart-drawer__separator">
+
+                <div class="cart-drawer__rating flex items-center justify-center gap-2">
+                  {% render 'cluutch-icon', icon: 'star' %}
+                  <span class="cart-drawer__rating-text jdgm-all-reviews-text__text"
+                    data-score="{{ shop.metafields.judgeme.all_reviews_rating }}"
+                    data-number-of-reviews="{{ shop.metafields.judgeme.all_reviews_count }}"
+                  >
+                    <strong>4,8/5</strong> – 5 170 avis vérifiés
+                  </span>
+                </div>
               </div>
             </div>
           </div>
