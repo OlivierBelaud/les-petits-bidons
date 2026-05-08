@@ -25,11 +25,11 @@
 -%}
 
 <div class="horizontal-product cluutch-reco-card">
-  <a class="cluutch-reco-card__media" href="{{ product.url }}" tabindex="-1">
-    {%- if product.featured_media -%}
-      {{ product.featured_media | image_url: width: 200 | image_tag: loading: 'lazy', widths: '86,172,258', class: 'cluutch-reco-card__img' }}
+  <a class="cluutch-reco-card__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_image -%}
+      {{ product.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '86,172,258', class: 'cluutch-reco-card__img', alt: '', width: 86, height: 86 }}
     {%- else -%}
-      {{ 'image' | placeholder_svg_tag: 'cluutch-reco-card__img' }}
+      <span class="cluutch-reco-card__img-placeholder">{{ 'image' | placeholder_svg_tag: 'cluutch-reco-card__img placeholder-svg' }}</span>
     {%- endif -%}
   </a>
   <div class="cluutch-reco-card__body">
