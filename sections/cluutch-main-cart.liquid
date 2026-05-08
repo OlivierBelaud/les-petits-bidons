@@ -133,7 +133,6 @@
                                 </div>
                       
                                 {%- if item.product.has_only_default_variant == false or item.properties.size != 0 or item.selling_plan_allocation != null -%}
-                                  <!-- DEBUG-MAIN-CART-VARIANTS-INLINE -->
                                   <dl class="grid gap-1d5">
                                     {%- unless item.product.has_only_default_variant -%}
                                       {%- assign variant_inline = '' -%}
