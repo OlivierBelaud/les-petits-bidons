@@ -44,6 +44,8 @@
         {% render 'cluutch-icon', icon: 'star' %}
         <span class="cluutch-reco-card__rating-value">{{ rating_clean }}/5</span>
         <span class="cluutch-reco-card__rating-count">({{ rating_count }})</span>
+      {%- else -%}
+        <span aria-hidden="true">&nbsp;</span>
       {%- endif -%}
     </div>
     <a href="{{ product.url }}" class="cluutch-reco-card__title">
