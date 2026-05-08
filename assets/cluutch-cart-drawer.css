@@ -314,9 +314,7 @@ html.touch .has-modal-open {
     background: #e4f7f6;
     border-radius: 20px;
     width: 100%;
-    height: 140px;
     box-sizing: border-box;
-    overflow: hidden;
 }
 
 .cluutch-reco-card__media {
@@ -351,6 +349,7 @@ html.touch .has-modal-open {
     font-size: 10px;
     line-height: 1;
     color: var(--TEXT, #003435);
+    min-height: 12px;
 }
 
 .cluutch-reco-card__rating svg {
@@ -411,10 +410,24 @@ html.touch .has-modal-open {
 }
 
 .cluutch-reco-card__price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
     font-size: 12px;
     font-weight: 700;
     color: var(--TEXT, #003435);
     white-space: nowrap;
+}
+
+.cluutch-reco-card__price-current {
+    font-weight: 700;
+}
+
+.cluutch-reco-card__price-compare {
+    font-size: 10px;
+    font-weight: 400;
+    opacity: 0.6;
+    text-decoration: line-through;
 }
 
 .cluutch-reco-card__form {
@@ -426,7 +439,7 @@ html.touch .has-modal-open {
     align-items: center;
     justify-content: center;
     height: 30px;
-    padding: 0 12px;
+    padding: 0 10px;
     border: 1px solid #37b6ad;
     border-radius: 30px;
     background: transparent;
@@ -438,6 +451,7 @@ html.touch .has-modal-open {
     text-decoration: none;
     white-space: nowrap;
     transition: background-color 0.15s ease;
+    flex-shrink: 0;
 }
 
 .cluutch-reco-card__btn:hover {
@@ -455,8 +469,8 @@ html.touch .has-modal-open {
     padding: 10px;
     padding-block: 10px;
     border-block-start: 0;
-    width: 260px;
-    max-width: 260px;
+    width: 280px;
+    max-width: 280px;
 }
 
 .complementary-products .horizontal-products.flickity .horizontal-product.cluutch-reco-card {

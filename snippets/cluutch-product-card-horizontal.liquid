@@ -22,6 +22,12 @@
     assign has_rating = true
     assign rating_clean = rating_value | replace: ',', '.' | replace: ' ', '' | plus: 0 | round: 1
   endif
+
+  assign first_variant = product.selected_or_first_available_variant
+  assign on_sale = false
+  if first_variant.compare_at_price > first_variant.price
+    assign on_sale = true
+  endif
 -%}
 
 <div class="horizontal-product cluutch-reco-card">
@@ -33,13 +39,13 @@
     {%- endif -%}
   </a>
   <div class="cluutch-reco-card__body">
-    {%- if has_rating -%}
-      <div class="cluutch-reco-card__rating">
+    <div class="cluutch-reco-card__rating">
+      {%- if has_rating -%}
         {% render 'cluutch-icon', icon: 'star' %}
         <span class="cluutch-reco-card__rating-value">{{ rating_clean }}/5</span>
         <span class="cluutch-reco-card__rating-count">({{ rating_count }})</span>
-      </div>
-    {%- endif -%}
+      {%- endif -%}
+    </div>
     <a href="{{ product.url }}" class="cluutch-reco-card__title">
       {{- product.title | escape -}}
     </a>
@@ -47,17 +53,22 @@
       <p class="cluutch-reco-card__variant">{{ variant_label }}</p>
     {%- endif -%}
     <div class="cluutch-reco-card__footer">
-      <span class="cluutch-reco-card__price">
-        {%- if product.price_varies -%}
-          {{ product.price_min | money }}
-        {%- else -%}
-          {{ product.price | money }}
+      <span class="cluutch-reco-card__price{% if on_sale %} cluutch-reco-card__price--on-sale{% endif %}">
+        <span class="cluutch-reco-card__price-current">
+          {%- if product.price_varies -%}
+            {{ product.price_min | money }}
+          {%- else -%}
+            {{ product.price | money }}
+          {%- endif -%}
+        </span>
+        {%- if on_sale -%}
+          <s class="cluutch-reco-card__price-compare">{{ first_variant.compare_at_price | money }}</s>
         {%- endif -%}
       </span>
       {%- if product.available -%}
         {%- if product.variants.size == 1 -%}
           {%- form 'product', product, is: 'product-form', class: 'cluutch-reco-card__form' -%}
-            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <input type="hidden" name="id" value="{{ first_variant.id }}">
             <button type="submit" class="cluutch-reco-card__btn" aria-label="{{ 'products.product.quick_add' | t | escape }}">
               + Ajouter
             </button>
