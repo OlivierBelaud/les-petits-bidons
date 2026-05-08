@@ -219,7 +219,13 @@
                                   <div class="">
                                     <div class="flex flex-col gap-1">
                                             <div class="cart-product__content">
-                                              <div class="price{% if item.original_price != item.final_price %} price--on-sale{% endif %} text-sm flex flex-wrap gap-1d5">
+                                              {%- liquid
+                                                assign has_shopify_sale = false
+                                                if item.variant.compare_at_price > item.variant.price
+                                                  assign has_shopify_sale = true
+                                                endif
+                                              -%}
+                                              <div class="price{% if item.original_price != item.final_price or has_shopify_sale %} price--on-sale{% endif %} text-sm flex flex-wrap gap-1d5">
                                                   {%- liquid
                                                   assign money_price = item.original_price | times: item.quantity | money
                                                   if settings.currency_code_enabled
@@ -244,11 +250,26 @@
                                                         {% comment %} {{ money_price }} {% endcomment %}
                                                         {{ item.variant.price | times: item.quantity | money }}
                                                       </span>
-                                                  {% elsif item.original_price != item.variant.price %} 
+                                                  {%- elsif has_shopify_sale -%}
+                                                      <span class="sr-only">{{ 'products.price.regular_price' | t }}</span>
+                                                      <span class="price__regular whitespace-nowrap">
+                                                          <strong>
+                                                            {%- if settings.currency_code_enabled -%}
+                                                              {{ item.final_price | times: item.quantity | money_with_currency }}
+                                                            {%- else -%}
+                                                              {{ item.final_price | times: item.quantity | money }}
+                                                            {%- endif -%}
+                                                          </strong>
+                                                      </span>
+                                                      <span class="sr-only">{{ 'products.price.sale_price' | t }}</span>
+                                                      <span class="price__sale inline-flex items-center relative">
+                                                        {{ item.variant.compare_at_price | times: item.quantity | money }}
+                                                      </span>
+                                                  {% elsif item.original_price != item.variant.price %}
                                                               <strong>
                                                           {{- money_price -}}
                                                               </strong>
-                                                          
+
                                                       <span class="price__sale inline-flex items-center relative">{{ item.variant.price | times: item.quantity | money }}</span>
                                                       {%- else -%}
                                                       <strong>

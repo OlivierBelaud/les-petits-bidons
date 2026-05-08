@@ -663,7 +663,14 @@
 
                             {% assign total_price_cents = discounted_unit_price_cents | times: quantity %}
                             {% assign total_price_eur = total_price_cents | divided_by: 100.0 %}
-                            {% assign compare_price_eur = unit_price_cents | times: quantity | divided_by: 100.0 %}
+                            {%- comment -%} Prix barré : compare_at_price Shopify s'il est supérieur, sinon prix unitaire {%- endcomment -%}
+                            {% assign compare_at_cents = product.selected_or_first_available_variant.compare_at_price %}
+                            {% if compare_at_cents > unit_price_cents %}
+                              {% assign compare_unit_cents = compare_at_cents %}
+                            {% else %}
+                              {% assign compare_unit_cents = unit_price_cents %}
+                            {% endif %}
+                            {% assign compare_price_eur = compare_unit_cents | times: quantity | divided_by: 100.0 %}
 
                             <div class="product-quantity__button">
                               <input
