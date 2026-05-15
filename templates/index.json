@@ -33,15 +33,14 @@
       "blocks": {
         "image_64UWDg": {
           "type": "image",
-          "disabled": true,
           "settings": {
-            "image": "shopify://shop_images/Banniere_Printemps_-_desktop_-_site_-60.webp",
+            "image": "shopify://shop_images/Banniere_site_-_HP_-60.webp",
             "image_mobile": "shopify://shop_images/Banniere_Printemps_-_mobile_-_site_-60.webp",
-            "heading": "Dernier Jour !  -15% sur tout le site",
+            "heading": "-15% sur tout le site",
             "heading_size": "h1",
             "heading_tag": "h1",
             "button_label": "J'en profite",
-            "button_link": "shopify://pages/offreprintemps2026",
+            "button_link": "shopify://pages/offre-essentiels-de-mai",
             "button_style": "primary",
             "button_external": false,
             "button_icon": false
