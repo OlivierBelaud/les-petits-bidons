@@ -12,6 +12,23 @@
     "cluutch_main_product_7yzPKV": {
       "type": "cluutch-main-product",
       "blocks": {
+        "reassurance_cFyNPP": {
+          "type": "reassurance",
+          "settings": {
+            "item_1_icon": "🚚",
+            "item_1_text": "<p><strong>Livraison offerte</strong> des 50€</p>",
+            "item_2_icon": "⭐",
+            "item_2_text": "<p><strong>4,8/5</strong> – 6 370 avis verifies</p>",
+            "item_3_icon": "💬",
+            "item_3_text": "<p><strong>SAV aux petits soins</strong> – 94% de satisfaction</p>",
+            "item_4_icon": "🔒",
+            "item_4_text": "<p><strong>Paiement securise</strong> – CB, Apple Pay...</p>",
+            "item_5_icon": "",
+            "item_5_text": "",
+            "text_color": "#003435",
+            "autoplay_speed": 3000
+          }
+        },
         "breadcrumb_8i89Xz": {
           "type": "breadcrumb",
           "settings": {
@@ -179,6 +196,7 @@
         }
       },
       "block_order": [
+        "reassurance_cFyNPP",
         "breadcrumb_8i89Xz",
         "vendor",
         "title",
