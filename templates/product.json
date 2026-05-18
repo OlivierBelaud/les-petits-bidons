@@ -101,7 +101,7 @@
           "type": "reassurance",
           "settings": {
             "item_1_icon": "🚚",
-            "item_1_text": "<p><strong>Livraison offerte</strong> des 50€</p>",
+            "item_1_text": "<p><strong>Livraison offerte</strong> dès 50€</p>",
             "item_2_icon": "⭐",
             "item_2_text": "<p><strong>4,8/5</strong> – 6 370 avis verifies</p>",
             "item_3_icon": "💬",
