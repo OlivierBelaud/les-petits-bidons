@@ -99,6 +99,7 @@
         },
         "reassurance_qe7AAx": {
           "type": "reassurance",
+          "disabled": true,
           "settings": {
             "item_1_icon": "🚚",
             "item_1_text": "<p><strong>Livraison offerte</strong> dès 50€</p>",
