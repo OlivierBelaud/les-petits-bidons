@@ -78,12 +78,19 @@
         },
         "variant_picker": {
           "type": "variant_picker",
+          "disabled": true,
           "settings": {
             "show_variant_labels": true,
             "picker_type": "button",
             "enable_color_swatches": true,
             "color_swatch_type": "color",
             "size_chart": ""
+          }
+        },
+        "price_CffTd3": {
+          "type": "price",
+          "settings": {
+            "show_taxes_notice": false
           }
         },
         "buy_buttons": {
@@ -220,6 +227,7 @@
         "variants_TYUDEY",
         "cluutch_variant_picker_UwCP84",
         "variant_picker",
+        "price_CffTd3",
         "buy_buttons",
         "reassurance_Q3BEWB",
         "essential_countdown_timer_app_block_tekEab",
