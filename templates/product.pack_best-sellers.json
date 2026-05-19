@@ -712,6 +712,42 @@
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
+        },
+        "question_xUELBA": {
+          "type": "question",
+          "settings": {
+            "title": "Les tablettes Lave-Vaisselle Les Petits Bidons sont elles tout en 1 ?",
+            "text": "<p>Les tablettes Lave-Vaisselle Les Petits Bidons ont une action tout en 1. Composées de 99% d’ingrédients d’origine naturelle, elles nettoient, dégraissent et font briller la vaisselle. Il n’est donc pas nécessaire d’y ajouter sels régénérants et liquide de rinçage.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_Y8qrtb": {
+          "type": "question",
+          "settings": {
+            "title": "Combien de tablettes Lave-Vaisselle Les Petits Bidons sont nécessaires à un lavage ?",
+            "text": "<p>Une Tablette Lave-Vaisselle Action tout en 1 suffit pour un lavage.</p><p><strong>Si toutefois les résultats ne sont pas assez efficaces, augmentez d’abord la température de lavage.</strong></p><p>Si la température n’améliore pas les performances, l’eau est peut-être trop calcaire, dans ce cas, ajoutez du liquide de rinçage et des sels régénérants.</p><p>Pour vous aider à utiliser votre lave-vaisselle de manière écologique, nous avons rédigé <a href=\"https://lespetitsbidons.fr/blogs/news/comment-bien-utiliser-lave-vaisselle-ecologique\">un article avec quelques conseils</a> pratiques à mettre en place dès maintenant ! </p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_XxM8jQ": {
+          "type": "question",
+          "settings": {
+            "title": "Faut il ajouter des sels régénérants ou du liquide de rinçage à mon Lave-Vaisselle ?",
+            "text": "<p>Les Tablette Lave-Vaisselle Les Petits Bidons ont une action tout en 1, elles nettoient, dégraissent et font briller. <strong>Vous n’avez donc pas besoin d’y ajouter des sels régénérants ou du liquide de rinçage.</strong></p><p>Toutefois, en cas d’eau très dure, ou dans le cas d’une vaisselle très sale, l’ajout de liquide de rinçage et de sels régénérants est recommandé.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_aGnkAK": {
+          "type": "question",
+          "settings": {
+            "title": "A quelle température est-il recommandé de laver ma vaisselle ?",
+            "text": "<p>Les Tablette Lave-Vaisselle Les Petits Bidons ont été testées et validées pour une utilisation en cycle court, à basse température, à partir de 45°C.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
         }
       },
       "block_order": [
@@ -721,7 +757,11 @@
         "question_BjtiYt",
         "question_eLEm7A",
         "question_B3RrTQ",
-        "question_qgCUQf"
+        "question_qgCUQf",
+        "question_xUELBA",
+        "question_Y8qrtb",
+        "question_XxM8jQ",
+        "question_aGnkAK"
       ],
       "settings": {
         "style": "with-background",
