@@ -74,6 +74,7 @@
         },
         "cluutch_variant_picker_UwCP84": {
           "type": "cluutch-variant_picker",
+          "disabled": true,
           "settings": {}
         },
         "variant_picker": {
