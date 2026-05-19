@@ -651,7 +651,7 @@
         "question_9krc4H": {
           "type": "question",
           "settings": {
-            "title": "Pourquoi choisir une lessive écologique?",
+            "title": "Pourquoi choisir une lessive écologique ?",
             "text": "<p>Nous vous invitons à vous renseigner quant à la composition complète des produits que proposent les marques de produits ménagers ! La plupart du temps, les listes sont incomplètes et incompréhensibles sur les produits classiques… Et pour cause, elles cachent souvent des ingrédients nocifs. </p><p>Chez <strong>LES PETITS BIDONS</strong>, on a voulu repartir de zéro pour <strong>LAVER SANS TOUT SALIR</strong> !<br/><br/>Notre lessive concentrée lavande apporte des solutions <strong>naturelles</strong> et <strong>concrètes</strong> à vos besoins du quotidien : sains, naturels et efficaces, pour vous comme pour la planète. Des formules d'origine naturelle, efficaces et facilement biodégradables, sans huile de palme, sans dérivés de pétrole et autres substances controversées. Nous voulons vous donner le pouvoir de faire mieux et retrouver un peu de bon sens, chaque jour.</p><p><span style=\"text-decoration:underline\">Attention</span>: La lessive BIO n'existe pas. En effet, pour fabriquer une lessive BIO, il faudrait que celle-ci soit uniquement composée d'ingrédients d'origine végétale et issus de l'agriculture biologique. Cela n'est pas possible.. Cependant, 100% des ingrédients qui composent nos Lessives Poudre sont d'origine naturelle. </p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
@@ -695,6 +695,7 @@
         },
         "question_B3RrTQ": {
           "type": "question",
+          "disabled": true,
           "settings": {
             "title": "La lessive Les Petits Bidons est-elle vegan et non testée sur les animaux ?",
             "text": "<p>La lessive Fleurs Blanches, tout comme les autres lessives liquides écologiques Les Petits Bidons, est fabriquée à partir d'ingrédients naturels et est 100% vegan.<br/>Par ailleurs, notre lessive bébé n'a pas été testé sur le chat, le chien, le lapin ou tout autre animal. Ils n'ont rien demandé, on les laisse tranquille ! </p>",
@@ -704,6 +705,7 @@
         },
         "question_qgCUQf": {
           "type": "question",
+          "disabled": true,
           "settings": {
             "title": "Puis-je cumuler un code promo avec mon abonnement ?",
             "text": "<p>L’abonnement vous donne déjà accès à -10% toute l’année, automatiquement appliqué à chaque commande. Les codes promo liés aux offres spéciales ou aux soldes ne sont donc pas cumulables avec l’abonnement.</p>",
