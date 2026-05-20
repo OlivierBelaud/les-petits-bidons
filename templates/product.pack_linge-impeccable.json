@@ -715,6 +715,7 @@
         },
         "question_Y8qrtb": {
           "type": "question",
+          "disabled": true,
           "settings": {
             "title": "Pourquoi choisir un liquide vaisselle écologique ?",
             "text": "<p>Des produits toujours plus chimiques, toujours plus d’ingrédients de synthèse cachés et toxiques, fabriqués toujours plus loin de chez nous…<br/><br/>Voilà ce que nous réserve les lessives et autres produits ménagers industriels : la surperformance au dépend de votre santé et l'environnement !</p><p>Chez Les Petits Bidons, nous avons souhaité faire mieux, pour laver sans tout salir. Nos liquides vaisselle apportent des solutions naturelles et concrètes à vos besoins du quotidien : <strong>sains, naturels et efficaces</strong>, <strong>pour vous</strong> comme <strong>pour la planète.</strong><br/><br/>Des formules d'origine <strong>naturelle</strong>, <strong>efficaces et facilement biodégradables</strong>, sans huile de palme, sans dérivés de pétrole et autres substances controversées. Nous voulons vous donner le pouvoir de faire mieux et retrouver un peu de bon sens, chaque jour.</p><p>Tous nos liquides vaisselle sont composés à 100% d'ingrédients d'origine naturelle et sont facilement biodégradables : ils ont été testés et validés pour une utilisation \"classique\", à savoir en passant dans un système de traitement des eaux, ce qui nous permet de garantir que nos formules sont respectueuses de l'environnement.</p><p>Ainsi, nous vous conseillons d'utiliser les produits dans un cadre dédié de récupération d'eaux usées afin de ne pas jeter l'eau, ainsi que les produits dans la nature.</p>",
@@ -724,6 +725,7 @@
         },
         "question_XxM8jQ": {
           "type": "question",
+          "disabled": true,
           "settings": {
             "title": "Quel est le meilleur dégraissant pour la vaisselle ?",
             "text": "<p>Le meilleur dégraissant est celui qui cumule efficacité sans limite et composition naturelle ! Pour laver votre vaisselle sans salir la planète. </p><p>Notre Liquide vaisselle Les Petits Bidons a été testé et s’est révélé naturellement dégraissant. Notre formule est 100% d’origine naturelle, sans dérivés d’huile de palme, sans agents texturants de synthèse, ce qui peut donner l’impression que le liquide vaisselle soit moins efficace car il est moins moussant. Cela dit, la mousse n'est pas gage de l'efficacité du savon 😊</p>",
