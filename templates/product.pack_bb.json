@@ -58,12 +58,6 @@
           "type": "rating",
           "settings": {}
         },
-        "price_WDntWb": {
-          "type": "price",
-          "settings": {
-            "show_taxes_notice": false
-          }
-        },
         "countdown": {
           "type": "countdown",
           "settings": {
@@ -90,6 +84,12 @@
             "enable_color_swatches": true,
             "color_swatch_type": "color",
             "size_chart": ""
+          }
+        },
+        "price_WDntWb": {
+          "type": "price",
+          "settings": {
+            "show_taxes_notice": false
           }
         },
         "buy_buttons": {
@@ -156,11 +156,11 @@
         "vendor",
         "title",
         "rating_TJxXq6",
-        "price_WDntWb",
         "countdown",
         "variants_TYUDEY",
         "cluutch_variant_picker_UwCP84",
         "variant_picker",
+        "price_WDntWb",
         "buy_buttons",
         "essential_countdown_timer_app_block_tekEab",
         "smile_io_smile_points_on_product_page_BKaK8T",
