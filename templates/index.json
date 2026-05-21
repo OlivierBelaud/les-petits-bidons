@@ -33,6 +33,7 @@
       "blocks": {
         "image_64UWDg": {
           "type": "image",
+          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/Banniere_site_-_HP_-60.webp",
             "image_mobile": "shopify://shop_images/Banniere_site_-_HP_-_mobile_-60_1_1457cf7f-521d-471b-972a-e35bb5b17409.webp",
