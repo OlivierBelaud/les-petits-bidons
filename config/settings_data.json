@@ -238,6 +238,11 @@
         "settings": {
           "home": false
         }
+      },
+      "11077559776736408198": {
+        "type": "shopify://apps/wheelio-spin-popup-email-sms/blocks/wheelio/f45cb831-26a4-40d6-92e9-b57362611b34",
+        "disabled": false,
+        "settings": {}
       }
     }
   },
