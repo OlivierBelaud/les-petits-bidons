@@ -261,9 +261,9 @@
                                       type="submit"
                                       class="button button--primary pointer-events-auto "
                                       is="hover-button"
-                                      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                                      data-variant-id="{{ variant.id }}"
                                       aria-label="{{ quick_add_label | escape }}"
-                                      {% unless product.available %}
+                                      {% unless variant.available %}
                                         disabled="disabled"
                                       {% endunless %}
                                     >
@@ -275,7 +275,7 @@
                                             class=" hidden md:block"
                                             data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                           >
-                                            {% if product.available %}
+                                            {% if variant.available %}
                                               {{- quick_add_label -}}
                                             {% else %}
                                               Épuisé
@@ -292,7 +292,7 @@
                                             class="block"
                                             data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                           >
-                                            {% if product.available %}
+                                            {% if variant.available %}
                                               {{- quick_add_label -}}
                                             {% else %}
                                               Épuisé
@@ -424,9 +424,9 @@
                                       type="submit"
                                       class="button button--primary pointer-events-auto "
                                       is="hover-button"
-                                      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                                      data-variant-id="{{ variant.id }}"
                                       aria-label="{{ quick_add_label | escape }}"
-                                      {% unless product.available %}
+                                      {% unless variant.available %}
                                         disabled="disabled"
                                       {% endunless %}
                                     >
@@ -438,7 +438,7 @@
                                             class=" hidden md:block"
                                             data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                           >
-                                            {% if product.available %}
+                                            {% if variant.available %}
                                               {{- quick_add_label -}}
                                             {% else %}
                                               Épuisé
@@ -455,7 +455,7 @@
                                             class="block"
                                             data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                           >
-                                            {% if product.available %}
+                                            {% if variant.available %}
                                               {{- quick_add_label -}}
                                             {% else %}
                                               Épuisé
@@ -584,9 +584,9 @@
                                     type="submit"
                                     class="button button--primary pointer-events-auto "
                                     is="hover-button"
-                                    data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                                    data-variant-id="{{ variant.id }}"
                                     aria-label="{{ quick_add_label | escape }}"
-                                    {% unless product.available %}
+                                    {% unless variant.available %}
                                       disabled="disabled"
                                     {% endunless %}
                                   >
@@ -598,7 +598,7 @@
                                           class=" hidden md:block"
                                           data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                         >
-                                          {% if product.available %}
+                                          {% if variant.available %}
                                             {{- quick_add_label -}}
                                           {% else %}
                                             Épuisé
@@ -615,7 +615,7 @@
                                           class="block"
                                           data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                         >
-                                          {% if product.available %}
+                                          {% if variant.available %}
                                             {{- quick_add_label -}}
                                           {% else %}
                                             Épuisé
