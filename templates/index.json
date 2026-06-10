@@ -1066,6 +1066,7 @@
     },
     "cluutch_featured_collection_3N8Ekb": {
       "type": "cluutch-featured-collection",
+      "disabled": true,
       "settings": {
         "use_metafield_category": true,
         "collection_category": "Sport",
