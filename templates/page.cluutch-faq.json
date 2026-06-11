@@ -207,7 +207,7 @@
           "type": "question",
           "settings": {
             "title": "Quels sont les délais de livraison ?",
-            "text": "<p>A partir de la prise en charge du colis par le transporteur, les commandes sont livrées dans les délais suivants : </p><ul><li>En point relais avec <strong>Chronopost</strong>, il faut compter environ entre 2 et 4 jours ouvrés.</li><li>A domicile avec <strong>Colieco</strong>, entre 3 à 4 jours ouvrés.</li><li>A domicile avec <strong>DPD</strong>, la livraison se fait entre 24h à 48h. </li></ul><p>Bon à savoir : Si cela fait <strong>plus de 7 jours ouvrés</strong> que votre commande a été expédiée et vous n’avez toujours rien reçu vous pouvez nous envoyer un demande via notre formulaire de contact.  </p><p>Le service client traitera votre demande dans les plus brefs délais :)  </p>",
+            "text": "<p>A partir de la prise en charge du colis par le transporteur, les commandes sont livrées dans les délais suivants : </p><ul><li>En point relais avec <strong>Chronopost</strong>, il faut compter environ entre 2 et 4 jours ouvrés.</li><li>A domicile avec <strong>Colieco</strong>, entre 3 à 4 jours ouvrés.</li><li>A domicile avec <strong>DPD</strong>, la livraison se fait entre 24h à 48h. </li></ul><p><br/>💬<em>Bon à savoir : Si cela fait </em><em><strong>plus de 7 jours ouvrés</strong></em><em> que votre commande a été expédiée et vous n’avez toujours rien reçu vous pouvez nous envoyer un demande via notre formulaire de contact.  </em></p><p>Le service client traitera votre demande dans les plus brefs délais :)  </p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -216,7 +216,7 @@
           "type": "question",
           "settings": {
             "title": "Livrez-vous à l'étranger ?",
-            "text": "<p>Cela nous fait toujours autant plaisir de savoir que nos Petits Bidons intéressent des personnes au-delà de notre territoire. 😊</p><p>Nous livrons aujourd’hui en <strong>France Métropolitaine</strong>, en <strong>Allemagne</strong>, en<strong> Espagne</strong>, en <strong>Belgique</strong>, et aux <strong>Pays Bas</strong>. Nous travaillons pour élargir cela rapidement. </p><p>Si nous ne livrons pas encore chez vous, n’hésitez pas à nous suivre sur les réseaux sociaux, on annonce toujours les bonnes nouvelles sur ceux-ci !</p>",
+            "text": "<p>Cela nous fait toujours autant plaisir de savoir que nos Petits Bidons intéressent des personnes au-delà de notre territoire. 😊</p><p>Nous livrons aujourd’hui en <strong>France Métropolitaine</strong>, à <strong>Monaco</strong>, en <strong>Allemagne</strong>, en<strong> Espagne</strong>, en <strong>Belgique</strong>, et aux <strong>Pays Bas</strong>. Nous travaillons pour élargir cela rapidement. </p><p>Si nous ne livrons pas encore chez vous, n’hésitez pas à nous suivre sur les réseaux sociaux, on annonce toujours les bonnes nouvelles sur ceux-ci !</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
