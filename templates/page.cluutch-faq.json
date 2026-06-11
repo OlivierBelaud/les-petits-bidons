@@ -200,14 +200,14 @@
           "settings": {
             "title_text": "<h2>Livraison 🚚</h2>",
             "title": "Comment sont calculés les frais de port ?",
-            "text": "<p>Nous avons sélectionné des options de livraison <strong>optimales </strong>pour garantir la <strong>qualité </strong>tout en offrant le <strong>meilleur prix</strong>. Votre satisfaction est notre priorité, et nous absorbons une partie des coûts pour vous pour vous permettre de <strong>réaliser plus d'économies</strong> à partir de 50€ d'achats (code promotionnel déduit) !</p><p>Coût <strong>Livraison en Point Relais </strong>Mondial Relay - Commandes supérieures à 50€ <strong>Offerte </strong>Mondial Relay<br/>Commandes inférieures à 50€ 4,90€ <br/><strong>Livraison à Domicile </strong>Colieco 5,90€<br/>DPD Livraison express 7,90€</p>"
+            "text": "<p>👉 À chacun sa livraison : en point relais avec Chronopost, ou directement chez vous avec Colissimo et DPD 🚚</p><h5>🇫🇷 France & Monaco</h5><p><strong>📦 Point relais (Chronopost)</strong><br/>Dès 50€ → <strong>Offert</strong><br/>&lt; 50€ → 3,90€</p><p><strong>🏠 Livraison à domicile (Colissimo)</strong><br/>&lt; 50€ → 5,90€</p><p><strong>⚡ Livraison express à domicile (DPD)</strong><br/>Dès 99€ → <strong>Offert</strong><br/>&lt; 99€ → 7,90€</p><h5><br/>🌍 Belgique, Allemagne, Pays-Bas, Espagne</h5><p><strong>📦 Point relais (Chronopost)</strong><br/>8,90€</p><p><strong>🏠 Livraison à domicile (Colissimo)</strong><br/>9,90€</p><p><br/>💬 <em>Bon à savoir : quel que soit le mode choisi, nous prenons en charge une partie des frais de livraison pour vous proposer le meilleur prix 💚</em></p><p></p>"
           }
         },
         "question_4qKAU6": {
           "type": "question",
           "settings": {
             "title": "Quels sont les délais de livraison ?",
-            "text": "<ul><li>Avec <strong>Mondial Relay</strong>, il faut compter environ entre 4 et 6 jours ouvrés.</li><li>Avec <strong>Colieco</strong>, les délais sont légèrement plus rapides, entre 3 et 5 jours ouvrés.</li><li>Avec <strong>DPD</strong>, la livraison se fait entre 24h à 48h, avec la possibilité de prendre rendez-vous avec votre livreur.</li></ul><p>Les commandes sont livrées selon les délais énoncés ci-dessus. </p><p> </p><p>Cependant, si cela fait <strong>plus de 7 jours ouvrés</strong> que votre commande a été expédiée et vous n’avez toujours rien reçu vous pouvez nous envoyer un demande via notre formulaire de contact. </p><p> </p><p>Le service client traitera votre demande dans les plus brefs délais :)  </p>",
+            "text": "<p>A partir de la prise en charge du colis par le transporteur, les commandes sont livrées dans les délais suivants : </p><ul><li>En point relais avec <strong>Chronopost</strong>, il faut compter environ entre 2 et 4 jours ouvrés.</li><li>A domicile avec <strong>Colieco</strong>, entre 3 à 4 jours ouvrés.</li><li>A domicile avec <strong>DPD</strong>, la livraison se fait entre 24h à 48h. </li></ul><p>Bon à savoir : Si cela fait <strong>plus de 7 jours ouvrés</strong> que votre commande a été expédiée et vous n’avez toujours rien reçu vous pouvez nous envoyer un demande via notre formulaire de contact.  </p><p>Le service client traitera votre demande dans les plus brefs délais :)  </p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
