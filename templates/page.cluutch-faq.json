@@ -183,7 +183,7 @@
           "settings": {
             "title_text": "<h2>Paiements 💳</h2>",
             "title": "Quels sont les modes de paiement disponibles ?",
-            "text": "<p>Actuellement, vous pouvez payer par <strong>Carte Bancaire : Visa, Mastercard et AMEX.</strong></p>"
+            "text": "<p>Nous acceptons les paiements par<strong> carte bancaire (Visa, Mastercard, AMEX)</strong>, ainsi que <strong>Shop Pay</strong> et <strong>Apple Pay </strong>pour un paiement simple, rapide et 100% sécurisé 🔒<br/><br/></p>"
           }
         },
         "question_PHz7tM": {
