@@ -234,7 +234,7 @@
           "type": "question",
           "settings": {
             "title": "Comment annuler/retourner ma commande ?",
-            "text": "<p>Si vous venez de passer votre commande, envoyez un message à <strong>info@lespetitsbidons</strong>, nous regarderons s’il est encore possible de modifier/annuler votre commande.<br/></p><p>Si il s’agit d’une box sur-mesure, vous pouvez <strong>modifier</strong>, <strong>décaler</strong> ou <strong>annuler</strong> votre commande jusqu'à la veille du renouvellement de votre échéance. Une fois la commande passée, elle ne peut plus être modifiée ou annulée.<br/></p><p>Si vous souhaitez retourner votre colis, le produit ne doit être ni utilisé, ni ouvert. Les frais de retours seront à la charge du client.</p>",
+            "text": "<p>Si vous venez de passer votre commande, envoyez un message à <strong>info@lespetitsbidons</strong>, nous regarderons s’il est encore possible de modifier/annuler votre commande.<br/></p><p>Si il s’agit d’un abonnement, vous pouvez <strong>modifier</strong>, <strong>décaler</strong> ou <strong>annuler</strong> votre commande jusqu'à la veille du renouvellement de votre échéance en vous connectant à votre compte Les Petits Bidons. Une fois la commande passée, elle ne peut plus être modifiée ou annulée.<br/></p><p>Si vous souhaitez retourner votre colis, le produit ne doit être ni utilisé, ni ouvert. Les frais de retours seront à la charge du client.</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
