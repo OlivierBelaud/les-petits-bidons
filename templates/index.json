@@ -577,7 +577,6 @@
     },
     "cluutch_featured_collection_DTLFPF": {
       "type": "cluutch-featured-collection",
-      "disabled": true,
       "settings": {
         "use_metafield_category": true,
         "collection_category": "Bébé",
