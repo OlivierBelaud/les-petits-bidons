@@ -74,7 +74,7 @@
     "cluutch_banner_Me6w8c": {
       "type": "cluutch-banner",
       "settings": {
-        "img": "shopify://shop_images/Cat_gorie_vaiselle_-_desktop_2880x600_-_16_06_26.webp",
+        "img": "shopify://shop_images/Cat_gorie_lessive_desktop_-90.webp",
         "text": "<h1>{{ collection.title }}</h1>"
       }
     },
