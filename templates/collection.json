@@ -74,7 +74,7 @@
     "cluutch_banner_Me6w8c": {
       "type": "cluutch-banner",
       "settings": {
-        "img": "shopify://shop_images/Categorie_Vaisselle_desktop.webp",
+        "img": "shopify://shop_images/Cat_gorie_vaiselle_-_desktop_2880x600_-_16_06_26.webp",
         "text": "<h1>{{ collection.title }}</h1>"
       }
     },
