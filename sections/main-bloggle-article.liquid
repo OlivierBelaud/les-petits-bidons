@@ -362,7 +362,7 @@
   <div id="bloggle_article" >
       <div id="article" class="flex-column-reverse">
       {% if article.image %}
-      <img class="bloggle--blog-item-img lazybloggle" data-src="{{ article.image | img_url:'1200x' }}" alt="{{ article.image.alt }}">
+      <img class="bloggle--blog-item-img" src="{{ article.image | img_url:'1200x' }}" alt="{{ article.image.alt }}">
       {% endif %}
     <div id="article-header" class="text__center">
       

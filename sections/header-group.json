@@ -1,1 +1,380 @@
-{"type":"header","name":"t:sections.header-group.name","sections":{"announcement-bar":{"type":"announcement-bar","blocks":{"announcement-1":{"type":"announcement","settings":{"icon":"truck","text":"Free shipping and returns","link":"","hide_icon_mobile":true,"text_mobile":"","highlighted_text":"none","highlighted_scribble":"circle"}},"announcement-2":{"type":"announcement","settings":{"icon":"email","text":"A question? Visit our contact page","link":"","hide_icon_mobile":true,"text_mobile":"","highlighted_text":"none","highlighted_scribble":"circle"}}},"block_order":["announcement-1","announcement-2"],"disabled":true,"settings":{"show_social":false,"enable_language_selector":false,"enable_country_selector":false,"invert_icons_selectors":false,"announcement_position":"center","autoplay":true,"autoplay_speed":5,"show_navigation":false,"color_text":"#003435","color_background":"#e4f7f6","gradient_background":"","color_highlight":"#ffddbf","gradient_highlight":"","hide_homepage":false,"full_width":true,"rounded":true}},"cluutch_announcement_bar_zFH9nt":{"type":"cluutch-announcement-bar","blocks":{"announcement_nMF7rN":{"type":"announcement","settings":{"icon":"truck","icon_svg":"","text":"<strong>Livraison offerte<\/strong> dès 50€ d’achat","link":"","hide_icon_mobile":false,"text_mobile":"","highlighted_text":"none","highlighted_scribble":"circle"}},"announcement_ppWayr":{"type":"announcement","disabled":true,"settings":{"icon":"sale","icon_svg":"","text":"<strong>-10%<\/strong> sur votre première commande avec <strong>WELCOME10<\/strong>","link":"","hide_icon_mobile":false,"text_mobile":"","highlighted_text":"none","highlighted_scribble":"circle"}},"announcement_DjdULg":{"type":"announcement","settings":{"icon":"shield","icon_svg":"","text":"Paiement crypté et sécurisé","link":"","hide_icon_mobile":true,"text_mobile":"","highlighted_text":"none","highlighted_scribble":"circle"}}},"block_order":["announcement_nMF7rN","announcement_ppWayr","announcement_DjdULg"],"settings":{"show_social":false,"enable_language_selector":false,"enable_country_selector":false,"invert_icons_selectors":false,"announcement_position":"center","show_navigation":false,"color_text":"#003435","color_background":"#e4f7f6","gradient_background":"","color_highlight":"rgba(0,0,0,0)","gradient_highlight":"","hide_homepage":false,"full_width":true,"rounded":false,"font_size_mobile":10,"font_size":12,"icon_size":16}},"header":{"type":"header","disabled":true,"settings":{"menu":"cluutch-main-menu","menu_mobile":"","menu_active":"dot","hover_menu":true,"header_layout":"left-center","sticky_header_type":"always","enable_language_selector_desktop":false,"enable_country_selector_desktop":false,"show_country_name_dekstop":false,"show_country_flag_desktop":false,"logo_position_mobile":"center","show_social":false,"enable_language_selector":false,"enable_country_selector":false,"transparent_color_text":"#ffffff","color_text":"#171717","color_background":"#f5f5f5","padding_top":16,"padding_bottom":16,"full_width":false,"rounded":false}},"cluutch_header_hhypqd":{"type":"cluutch-header","blocks":{"mega_menu_ajUCdx":{"type":"mega_menu","settings":{"menu_title":"boutique","menu_width":"large","show_menu_image":true,"button_label":"","button_link":"shopify:\/\/collections\/cluutch-collection","promo_image_1":"shopify:\/\/shop_images\/Bloc_tous_produits_-90_2.webp","promo_image_ratio_1":"adapt","promo_heading_1":"Tous les produits","promo_subtext_1":"","promo_overlay_content_1":false,"promo_link_1":"shopify:\/\/collections\/cluutch-collection","promo_tag_1":"","promo_color_text_1":"#003435","promo_color_overlay_1":"#000000","promo_overlay_opacity_1":40,"promo_image_2":"shopify:\/\/shop_images\/v2_lessive_1080_-90.webp","promo_image_ratio_2":"adapt","promo_heading_2":"Lessive","promo_subtext_2":"","promo_overlay_content_2":false,"promo_link_2":"shopify:\/\/collections\/lessive-les-petits-bidons","promo_tag_2":"","promo_color_text_2":"#003435","promo_color_overlay_2":"#000000","promo_overlay_opacity_2":40,"promo_image_3":"shopify:\/\/shop_images\/Bloc_Gamme_B_b_-90.webp","promo_image_ratio_3":"adapt","promo_heading_3":"Bébé","promo_subtext_3":"","promo_overlay_content_3":false,"promo_link_3":"shopify:\/\/collections\/bebe-les-petits-bidons","promo_tag_3":"","promo_color_text_3":"#003435","promo_color_overlay_3":"#000000","promo_overlay_opacity_3":40,"promo_image_4":"shopify:\/\/shop_images\/Bloc_vaisselle_-90.webp","promo_image_ratio_4":"adapt","promo_heading_4":"Vaisselle","promo_subtext_4":"","promo_overlay_content_4":false,"promo_link_4":"shopify:\/\/collections\/vaisselle-les-petits-bidons","promo_tag_4":"","promo_color_text_4":"#003435","promo_color_overlay_4":"#000000","promo_overlay_opacity_4":40,"promo_image_5":"shopify:\/\/shop_images\/Bloc_produits_m_nagers_1080_V2_-90.webp","promo_image_ratio_5":"adapt","promo_heading_5":"Produits Ménagers","promo_subtext_5":"","promo_overlay_content_5":false,"promo_link_5":"shopify:\/\/collections\/produit-menager-les-petits-bidons","promo_tag_5":"","promo_color_text_5":"#003435","promo_color_overlay_5":"#000000","promo_overlay_opacity_5":40,"promo_image_6":"shopify:\/\/shop_images\/Bloc_Cat_gorie_Sport_-90_1.webp","promo_image_ratio_6":"adapt","promo_heading_6":"Sport","promo_subtext_6":"","promo_overlay_content_6":false,"promo_link_6":"shopify:\/\/collections\/sport-les-petits-bidons","promo_tag_6":"","promo_color_text_6":"#003435","promo_color_overlay_6":"#000000","promo_overlay_opacity_6":40,"promo_image_7":"shopify:\/\/shop_images\/0_d_chet_1080_V2_-90.webp","promo_image_ratio_7":"adapt","promo_heading_7":"Zéro Déchet","promo_subtext_7":"","promo_overlay_content_7":false,"promo_link_7":"shopify:\/\/collections\/zero-dechet-les-petits-bidons","promo_tag_7":"","promo_color_text_7":"#003435","promo_color_overlay_7":"#000000","promo_overlay_opacity_7":40}},"mega_menu_4WpD87":{"type":"mega_menu","settings":{"menu_title":"À propos","menu_width":"medium","show_menu_image":true,"button_label":"","button_link":"shopify:\/\/blogs\/news\/les-meilleures-astuces-pour-entretenir-sa-maison-de-maniere-ecologique","promo_image_1":"shopify:\/\/shop_images\/Frame_1960890080.jpg","promo_image_ratio_1":"square","promo_heading_1":"Nos Conseils","promo_subtext_1":"Blog","promo_overlay_content_1":true,"promo_link_1":"shopify:\/\/blogs\/news","promo_tag_1":"","promo_color_text_1":"#ffffff","promo_color_overlay_1":"#000000","promo_overlay_opacity_1":15,"promo_image_2":"shopify:\/\/shop_images\/CB-19_73acca82-3023-4051-96dd-b03684661b82.jpg","promo_image_ratio_2":"square","promo_heading_2":"Notre FAQ","promo_subtext_2":"Des questions ?","promo_overlay_content_2":true,"promo_link_2":"shopify:\/\/pages\/faq-les-petits-bidons","promo_tag_2":"","promo_color_text_2":"#ffffff","promo_color_overlay_2":"#000000","promo_overlay_opacity_2":15,"promo_image_3":"shopify:\/\/shop_images\/CB-3_copie.jpg","promo_image_ratio_3":"square","promo_heading_3":"Notre Histoire","promo_subtext_3":"C'est par ici","promo_overlay_content_3":true,"promo_link_3":"shopify:\/\/pages\/notre-histoire-les-petits-bidons","promo_tag_3":"","promo_color_text_3":"#ffffff","promo_color_overlay_3":"#000000","promo_overlay_opacity_3":15,"promo_image_4":"shopify:\/\/shop_images\/CB-17_copie.jpg","promo_image_ratio_4":"square","promo_heading_4":"Nos Engagements","promo_subtext_4":"À découvrir","promo_overlay_content_4":true,"promo_link_4":"shopify:\/\/pages\/nos-engagements-les-petits-bidons","promo_tag_4":"","promo_color_text_4":"#ffffff","promo_color_overlay_4":"#000000","promo_overlay_opacity_4":15,"promo_image_ratio_5":"adapt","promo_heading_5":"","promo_subtext_5":"","promo_overlay_content_5":true,"promo_link_5":"","promo_tag_5":"","promo_color_text_5":"#ffffff","promo_color_overlay_5":"#000000","promo_overlay_opacity_5":40,"promo_image_ratio_6":"adapt","promo_heading_6":"","promo_subtext_6":"","promo_overlay_content_6":true,"promo_link_6":"","promo_tag_6":"","promo_color_text_6":"#ffffff","promo_color_overlay_6":"#000000","promo_overlay_opacity_6":40,"promo_image_ratio_7":"adapt","promo_heading_7":"","promo_subtext_7":"","promo_overlay_content_7":true,"promo_link_7":"","promo_tag_7":"","promo_color_text_7":"#ffffff","promo_color_overlay_7":"#000000","promo_overlay_opacity_7":40}}},"block_order":["mega_menu_ajUCdx","mega_menu_4WpD87"],"settings":{"menu":"cluutch-main-menu","menu_mobile":"cluutch-main-menu","menu_active":"block","hover_menu":false,"header_layout":"left-center","sticky_header_type":"on-scroll-up","enable_language_selector_desktop":false,"enable_country_selector_desktop":false,"show_country_name_dekstop":false,"show_country_flag_desktop":false,"logo_position_mobile":"center","show_social":false,"enable_language_selector":false,"enable_country_selector":false,"transparent_color_text":"#ffffff","color_text":"#003435","color_background":"#ffffff","padding_top_mobile":12,"padding_bottom_mobile":12,"padding_top":16,"padding_bottom":16,"full_width":false,"rounded":false}},"lpb_scrolling_banner_giKLhH":{"type":"lpb-scrolling-banner","disabled":true,"name":"LPB scrolling banner","settings":{"text":"<p>⏳ <strong>DERNIERS JOURS<\/strong> ⏳ <strong>-15% dès 20€ d'achat<\/strong><\/p>","speed":20,"color_background":"#fcecbf","color_text":"#fca405","padding_mobile":14,"padding":4,"enable_schedule":false,"start_date":"22\/03\/2026","start_time":"12:00","end_date":"31\/03\/2026","end_time":"00:00","enable_sticky":true}}},"order":["announcement-bar","cluutch_announcement_bar_zFH9nt","header","cluutch_header_hhypqd","lpb_scrolling_banner_giKLhH"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "t:sections.header-group.name",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-1": {
+          "type": "announcement",
+          "settings": {
+            "icon": "truck",
+            "text": "Free shipping and returns",
+            "link": "",
+            "hide_icon_mobile": true,
+            "text_mobile": "",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "announcement-2": {
+          "type": "announcement",
+          "settings": {
+            "icon": "email",
+            "text": "A question? Visit our contact page",
+            "link": "",
+            "hide_icon_mobile": true,
+            "text_mobile": "",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        }
+      },
+      "block_order": [
+        "announcement-1",
+        "announcement-2"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_social": false,
+        "enable_language_selector": false,
+        "enable_country_selector": false,
+        "invert_icons_selectors": false,
+        "announcement_position": "center",
+        "autoplay": true,
+        "autoplay_speed": 5,
+        "show_navigation": false,
+        "color_text": "#003435",
+        "color_background": "#e4f7f6",
+        "gradient_background": "",
+        "color_highlight": "#ffddbf",
+        "gradient_highlight": "",
+        "hide_homepage": false,
+        "full_width": true,
+        "rounded": true
+      }
+    },
+    "cluutch_announcement_bar_zFH9nt": {
+      "type": "cluutch-announcement-bar",
+      "blocks": {
+        "announcement_nMF7rN": {
+          "type": "announcement",
+          "settings": {
+            "icon": "truck",
+            "icon_svg": "",
+            "text": "<strong>Livraison offerte</strong> dès 50€ d’achat",
+            "link": "",
+            "hide_icon_mobile": false,
+            "text_mobile": "",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "announcement_ppWayr": {
+          "type": "announcement",
+          "disabled": true,
+          "settings": {
+            "icon": "sale",
+            "icon_svg": "",
+            "text": "<strong>-10%</strong> sur votre première commande avec <strong>WELCOME10</strong>",
+            "link": "",
+            "hide_icon_mobile": false,
+            "text_mobile": "",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "announcement_DjdULg": {
+          "type": "announcement",
+          "settings": {
+            "icon": "shield",
+            "icon_svg": "",
+            "text": "Paiement crypté et sécurisé",
+            "link": "",
+            "hide_icon_mobile": true,
+            "text_mobile": "",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        }
+      },
+      "block_order": [
+        "announcement_nMF7rN",
+        "announcement_ppWayr",
+        "announcement_DjdULg"
+      ],
+      "settings": {
+        "show_social": false,
+        "enable_language_selector": false,
+        "enable_country_selector": false,
+        "invert_icons_selectors": false,
+        "announcement_position": "center",
+        "show_navigation": false,
+        "color_text": "#003435",
+        "color_background": "#e4f7f6",
+        "gradient_background": "",
+        "color_highlight": "rgba(0,0,0,0)",
+        "gradient_highlight": "",
+        "hide_homepage": false,
+        "full_width": true,
+        "rounded": false,
+        "font_size_mobile": 10,
+        "font_size": 12,
+        "icon_size": 16
+      }
+    },
+    "header": {
+      "type": "header",
+      "disabled": true,
+      "settings": {
+        "menu": "cluutch-main-menu",
+        "menu_mobile": "",
+        "menu_active": "dot",
+        "hover_menu": true,
+        "header_layout": "left-center",
+        "sticky_header_type": "always",
+        "enable_language_selector_desktop": false,
+        "enable_country_selector_desktop": false,
+        "show_country_name_dekstop": false,
+        "show_country_flag_desktop": false,
+        "logo_position_mobile": "center",
+        "show_social": false,
+        "enable_language_selector": false,
+        "enable_country_selector": false,
+        "transparent_color_text": "#ffffff",
+        "color_text": "#171717",
+        "color_background": "#f5f5f5",
+        "padding_top": 16,
+        "padding_bottom": 16,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "cluutch_header_hhypqd": {
+      "type": "cluutch-header",
+      "blocks": {
+        "mega_menu_ajUCdx": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_title": "boutique",
+            "menu_width": "large",
+            "show_menu_image": true,
+            "button_label": "",
+            "button_link": "shopify://collections/cluutch-collection",
+            "promo_image_1": "shopify://shop_images/Bloc_tous_produits_-90_2.webp",
+            "promo_image_ratio_1": "adapt",
+            "promo_heading_1": "Tous les produits",
+            "promo_subtext_1": "",
+            "promo_overlay_content_1": false,
+            "promo_link_1": "shopify://collections/cluutch-collection",
+            "promo_tag_1": "",
+            "promo_color_text_1": "#003435",
+            "promo_color_overlay_1": "#000000",
+            "promo_overlay_opacity_1": 40,
+            "promo_image_2": "shopify://shop_images/v2_lessive_1080_-90.webp",
+            "promo_image_ratio_2": "adapt",
+            "promo_heading_2": "Lessive",
+            "promo_subtext_2": "",
+            "promo_overlay_content_2": false,
+            "promo_link_2": "shopify://collections/lessive-les-petits-bidons",
+            "promo_tag_2": "",
+            "promo_color_text_2": "#003435",
+            "promo_color_overlay_2": "#000000",
+            "promo_overlay_opacity_2": 40,
+            "promo_image_3": "shopify://shop_images/Bloc_Gamme_B_b_-90.webp",
+            "promo_image_ratio_3": "adapt",
+            "promo_heading_3": "Bébé",
+            "promo_subtext_3": "",
+            "promo_overlay_content_3": false,
+            "promo_link_3": "shopify://collections/bebe-les-petits-bidons",
+            "promo_tag_3": "",
+            "promo_color_text_3": "#003435",
+            "promo_color_overlay_3": "#000000",
+            "promo_overlay_opacity_3": 40,
+            "promo_image_4": "shopify://shop_images/Bloc_vaisselle_-_mega_menu_-_16_06_26_-90.webp",
+            "promo_image_ratio_4": "adapt",
+            "promo_heading_4": "Vaisselle",
+            "promo_subtext_4": "",
+            "promo_overlay_content_4": false,
+            "promo_link_4": "shopify://collections/vaisselle-les-petits-bidons",
+            "promo_tag_4": "",
+            "promo_color_text_4": "#003435",
+            "promo_color_overlay_4": "#000000",
+            "promo_overlay_opacity_4": 40,
+            "promo_image_5": "shopify://shop_images/Bloc_produits_m_nagers_1080_V2_-90.webp",
+            "promo_image_ratio_5": "adapt",
+            "promo_heading_5": "Produits Ménagers",
+            "promo_subtext_5": "",
+            "promo_overlay_content_5": false,
+            "promo_link_5": "shopify://collections/produit-menager-les-petits-bidons",
+            "promo_tag_5": "",
+            "promo_color_text_5": "#003435",
+            "promo_color_overlay_5": "#000000",
+            "promo_overlay_opacity_5": 40,
+            "promo_image_6": "shopify://shop_images/Bloc_Cat_gorie_Sport_-90_1.webp",
+            "promo_image_ratio_6": "adapt",
+            "promo_heading_6": "Sport",
+            "promo_subtext_6": "",
+            "promo_overlay_content_6": false,
+            "promo_link_6": "shopify://collections/sport-les-petits-bidons",
+            "promo_tag_6": "",
+            "promo_color_text_6": "#003435",
+            "promo_color_overlay_6": "#000000",
+            "promo_overlay_opacity_6": 40,
+            "promo_image_7": "shopify://shop_images/0_d_chet_1080_V2_-90.webp",
+            "promo_image_ratio_7": "adapt",
+            "promo_heading_7": "Zéro Déchet",
+            "promo_subtext_7": "",
+            "promo_overlay_content_7": false,
+            "promo_link_7": "shopify://collections/zero-dechet-les-petits-bidons",
+            "promo_tag_7": "",
+            "promo_color_text_7": "#003435",
+            "promo_color_overlay_7": "#000000",
+            "promo_overlay_opacity_7": 40
+          }
+        },
+        "mega_menu_4WpD87": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_title": "À propos",
+            "menu_width": "medium",
+            "show_menu_image": true,
+            "button_label": "",
+            "button_link": "shopify://blogs/news/les-meilleures-astuces-pour-entretenir-sa-maison-de-maniere-ecologique",
+            "promo_image_1": "shopify://shop_images/Frame_1960890080.jpg",
+            "promo_image_ratio_1": "square",
+            "promo_heading_1": "Nos Conseils",
+            "promo_subtext_1": "Blog",
+            "promo_overlay_content_1": true,
+            "promo_link_1": "shopify://blogs/news",
+            "promo_tag_1": "",
+            "promo_color_text_1": "#ffffff",
+            "promo_color_overlay_1": "#000000",
+            "promo_overlay_opacity_1": 15,
+            "promo_image_2": "shopify://shop_images/CB-19_73acca82-3023-4051-96dd-b03684661b82.jpg",
+            "promo_image_ratio_2": "square",
+            "promo_heading_2": "Notre FAQ",
+            "promo_subtext_2": "Des questions ?",
+            "promo_overlay_content_2": true,
+            "promo_link_2": "shopify://pages/faq-les-petits-bidons",
+            "promo_tag_2": "",
+            "promo_color_text_2": "#ffffff",
+            "promo_color_overlay_2": "#000000",
+            "promo_overlay_opacity_2": 15,
+            "promo_image_3": "shopify://shop_images/CB-3_copie.jpg",
+            "promo_image_ratio_3": "square",
+            "promo_heading_3": "Notre Histoire",
+            "promo_subtext_3": "C'est par ici",
+            "promo_overlay_content_3": true,
+            "promo_link_3": "shopify://pages/notre-histoire-les-petits-bidons",
+            "promo_tag_3": "",
+            "promo_color_text_3": "#ffffff",
+            "promo_color_overlay_3": "#000000",
+            "promo_overlay_opacity_3": 15,
+            "promo_image_4": "shopify://shop_images/CB-17_copie.jpg",
+            "promo_image_ratio_4": "square",
+            "promo_heading_4": "Nos Engagements",
+            "promo_subtext_4": "À découvrir",
+            "promo_overlay_content_4": true,
+            "promo_link_4": "shopify://pages/nos-engagements-les-petits-bidons",
+            "promo_tag_4": "",
+            "promo_color_text_4": "#ffffff",
+            "promo_color_overlay_4": "#000000",
+            "promo_overlay_opacity_4": 15,
+            "promo_image_ratio_5": "adapt",
+            "promo_heading_5": "",
+            "promo_subtext_5": "",
+            "promo_overlay_content_5": true,
+            "promo_link_5": "",
+            "promo_tag_5": "",
+            "promo_color_text_5": "#ffffff",
+            "promo_color_overlay_5": "#000000",
+            "promo_overlay_opacity_5": 40,
+            "promo_image_ratio_6": "adapt",
+            "promo_heading_6": "",
+            "promo_subtext_6": "",
+            "promo_overlay_content_6": true,
+            "promo_link_6": "",
+            "promo_tag_6": "",
+            "promo_color_text_6": "#ffffff",
+            "promo_color_overlay_6": "#000000",
+            "promo_overlay_opacity_6": 40,
+            "promo_image_ratio_7": "adapt",
+            "promo_heading_7": "",
+            "promo_subtext_7": "",
+            "promo_overlay_content_7": true,
+            "promo_link_7": "",
+            "promo_tag_7": "",
+            "promo_color_text_7": "#ffffff",
+            "promo_color_overlay_7": "#000000",
+            "promo_overlay_opacity_7": 40
+          }
+        }
+      },
+      "block_order": [
+        "mega_menu_ajUCdx",
+        "mega_menu_4WpD87"
+      ],
+      "settings": {
+        "menu": "cluutch-main-menu",
+        "menu_mobile": "cluutch-main-menu",
+        "menu_active": "block",
+        "hover_menu": false,
+        "header_layout": "left-center",
+        "sticky_header_type": "on-scroll-up",
+        "enable_language_selector_desktop": false,
+        "enable_country_selector_desktop": false,
+        "show_country_name_dekstop": false,
+        "show_country_flag_desktop": false,
+        "logo_position_mobile": "center",
+        "show_social": false,
+        "enable_language_selector": false,
+        "enable_country_selector": false,
+        "transparent_color_text": "#ffffff",
+        "color_text": "#003435",
+        "color_background": "#ffffff",
+        "padding_top_mobile": 12,
+        "padding_bottom_mobile": 12,
+        "padding_top": 16,
+        "padding_bottom": 16,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "lpb_scrolling_banner_giKLhH": {
+      "type": "lpb-scrolling-banner",
+      "disabled": true,
+      "name": "LPB scrolling banner",
+      "settings": {
+        "text": "<p>BUG D’AFFICHAGE 💛 -  CLIQUEZ SUR UN PRODUIT POUR COMMANDER ✅</p>",
+        "speed": 28,
+        "color_background": "#fcecbf",
+        "color_text": "#007e7f",
+        "padding_mobile": 10,
+        "padding": 10,
+        "enable_schedule": true,
+        "start_date": "18/06/26",
+        "start_time": "06:00",
+        "end_date": "18/06/26",
+        "end_time": "19:00",
+        "enable_sticky": true
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "cluutch_announcement_bar_zFH9nt",
+    "header",
+    "cluutch_header_hhypqd",
+    "lpb_scrolling_banner_giKLhH"
+  ]
+}
