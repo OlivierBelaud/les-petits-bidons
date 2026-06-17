@@ -6059,10 +6059,16 @@ class ProductForm extends HTMLFormElement {
           })
         ).json();
         cartJson["sections"] = parsedState["sections"];
+        const recommendationCard = isCartRecommendation
+          ? this.closest("[data-product-handle]")
+          : null;
 
         theme.pubsub.publish(theme.pubsub.PUB_SUB_EVENTS.cartUpdate, {
           source: "product-form",
           productVariantId: formData.get("id"),
+          cartRecommendation: Boolean(isCartRecommendation),
+          cartRecommendationProductHandle:
+            recommendationCard?.dataset.productHandle || null,
           cart: cartJson,
         });
         document.dispatchEvent(

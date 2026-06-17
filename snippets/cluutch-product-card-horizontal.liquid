@@ -30,7 +30,7 @@
   endif
 -%}
 
-<div class="horizontal-product cluutch-reco-card">
+<div class="horizontal-product cluutch-reco-card" data-product-handle="{{ product.handle | escape }}">
   <a class="cluutch-reco-card__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
     {%- if product.featured_image -%}
       {{ product.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '86,172,258', class: 'cluutch-reco-card__img', alt: '', width: 86, height: 86 }}

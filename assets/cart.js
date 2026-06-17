@@ -185,6 +185,32 @@ class CartItems extends HTMLElement {
     this.validateQuantity(event);
   }
 
+  getCartRecommendationBlocks(container) {
+    return ['.complementary-products', '.icon-block__wrapper']
+      .map((selector) => {
+        const element = container.querySelector(selector);
+        return element ? { selector, element } : null;
+      })
+      .filter(Boolean);
+  }
+
+  restoreCartRecommendationBlocks(container, preservedBlocks) {
+    preservedBlocks.forEach(({ selector, element }) => {
+      const updatedElement = container.querySelector(selector);
+      if (updatedElement) {
+        updatedElement.replaceWith(element);
+      }
+    });
+  }
+
+  removeAddedRecommendationProduct(container, productHandle) {
+    if (!productHandle) return;
+
+    const addedCard = Array.from(container.querySelectorAll('[data-product-handle]'))
+      .find((element) => element.dataset.productHandle === productHandle);
+    addedCard?.remove();
+  }
+
   onCartUpdate(event) {
     if (event.cart.errors) {
       this.onCartError(event.cart.errors, event.target);
@@ -198,10 +224,15 @@ class CartItems extends HTMLElement {
       // Save scroll position of the drawer's scrollable area before innerHTML replace
       const prevScrollable = miniCart.querySelector('.drawer__scrollable');
       const savedScrollTop = prevScrollable ? prevScrollable.scrollTop : 0;
+      const preservedRecommendationBlocks = event.cartRecommendation
+        ? this.getCartRecommendationBlocks(miniCart)
+        : [];
 
       const updatedElement = sectionToRender.querySelector(`#MiniCart-${this.sectionId}`);
       if (updatedElement) {
         miniCart.innerHTML = updatedElement.innerHTML;
+        this.restoreCartRecommendationBlocks(miniCart, preservedRecommendationBlocks);
+        this.removeAddedRecommendationProduct(miniCart, event.cartRecommendationProductHandle);
 
         // Restore scroll position so the drawer doesn't jump to the top after a quantity update.
         // CSS sets `scroll-behavior: smooth` on .drawer__scrollable, which would animate the
