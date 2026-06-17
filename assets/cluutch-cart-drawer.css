@@ -4,7 +4,27 @@
 
 .cluutch-cart-drawer[open],
 .cluutch-cart-drawer[active] {
-    z-index: 2147483000 !important;
+    z-index: 2147483647 !important;
+}
+
+.cluutch-cart-drawer[open] .drawer__inner,
+.cluutch-cart-drawer[active] .drawer__inner,
+.cluutch-cart-drawer[open] .overlay,
+.cluutch-cart-drawer[active] .overlay {
+    z-index: 2147483647 !important;
+}
+
+.has-modal-open #smile-ui-container,
+.has-modal-open #smile-launcher-frame,
+.has-modal-open .smile-launcher-frame-container,
+.has-modal-open iframe[id*="smile"],
+.has-modal-open iframe[src*="smile"],
+.has-modal-open [id*="smile"][style*="position: fixed"],
+.has-modal-open [class*="smile"][style*="position: fixed"],
+.has-modal-open [class*="kl-teaser"],
+.has-modal-open [id*="klaviyo"][style*="position: fixed"],
+.has-modal-open [class*="klaviyo"][style*="position: fixed"] {
+    z-index: 20 !important;
 }
 
 .cluutch-cart-drawer .free-shipping-bar progress-bar::before {
