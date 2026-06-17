@@ -106,6 +106,7 @@
 
 .cluutch-cart-drawer .horizontal-product__details {
     min-width: 0;
+    min-height: var(--cart-item-media-width);
     gap: 6px !important;
 }
 
@@ -115,7 +116,7 @@
 }
 
 .cluutch-cart-drawer .cart-item__bottom {
-    margin-top: 0;
+    margin-top: auto;
 }
 
 .cluutch-cart-drawer .cart-product__content,
