@@ -398,27 +398,27 @@
 
                                                   {%- endif -%}
 
-                                                  {%- if item.line_level_discount_allocations != blank -%}
-                                                    {%- assign lot_pct = 0 -%}
-                                                    {%- for discount in item.discount_allocations -%}
-                                                      {%- if discount.discount_application.value_type == "percentage" -%}
-                                                        {%- assign lot_pct = lot_pct | plus: discount.discount_application.value -%}
-                                                      {%- endif -%}
-                                                    {%- endfor -%}
-                                                    <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
-                                                      Lot de {{ item.quantity }} (-{{ lot_pct | round }}%)
-                                                    </span>
-                                                  {%- endif -%}
-
                                                   {%- if has_shopify_sale -%}
                                                     {%- assign shopify_diff = item.variant.compare_at_price | minus: item.variant.price -%}
                                                     {%- assign shopify_pct = shopify_diff | times: 100.0 | divided_by: item.variant.compare_at_price -%}
                                                     <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
                                                       Promo : -{{ shopify_pct | round }}%
                                                     </span>
+                                                  {%- elsif item.line_level_discount_allocations != blank -%}
+                                                    {%- assign lot_pct = 0 -%}
+                                                    {%- for discount in item.discount_allocations -%}
+                                                      {%- if discount.discount_application.value_type == "percentage" -%}
+                                                        {%- assign lot_pct = lot_pct | plus: discount.discount_application.value -%}
+                                                      {%- endif -%}
+                                                    {%- endfor -%}
+                                                    {%- if lot_pct > 0 -%}
+                                                      <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
+                                                        Lot de 2 : -{{ lot_pct | round }}%
+                                                      </span>
+                                                    {%- endif -%}
                                                   {%- endif -%}
 
-                                                  {%- if item.selling_plan_allocation != null -%}
+                                                  {%- if item.selling_plan_allocation != null and has_shopify_sale == false -%}
                                                     {%- assign sp_name = item.selling_plan_allocation.selling_plan.name
                                                       | replace: 'Livraison tous les 1', 'Livré tous les'
                                                       | replace: 'Livraison tous les', 'Livré tous les'

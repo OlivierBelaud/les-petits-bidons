@@ -2,6 +2,11 @@
     max-width: 40rem;
 }
 
+.cluutch-cart-drawer[open],
+.cluutch-cart-drawer[active] {
+    z-index: 2147483000 !important;
+}
+
 .cluutch-cart-drawer .free-shipping-bar progress-bar::before {
     background-color: #37B6AD;
 }
@@ -297,18 +302,6 @@
     height: 16px;
     color: #D4A843;
     flex-shrink: 0;
-}
-
-/* Hide Smile.io + Klaviyo floating widgets when cart drawer is open on mobile */
-@media screen and (max-width: 767px) {
-    .has-modal-open #smile-ui-container,
-    .has-modal-open .smile-launcher-frame-container,
-    .has-modal-open #smile-launcher-frame,
-    .has-modal-open [id*="smile"],
-    .has-modal-open [class*="smile-launcher"],
-    .has-modal-open [class*="kl-teaser"] {
-        display: none !important;
-    }
 }
 
 /* Mobile: full height, no grab bar, show close button */
