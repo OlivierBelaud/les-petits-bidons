@@ -76,9 +76,40 @@
             </button>
           {%- endform -%}
         {%- else -%}
-          <a href="{{ product.url }}" class="cluutch-reco-card__btn" aria-label="{{ 'products.product.choose_options' | t | escape }}">
-            Choisir
-          </a>
+          <details class="cluutch-reco-card__variant-picker">
+            <summary class="cluutch-reco-card__btn" aria-label="{{ 'products.product.choose_options' | t | escape }}">
+              Choisir
+            </summary>
+            <div class="cluutch-reco-card__variant-menu">
+              {%- form 'product', product, is: 'product-form', class: 'cluutch-reco-card__variant-form', data-hide-errors: 'true' -%}
+                <label class="sr-only" for="RecoVariant-{{ product.id }}">
+                  {{- 'products.product.choose_options' | t -}}
+                </label>
+                <select
+                  id="RecoVariant-{{ product.id }}"
+                  name="id"
+                  class="cluutch-reco-card__variant-select"
+                >
+                  {%- for variant in product.variants -%}
+                    {%- assign variant_title = variant.title | split: '/' | first | strip -%}
+                    <option
+                      value="{{ variant.id }}"
+                      {% unless variant.available %}disabled{% endunless %}
+                      {% if variant.id == first_variant.id %}selected{% endif %}
+                    >
+                      {{- variant_title -}}
+                      {%- unless variant.available -%}
+                        {{- ' - ' -}}{{ 'products.product.sold_out' | t }}
+                      {%- endunless -%}
+                    </option>
+                  {%- endfor -%}
+                </select>
+                <button type="submit" class="cluutch-reco-card__btn cluutch-reco-card__variant-submit">
+                  + Ajouter
+                </button>
+              {%- endform -%}
+            </div>
+          </details>
         {%- endif -%}
       {%- else -%}
         <span class="cluutch-reco-card__btn cluutch-reco-card__btn--disabled">

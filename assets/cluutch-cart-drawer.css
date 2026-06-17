@@ -543,6 +543,61 @@ html.touch .has-modal-open {
     cursor: not-allowed;
 }
 
+.cluutch-reco-card__variant-picker {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.cluutch-reco-card__variant-picker > summary {
+    list-style: none;
+}
+
+.cluutch-reco-card__variant-picker > summary::-webkit-details-marker {
+    display: none;
+}
+
+.cluutch-reco-card__variant-picker[open] > summary {
+    background: #37b6ad;
+    color: #ffffff;
+}
+
+.cluutch-reco-card__variant-menu {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 6px);
+    z-index: 2;
+    width: min(220px, 72vw);
+    padding: 8px;
+    border: 1px solid rgba(0, 52, 53, 0.12);
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 52, 53, 0.16);
+}
+
+.cluutch-reco-card__variant-form {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.cluutch-reco-card__variant-select {
+    width: 100%;
+    min-height: 34px;
+    padding: 0 28px 0 10px;
+    border: 1px solid rgba(0, 52, 53, 0.18);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--TEXT, #003435);
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.cluutch-reco-card__variant-submit {
+    width: 100%;
+    background: #37b6ad;
+    color: #ffffff;
+}
+
 /* Override theme.css horizontal-product padding/border for our reco card */
 .complementary-products .horizontal-products .horizontal-product.cluutch-reco-card {
     padding: 10px;
