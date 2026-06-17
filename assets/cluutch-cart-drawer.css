@@ -105,9 +105,11 @@
 }
 
 .cluutch-cart-drawer .horizontal-product__details {
+    position: relative;
     min-width: 0;
     min-height: var(--cart-item-media-width);
     gap: 6px !important;
+    padding-bottom: 48px;
 }
 
 .cluutch-cart-drawer .horizontal-product__details > .flex,
@@ -116,7 +118,11 @@
 }
 
 .cluutch-cart-drawer .cart-item__bottom {
-    margin-top: auto;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin-top: 0;
 }
 
 .cluutch-cart-drawer .cart-product__content,
