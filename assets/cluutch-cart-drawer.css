@@ -86,6 +86,16 @@
 
 .cluutch-cart-drawer .horizontal-product__details {
     min-width: 0;
+    gap: 6px !important;
+}
+
+.cluutch-cart-drawer .horizontal-product__details > .flex,
+.cluutch-cart-drawer .cart-item__bottom > .flex {
+    gap: 6px !important;
+}
+
+.cluutch-cart-drawer .cart-item__bottom {
+    margin-top: 0;
 }
 
 .cluutch-cart-drawer .cart-product__content,

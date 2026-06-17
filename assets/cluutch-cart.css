@@ -93,6 +93,20 @@
     max-width: 590px;
 }
 
+.cluutch-cart .cluutch-cart__flex {
+    align-items: flex-start !important;
+}
+
+.cluutch-cart .cart-item__details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cluutch-cart .cart-item__bottom {
+    margin-top: 0;
+}
+
 .cluutch-cart .cart__free-shipping-top {
     margin-bottom: 4px;
 }
