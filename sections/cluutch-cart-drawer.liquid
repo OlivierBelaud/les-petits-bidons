@@ -191,9 +191,7 @@
                             </a>
                             {%- if p_has_rating -%}
                               <div class="cart-empty-product-card__rating">
-                                {%- for i in (1..5) -%}
-                                  {% render 'cluutch-icon', icon: 'star' %}
-                                {%- endfor -%}
+                                {% render 'cluutch-icon', icon: 'star' %}
                                 <span>{{ p_rating_clean }} ({{ p_rating_count }})</span>
                               </div>
                             {%- endif -%}
@@ -337,7 +335,7 @@
                                       </dl>
                                   {%- endif -%}
                                   </div>
-                                  <div class="">
+                                  <div class="cart-item__bottom">
                                     <div class="flex flex-col gap-1">
                                             <div class="cart-product__content">
                                               {%- liquid
@@ -1039,7 +1037,11 @@
                 <hr class="cart-drawer__separator">
 
                 <div class="cart-drawer__rating flex items-center justify-center gap-2">
-                  {% render 'cluutch-icon', icon: 'star' %}
+                  <span class="cart-drawer__rating-stars" aria-hidden="true">
+                    {%- for i in (1..5) -%}
+                      {% render 'cluutch-icon', icon: 'star' %}
+                    {%- endfor -%}
+                  </span>
                   <span class="cart-drawer__rating-text jdgm-all-reviews-text__text"
                     data-score="{{ shop.metafields.judgeme.all_reviews_rating }}"
                     data-number-of-reviews="{{ shop.metafields.judgeme.all_reviews_count }}"

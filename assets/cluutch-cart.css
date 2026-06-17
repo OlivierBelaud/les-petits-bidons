@@ -106,6 +106,28 @@
     line-height: 1.25;
 }
 
+.cluutch-cart .cluutch-cart__flex {
+    align-items: stretch;
+}
+
+.cluutch-cart .cart-item__media {
+    flex: 0 0 var(--cart-item-media-width);
+}
+
+.cluutch-cart .cart-item__details {
+    min-height: var(--cart-item-media-width);
+    align-content: space-between;
+}
+
+.cluutch-cart .cart-item__bottom {
+    margin-top: auto;
+}
+
+.cluutch-cart .cart-product__content {
+    width: 100%;
+    margin-top: auto;
+}
+
 .cluutch-cart .product-card,
 .cluutch-cart .cluutch-card__content {
     min-height: 100%;
