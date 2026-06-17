@@ -39,6 +39,8 @@ class CartDrawer extends DrawerElement {
 
     this.onPrepareBundledSectionsListener = this.onPrepareBundledSections.bind(this);
     this.onCartRefreshListener = this.onCartRefresh.bind(this);
+    this.onCartIntentListener = this.onCartIntent.bind(this);
+    this.lastCartIntentAt = 0;
   }
 
   get sectionId() {
@@ -62,6 +64,8 @@ class CartDrawer extends DrawerElement {
 
     document.addEventListener('cart:bundled-sections', this.onPrepareBundledSectionsListener);
     document.addEventListener('cart:refresh', this.onCartRefreshListener);
+    document.addEventListener('click', this.onCartIntentListener, true);
+    document.addEventListener('submit', this.onCartIntentListener, true);
     if (this.recentlyViewed) {
       this.recentlyViewed.addEventListener('is-empty', this.onRecentlyViewedEmpty.bind(this));
     }
@@ -72,6 +76,8 @@ class CartDrawer extends DrawerElement {
 
     document.removeEventListener('cart:bundled-sections', this.onPrepareBundledSectionsListener);
     document.removeEventListener('cart:refresh', this.onCartRefreshListener);
+    document.removeEventListener('click', this.onCartIntentListener, true);
+    document.removeEventListener('submit', this.onCartIntentListener, true);
   }
 
   onPrepareBundledSections(event) {
@@ -88,6 +94,31 @@ class CartDrawer extends DrawerElement {
     `;
   }
 
+  onCartIntent(event) {
+    if (!event.isTrusted || !(event.target instanceof Element)) return;
+
+    const cartTarget = event.target.closest([
+      'form[action*="/cart/add"]',
+      '[is="product-form"]',
+      'product-bundle',
+      '[data-product-bundle-submit]',
+      '.pf-product-form',
+      'button[name="add"]',
+      '[data-add-to-cart]'
+    ].join(','));
+
+    if (cartTarget) {
+      this.lastCartIntentAt = Date.now();
+    }
+  }
+
+  shouldOpenAfterCartRefresh(event) {
+    if (event.detail?.open !== true) return false;
+
+    const recentCartIntentWindow = 10000;
+    return Date.now() - this.lastCartIntentAt < recentCartIntentWindow;
+  }
+
   async onCartRefresh(event) {
     const id = `MiniCart-${this.sectionId}`;
     if (document.getElementById(id) === null) return;
@@ -97,7 +128,7 @@ class CartDrawer extends DrawerElement {
 
     document.getElementById(id).innerHTML = parsedHTML.getElementById(id).innerHTML;
 
-    if (event.detail?.open === true) {
+    if (this.shouldOpenAfterCartRefresh(event)) {
       this.show();
     }
   }
