@@ -79,6 +79,21 @@
     justify-content: space-between;
 }
 
+.cluutch-cart-drawer dl .text-opacity,
+.cluutch-cart-drawer .horizontal-product__details .text-opacity {
+    font-size: 11px;
+    line-height: 1.25;
+}
+
+.cluutch-cart-drawer .horizontal-product__details dl {
+    gap: 2px;
+}
+
+.cart-drawer__free-shipping-top {
+    border-bottom: 1px solid rgb(var(--color-border));
+    padding-bottom: var(--sp-5);
+}
+
 .cart-product__link {
     font-size: 16px;
     text-decoration: underline;
@@ -330,8 +345,9 @@ html.touch .has-modal-open {
     gap: 10px;
     padding: 10px;
     background: #e4f7f6;
-    border-radius: 20px;
+    border-radius: 8px;
     width: 100%;
+    min-height: 126px;
     box-sizing: border-box;
 }
 
@@ -399,7 +415,7 @@ html.touch .has-modal-open {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    min-height: 2.4em;
+    min-height: 0;
 }
 
 .cluutch-reco-card__title:hover {
@@ -780,6 +796,10 @@ html.touch .has-modal-open {
     fill: #f59e0b;
 }
 
+.cart-empty-product-card__rating span {
+    margin-left: 2px;
+}
+
 .cart-empty-product-card__price {
     display: inline-flex;
     align-items: baseline;
@@ -826,6 +846,13 @@ html.touch .has-modal-open {
 .cart-empty-product-card__btn:hover {
     background: #5aa89f;
     color: #ffffff;
+}
+
+@media (max-width: 767px) {
+    .cluutch-cart-drawer dl .text-opacity,
+    .cluutch-cart-drawer .horizontal-product__details .text-opacity {
+        font-size: 10px;
+    }
 }
 
 .cart-empty-state__message {

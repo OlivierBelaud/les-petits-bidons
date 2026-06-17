@@ -92,3 +92,35 @@
     gap: 20px;
     max-width: 590px;
 }
+
+.cluutch-cart .cart__free-shipping-top {
+    margin-bottom: 4px;
+}
+
+.cluutch-cart .cart-item dl {
+    gap: 2px;
+}
+
+.cluutch-cart .cart-item dl .text-opacity {
+    font-size: 11px;
+    line-height: 1.25;
+}
+
+.cluutch-cart .product-card,
+.cluutch-cart .cluutch-card__content {
+    min-height: 100%;
+}
+
+.cluutch-cart .cluutch-card__details {
+    gap: 8px;
+}
+
+.cluutch-cart .product-card__title {
+    min-height: 0;
+}
+
+@media (max-width: 767px) {
+    .cluutch-cart .cart-item dl .text-opacity {
+        font-size: 10px;
+    }
+}

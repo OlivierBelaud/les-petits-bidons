@@ -97,7 +97,7 @@ class CartDrawer extends DrawerElement {
 
     document.getElementById(id).innerHTML = parsedHTML.getElementById(id).innerHTML;
 
-    if (event.detail.open === true) {
+    if (event.detail?.open === true) {
       this.show();
     }
   }

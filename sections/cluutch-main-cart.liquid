@@ -84,6 +84,35 @@
           data-section-id="{{ section.id }}"
         >
           <div class="grow flex flex-col gap-8 md:gap-12">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'free_shipping' and block.settings.minimum_amount != blank -%}
+                {%- liquid
+                  assign minimum_amounts = block.settings.minimum_amount | remove: ' '
+                  assign show_free_shipping_bar = false
+
+                  if minimum_amounts contains ':'
+                    assign minimum_amounts = minimum_amounts | split: ','
+                    for amount in minimum_amounts
+                      assign amount_parts = amount | split: ':'
+                      assign currency_code = amount_parts | first | upcase
+                      if currency_code == cart.currency.iso_code
+                        assign minimum_amount = amount_parts | last
+                        assign show_free_shipping_bar = true
+                        break
+                      endif
+                    endfor
+                  else
+                    assign minimum_amount = minimum_amounts
+                    assign show_free_shipping_bar = true
+                  endif
+                -%}
+                {%- if show_free_shipping_bar -%}
+                  <div class="cart__free-shipping-top" {{ block.shopify_attributes }}>
+                    {%- render 'free-shipping-bar', minimum_amount: minimum_amount -%}
+                  </div>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
             <form class="cart__form" action="{{ routes.cart_url }}" method="POST" id="cart">
               <cart-items class="cart__items block" data-section-id="{{ section.id }}">
                 <table role="table" class="no-headings w-full overflow-visible">
@@ -139,7 +168,7 @@
                                         {% if option.value != 'x1' %}  
                                             <div class="flex gap-1 text-xs text-opacity leading-tight">
                                             <dt class="sr-only">{{ option.name }}:</dt>
-                                            <dd>{{ option.value }}</dd>
+                                            <dd>{{ option.value | split: '/' | first | strip }}</dd>
                                             </div>
                                         {% endif %}
                                       {%- endfor -%}
@@ -156,7 +185,7 @@
                                                 {{- property.last | split: '/' | last -}}
                                               </a>
                                             {%- else -%}
-                                              {{- property.last -}}
+                                              {{- property.last | split: '/' | first | strip -}}
                                             {%- endif -%}
                                           </dd>
                                         </div>
@@ -804,12 +833,11 @@
                           </button>
                         </noscript>
 
-                        <button
+                        <a
                           class="button button--primary icon-with-text w-full"
-                          type="submit"
-                          name="checkout"
-                          form="cart"
+                          href="{{ routes.root_url }}checkout"
                           is="hover-button"
+                          data-no-instant
                         >
                           <span class="btn-fill" data-fill></span>
                           <span class="btn-text">
@@ -818,7 +846,7 @@
                               echo 'cart.general.checkout' | t
                             -%}
                           </span>
-                        </button>
+                        </a>
 
                         {%- if block.settings.show_accelerated_buttons and additional_checkout_buttons -%}
                           <div class="additional-checkout-buttons additional-checkout-buttons--vertical">
@@ -828,32 +856,7 @@
                       </div>
 
                     {%- when 'free_shipping' -%}
-                      {%- liquid
-                        if block.settings.minimum_amount != blank
-                          assign minimum_amounts = block.settings.minimum_amount | remove: ' '
-                          assign show_free_shipping_bar = false
-
-                          if minimum_amounts contains ':'
-                            assign minimum_amounts = minimum_amounts | split: ','
-                            for amount in minimum_amounts
-                              assign amount_parts = amount | split: ':'
-                              assign currency_code = amount_parts | first | upcase
-                              if currency_code == cart.currency.iso_code
-                                assign minimum_amount = amount_parts | last
-                                assign show_free_shipping_bar = true
-                                break
-                              endif
-                            endfor
-                          else
-                            assign minimum_amount = minimum_amounts
-                            assign show_free_shipping_bar = true
-                          endif
-
-                          if show_free_shipping_bar
-                            render 'free-shipping-bar', minimum_amount: minimum_amount
-                          endif
-                        endif
-                      -%}
+                      {%- comment -%}Rendered above the cart lines for better visibility.{%- endcomment -%}
 
                     {%- when 'custom_field' -%}
                       {%- assign custom_name = block.settings.title | escape -%}
@@ -1034,27 +1037,6 @@
               -%}
             </div>
           {%- endunless -%}
-        {%- else -%}
-          {%- for i in (1..section.settings.product_limit) -%}
-            {%- capture placeholder -%}product-{% cycle '1', '2', '3', '4', '5', '6' %}{%- endcapture -%}
-            <div class="swiper-slide">
-              {%- render 'product-card-placeholder',
-                lazy_load: false,
-                image_ratio: settings.product_image_ratio,
-                image_fill: settings.product_image_fill,
-                show_secondary_image: settings.product_secondary_image,
-                show_vendor: settings.product_vendor,
-                show_rating: settings.product_rating,
-                show_color_swatches: settings.product_color_swatches,
-                show_countdown: settings.product_countdown,
-                show_quick_add: settings.product_quick_add,
-                show_quick_view: settings.product_quick_view,
-                show_save_amount: settings.product_save_amount,
-                save_type: settings.product_save_type,
-                placeholder: placeholder
-              -%}
-            </div>
-          {%- endfor -%}
         {%- endfor -%}
       </div>
       <div class="swiper-button-next">{% render 'cluutch-icon', icon: 'arrow-right-long' %}</div>

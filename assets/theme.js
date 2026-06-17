@@ -5983,9 +5983,13 @@ class ProductForm extends HTMLFormElement {
   }
 
   onSubmitHandler(event) {
+    const isCartRecommendation = this.closest(
+      ".cluutch-wrapper, .complementary-products, .cart-empty-state"
+    );
     if (
-      document.body.classList.contains("template-cart") ||
-      theme.settings.cartType === "page"
+      (document.body.classList.contains("template-cart") ||
+        theme.settings.cartType === "page") &&
+      !isCartRecommendation
     )
       return;
 
@@ -6068,6 +6072,7 @@ class ProductForm extends HTMLFormElement {
             },
           })
         );
+        this.showCartSuccessMessage();
 
         const quickViewModal = this.closest("quick-view");
         if (quickViewModal) {
@@ -6112,6 +6117,25 @@ class ProductForm extends HTMLFormElement {
 
     this.errorMessage.toggleAttribute("hidden", !errorMessage);
     this.errorMessage.innerText = errorMessage;
+  }
+
+  showCartSuccessMessage() {
+    let message = document.querySelector("[data-cart-success-message]");
+    if (!message) {
+      message = document.createElement("div");
+      message.setAttribute("data-cart-success-message", "");
+      message.setAttribute("role", "status");
+      message.setAttribute("aria-live", "polite");
+      message.className = "cart-success-message";
+      document.body.appendChild(message);
+    }
+
+    message.textContent = "Ajouté à votre panier";
+    message.classList.add("is-visible");
+    clearTimeout(window.cartSuccessMessageTimeout);
+    window.cartSuccessMessageTimeout = setTimeout(() => {
+      message.classList.remove("is-visible");
+    }, 2500);
   }
 
   toggleSubmitButton(disable = true, text, unavailable = false) {

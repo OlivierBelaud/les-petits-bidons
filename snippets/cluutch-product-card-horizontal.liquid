@@ -12,7 +12,7 @@
 {%- liquid
   assign variant_label = ''
   unless product.has_only_default_variant
-    assign variant_label = product.selected_or_first_available_variant.title
+    assign variant_label = product.selected_or_first_available_variant.title | split: '/' | first | strip
   endunless
 
   assign rating_value = product.metafields.reviews.rating.value
@@ -76,8 +76,8 @@
             </button>
           {%- endform -%}
         {%- else -%}
-          <a href="{{ product.url }}" class="cluutch-reco-card__btn" aria-label="{{ 'products.product.quick_view' | t | escape }}">
-            + Ajouter
+          <a href="{{ product.url }}" class="cluutch-reco-card__btn" aria-label="{{ 'products.product.choose_options' | t | escape }}">
+            Choisir
           </a>
         {%- endif -%}
       {%- else -%}

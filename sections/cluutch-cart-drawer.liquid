@@ -87,7 +87,7 @@
                   Si la liste 'empty_cart_collections' est configuree dans le theme editor, elle prend le dessus.
                 {%- endcomment -%}
                 {%- liquid
-                  assign essentials_handles_str = 'tous-les-produits-ecologiques-les-petits-bidons,lessive-les-petits-bidons,vaisselle-les-petits-bidons,bebe-les-petits-bidons,produit-menager-les-petits-bidons'
+                  assign essentials_handles_str = 'tous-les-produits-ecologiques-les-petits-bidons,lessive-les-petits-bidons,bebe-les-petits-bidons,vaisselle-les-petits-bidons,produit-menager-les-petits-bidons'
                   assign essentials_handles = essentials_handles_str | split: ','
 
                   assign essentials_collections = section.settings.empty_cart_collections
@@ -130,7 +130,10 @@
                 {%- endif -%}
 
                 {%- liquid
-                  assign best_sellers_products = collections['best-sellers'].products
+                  assign best_sellers_products = section.settings.empty_cart_products
+                  if best_sellers_products == blank
+                    assign best_sellers_products = collections['best-sellers'].products
+                  endif
                 -%}
                 {%- if best_sellers_products.size > 0 -%}
                   <div class="cart-empty-state__section">
@@ -188,7 +191,9 @@
                             </a>
                             {%- if p_has_rating -%}
                               <div class="cart-empty-product-card__rating">
-                                {% render 'cluutch-icon', icon: 'star' %}
+                                {%- for i in (1..5) -%}
+                                  {% render 'cluutch-icon', icon: 'star' %}
+                                {%- endfor -%}
                                 <span>{{ p_rating_clean }} ({{ p_rating_count }})</span>
                               </div>
                             {%- endif -%}
@@ -254,6 +259,12 @@
                   assign items_in_cart = cart.item_count | minus: gift_wraps_in_cart
                 endif
               -%}
+              {%- if show_free_shipping_bar -%}
+                <div class="cart-drawer__free-shipping-top">
+                  {%- render 'free-shipping-bar', minimum_amount: minimum_amount -%}
+                </div>
+              {%- endif -%}
+
               <cart-items class="block grow" data-section-id="{{ section.id }}">
                 <ul class="horizontal-products grid" role="list">
                   {%- for item in cart.items -%}
@@ -292,10 +303,11 @@
                                           {%- assign variant_inline = '' -%}
                                           {%- for option in item.options_with_values -%}
                                               {%- if option.value != 'x1' -%}
+                                                  {%- assign option_display = option.value | split: '/' | first | strip -%}
                                                   {%- if variant_inline == '' -%}
-                                                      {%- assign variant_inline = option.value -%}
+                                                      {%- assign variant_inline = option_display -%}
                                                   {%- else -%}
-                                                      {%- assign variant_inline = variant_inline | append: ' / ' | append: option.value -%}
+                                                      {%- assign variant_inline = variant_inline | append: ' / ' | append: option_display -%}
                                                   {%- endif -%}
                                               {%- endif -%}
                                           {%- endfor -%}
@@ -316,7 +328,7 @@
                                                   {{- property.last | split: '/' | last -}}
                                                   </a>
                                               {%- else -%}
-                                                  {{- property.last -}}
+                                                  {{- property.last | split: '/' | first | strip -}}
                                               {%- endif -%}
                                               </dd>
                                           </div>
@@ -693,12 +705,6 @@
                 </ul>
               </cart-items>
 
-              {%- if show_free_shipping_bar -%}
-                <div style="border-top: 1px solid rgb(var(--color-border)); padding-top: var(--sp-5);">
-                  {%- render 'free-shipping-bar', minimum_amount: minimum_amount -%}
-                </div>
-              {%- endif -%}
-
               {%- render 'gift-wrapping',
                 section_id: section.id,
                 gift_wrapping: gift_wrapping,
@@ -985,17 +991,17 @@
                       class="drawer__footer-buttons grid gap-4"
                     >
                       {%- if section.settings.show_checkout_button -%}
-                        <button
+                        <a
                           class="button button--primary icon-with-text col-span-full cart-drawer__checkout-btn"
-                          type="submit"
-                          name="checkout"
+                          href="{{ routes.root_url }}checkout"
                           is="hover-button"
+                          data-no-instant
                         >
                           <span class="btn-fill" data-fill></span>
                           <span class="btn-text">
                             {{- 'cart.general.checkout' | t -}}
                           </span>
-                        </button>
+                        </a>
                       {%- endif -%}
 
                       {%- if section.settings.show_view_cart_button -%}
@@ -1201,6 +1207,12 @@
       "type": "collection_list",
       "id": "empty_cart_collections",
       "label": "t:sections.cart-drawer.settings.empty_cart_collections.label"
+    },
+    {
+      "type": "product_list",
+      "id": "empty_cart_products",
+      "label": "Produits recommandes panier vide",
+      "info": "Choisir les produits affiches dans l'etat panier vide. Si vide, la collection best-sellers est utilisee."
     },
     {
       "type": "header",
