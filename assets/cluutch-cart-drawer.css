@@ -568,11 +568,12 @@ html.touch .has-modal-open {
     bottom: calc(100% + 6px);
     z-index: 2;
     width: min(220px, 72vw);
-    padding: 8px;
+    padding: 10px 8px 8px;
     border: 1px solid rgba(0, 52, 53, 0.12);
     border-radius: 10px;
     background: #ffffff;
     box-shadow: 0 8px 24px rgba(0, 52, 53, 0.16);
+    overflow: visible;
 }
 
 .cluutch-reco-card__variant-form {
@@ -582,15 +583,19 @@ html.touch .has-modal-open {
 }
 
 .cluutch-reco-card__variant-select {
+    appearance: none;
+    display: block;
     width: 100%;
     min-height: 34px;
     padding: 0 28px 0 10px;
-    border: 1px solid rgba(0, 52, 53, 0.18);
+    border: 1px solid rgba(0, 52, 53, 0.22);
+    border-top-color: rgba(0, 52, 53, 0.22);
     border-radius: 8px;
     background: #ffffff;
     color: var(--TEXT, #003435);
     font-size: 12px;
     line-height: 1.2;
+    box-shadow: inset 0 0 0 1px rgba(0, 52, 53, 0.04);
 }
 
 .cluutch-reco-card__variant-submit {
