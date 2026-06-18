@@ -297,6 +297,13 @@
     color: rgb(var(--color-foreground) / 0.8);
 }
 
+@media (max-width: 767px) {
+    .cart-drawer__checkout-info {
+        font-size: 11px;
+        line-height: 1.45;
+    }
+}
+
 .cart-drawer__separator {
     border: none;
     height: 1px;
@@ -664,7 +671,7 @@ html.touch .has-modal-open {
    - Sous-titres "Découvrez nos gammes naturelles" / "Nos recommandations": 18px Medium
 */
 .cart-empty-state {
-    padding: 56px 16px 32px;
+    padding: 84px 16px 32px;
     gap: 42px;
 }
 
@@ -679,7 +686,7 @@ html.touch .has-modal-open {
 
 @media (min-width: 768px) {
     .cart-empty-state {
-        padding: 64px 40px 40px;
+        padding: 96px 40px 40px;
         gap: 48px;
     }
 }
