@@ -3,15 +3,41 @@
 }
 
 .cluutch-cart-drawer[open],
-.cluutch-cart-drawer[active] {
+.cluutch-cart-drawer[active],
+.cluutch-cart-drawer .cart-drawer[open],
+.cluutch-cart-drawer .cart-drawer[active] {
     z-index: 2147483647 !important;
 }
 
 .cluutch-cart-drawer[open] .drawer__inner,
 .cluutch-cart-drawer[active] .drawer__inner,
 .cluutch-cart-drawer[open] .overlay,
-.cluutch-cart-drawer[active] .overlay {
+.cluutch-cart-drawer[active] .overlay,
+.cluutch-cart-drawer .cart-drawer[open] .drawer__inner,
+.cluutch-cart-drawer .cart-drawer[active] .drawer__inner,
+.cluutch-cart-drawer .cart-drawer[open] .overlay,
+.cluutch-cart-drawer .cart-drawer[active] .overlay {
     z-index: 2147483647 !important;
+}
+
+body:has(.cluutch-cart-drawer .cart-drawer[open]) .newsletter-modal,
+body:has(.cluutch-cart-drawer .cart-drawer[active]) .newsletter-modal,
+body:has(.cluutch-cart-drawer .cart-drawer[open]) [class*="klaviyo" i],
+body:has(.cluutch-cart-drawer .cart-drawer[active]) [class*="klaviyo" i],
+body:has(.cluutch-cart-drawer .cart-drawer[open]) [id*="klaviyo" i],
+body:has(.cluutch-cart-drawer .cart-drawer[active]) [id*="klaviyo" i],
+body:has(.cluutch-cart-drawer .cart-drawer[open]) [data-testid*="popup" i],
+body:has(.cluutch-cart-drawer .cart-drawer[active]) [data-testid*="popup" i],
+body:has(.cluutch-cart-drawer .cart-drawer[open]) [role="dialog"][aria-label*="newsletter" i],
+body:has(.cluutch-cart-drawer .cart-drawer[active]) [role="dialog"][aria-label*="newsletter" i],
+body:has(.cluutch-cart-drawer .cart-drawer[open]) .needsclick[style*="position: fixed"],
+body:has(.cluutch-cart-drawer .cart-drawer[active]) .needsclick[style*="position: fixed"],
+body:has(.cluutch-cart-drawer .cart-drawer[open]) .needsclick[style*="position:fixed"],
+body:has(.cluutch-cart-drawer .cart-drawer[active]) .needsclick[style*="position:fixed"] {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
 }
 
 .has-modal-open #smile-ui-container,
