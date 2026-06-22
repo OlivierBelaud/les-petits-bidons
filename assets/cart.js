@@ -203,14 +203,6 @@ class CartItems extends HTMLElement {
     });
   }
 
-  removeAddedRecommendationProduct(container, productHandle) {
-    if (!productHandle) return;
-
-    const addedCard = Array.from(container.querySelectorAll('[data-product-handle]'))
-      .find((element) => element.dataset.productHandle === productHandle);
-    addedCard?.remove();
-  }
-
   onCartUpdate(event) {
     if (event.cart.errors) {
       this.onCartError(event.cart.errors, event.target);
@@ -232,7 +224,6 @@ class CartItems extends HTMLElement {
       if (updatedElement) {
         miniCart.innerHTML = updatedElement.innerHTML;
         this.restoreCartRecommendationBlocks(miniCart, preservedRecommendationBlocks);
-        this.removeAddedRecommendationProduct(miniCart, event.cartRecommendationProductHandle);
 
         // Restore scroll position so the drawer doesn't jump to the top after a quantity update.
         // CSS sets `scroll-behavior: smooth` on .drawer__scrollable, which would animate the
