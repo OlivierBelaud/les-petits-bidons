@@ -97,7 +97,17 @@ class CartDrawer extends DrawerElement {
   onCartIntent(event) {
     if (!event.isTrusted || !(event.target instanceof Element)) return;
 
-    const cartTarget = event.target.closest([
+    const cartTarget = this.getCartIntentTarget(event.target);
+
+    if (cartTarget) {
+      this.lastCartIntentAt = Date.now();
+    }
+  }
+
+  getCartIntentTarget(element) {
+    if (!(element instanceof Element)) return null;
+
+    return element.closest([
       'form[action*="/cart/add"]',
       '[is="product-form"]',
       'product-bundle',
@@ -106,17 +116,29 @@ class CartDrawer extends DrawerElement {
       'button[name="add"]',
       '[data-add-to-cart]'
     ].join(','));
+  }
 
-    if (cartTarget) {
-      this.lastCartIntentAt = Date.now();
-    }
+  isCartControl(element) {
+    return element instanceof Element && element.closest(`[aria-controls="${this.id}"]`);
+  }
+
+  hasRecentCartIntent() {
+    const recentCartIntentWindow = 10000;
+    return Date.now() - this.lastCartIntentAt < recentCartIntentWindow;
+  }
+
+  shouldOpenFromSignal(focusElement) {
+    if (Shopify.designMode && this.designMode) return true;
+    if (this.isCartControl(focusElement)) return true;
+    if (this.getCartIntentTarget(focusElement)) return true;
+
+    return this.hasRecentCartIntent();
   }
 
   shouldOpenAfterCartRefresh(event) {
     if (event.detail?.open !== true) return false;
 
-    const recentCartIntentWindow = 10000;
-    return Date.now() - this.lastCartIntentAt < recentCartIntentWindow;
+    return this.hasRecentCartIntent();
   }
 
   async onCartRefresh(event) {
@@ -134,6 +156,8 @@ class CartDrawer extends DrawerElement {
   }
 
   show(focusElement = null, animate = true) {
+    if (!this.shouldOpenFromSignal(focusElement)) return;
+
     super.show(focusElement, animate);
 
     if (this.tabList) {
