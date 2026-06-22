@@ -697,8 +697,10 @@ html.touch .has-modal-open {
    - Sous-titres "Découvrez nos gammes naturelles" / "Nos recommandations": 18px Medium
 */
 .cart-empty-state {
-    padding: 84px 16px 32px;
-    gap: 42px;
+    --cart-empty-title-offset: 84px;
+    --cart-empty-section-gap: 42px;
+    padding: var(--cart-empty-title-offset) 16px 32px;
+    gap: var(--cart-empty-section-gap);
 }
 
 .cart-empty-state__title {
@@ -707,13 +709,15 @@ html.touch .has-modal-open {
     font-weight: 700;
     line-height: 1.1;
     color: var(--TEXT, #003435);
-    margin: 0;
+    margin: 0 0 calc(var(--cart-empty-title-offset) - var(--cart-empty-section-gap));
 }
 
 @media (min-width: 768px) {
     .cart-empty-state {
-        padding: 96px 40px 40px;
-        gap: 48px;
+        --cart-empty-title-offset: 96px;
+        --cart-empty-section-gap: 48px;
+        padding: var(--cart-empty-title-offset) 40px 40px;
+        gap: var(--cart-empty-section-gap);
     }
 }
 
