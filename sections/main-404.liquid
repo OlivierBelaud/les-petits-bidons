@@ -5,17 +5,6 @@
   }
 </style>
 
-<script>
-  (function () {
-    var malformedFaqPath = '/pages/faq-les-petits-bidons:';
-    var targetFaqPath = '/pages/faq-les-petits-bidons';
-
-    if (window.location.pathname === malformedFaqPath) {
-      window.location.replace(targetFaqPath + window.location.search + window.location.hash);
-    }
-  })();
-</script>
-
 <div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}">
   <div class="page-width{% if section.settings.narrow %} page-width--narrow{% endif %} relative">
     <div class="title-wrapper text-center leading-none">
