@@ -48,6 +48,7 @@
         },
         "image_eRnAHP": {
           "type": "image",
+          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/banniere_jaune_homepage_Lessive__desktop.png",
             "image_mobile": "shopify://shop_images/banniere_jaune_homepage_Lessive_mobile_v4.png",
@@ -63,6 +64,7 @@
         },
         "image_En6zN4": {
           "type": "image",
+          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/banni_re_violette_vaisselle_-_home_-_16_06_26_-90.webp",
             "image_mobile": "shopify://shop_images/banniere_violette_vaisselle_mobile__v2.png",
@@ -78,6 +80,7 @@
         },
         "image_3DcCCQ": {
           "type": "image",
+          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/Banni_re_Homepage_Entretien_desktop_-90.webp",
             "image_mobile": "shopify://shop_images/Banni_re_Homepage_Entretien_mobile_-90_1.webp",
@@ -93,6 +96,7 @@
         },
         "image_pR3qmW": {
           "type": "image",
+          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/Banni_re_HP_tous_produits_-90.webp",
             "image_mobile": "shopify://shop_images/Banni_re_HP_tous_produits_mobile_-90_1.webp",
@@ -113,6 +117,10 @@
         "image_En6zN4",
         "image_3DcCCQ",
         "image_pR3qmW"
+      ],
+      "custom_css": [
+        ".page-width.absolute.bottom-0 {bottom: auto !important; top: 50px !important;}",
+        ".slideshow-dots__cluutch {position: absolute !important; top: 500px !important;}"
       ],
       "settings": {
         "autoplay": true,
