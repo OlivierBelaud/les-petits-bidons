@@ -355,7 +355,7 @@
       "disabled": true,
       "name": "LPB scrolling banner",
       "settings": {
-        "text": "<p>BUG D’AFFICHAGE 💛 -  CLIQUEZ SUR UN PRODUIT POUR COMMANDER ✅</p>",
+        "text": "<p>-15% sur tout le site dès 20€ d'achat</p>",
         "speed": 28,
         "color_background": "#fcecbf",
         "color_text": "#007e7f",
