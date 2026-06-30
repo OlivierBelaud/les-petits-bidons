@@ -203,6 +203,29 @@ body:has(.cluutch-cart-drawer .cart-drawer[active]) .needsclick[style*="position
     font-style: normal;
 }
 
+.cluutch-cart-drawer .cart-drawer__status {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    max-width: min(70%, 320px);
+    padding: 10px 16px;
+    border: 1px solid rgb(var(--color-border));
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgb(var(--color-foreground) / .14);
+    color: rgb(var(--color-foreground));
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    transform: translate(-50%, -50%);
+}
+
+.cluutch-cart-drawer .cart-drawer__status[hidden] {
+    display: none;
+}
+
 /* Quantity pill */
 .cart-qty-pill {
     display: inline-flex;

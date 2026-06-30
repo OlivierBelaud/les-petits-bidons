@@ -40,7 +40,9 @@ class CartDrawer extends DrawerElement {
     this.onPrepareBundledSectionsListener = this.onPrepareBundledSections.bind(this);
     this.onCartRefreshListener = this.onCartRefresh.bind(this);
     this.onCartIntentListener = this.onCartIntent.bind(this);
+    this.onAjaxProductAddedListener = this.onAjaxProductAdded.bind(this);
     this.lastCartIntentAt = 0;
+    this.statusTimeout = null;
   }
 
   get sectionId() {
@@ -66,6 +68,7 @@ class CartDrawer extends DrawerElement {
     document.addEventListener('cart:refresh', this.onCartRefreshListener);
     document.addEventListener('click', this.onCartIntentListener, true);
     document.addEventListener('submit', this.onCartIntentListener, true);
+    document.addEventListener('ajaxProduct:added', this.onAjaxProductAddedListener);
     if (this.recentlyViewed) {
       this.recentlyViewed.addEventListener('is-empty', this.onRecentlyViewedEmpty.bind(this));
     }
@@ -78,6 +81,8 @@ class CartDrawer extends DrawerElement {
     document.removeEventListener('cart:refresh', this.onCartRefreshListener);
     document.removeEventListener('click', this.onCartIntentListener, true);
     document.removeEventListener('submit', this.onCartIntentListener, true);
+    document.removeEventListener('ajaxProduct:added', this.onAjaxProductAddedListener);
+    clearTimeout(this.statusTimeout);
   }
 
   onPrepareBundledSections(event) {
@@ -139,6 +144,22 @@ class CartDrawer extends DrawerElement {
     if (event.detail?.open !== true) return false;
 
     return this.hasRecentCartIntent();
+  }
+
+  onAjaxProductAdded(event) {
+    this.showStatus(event.detail?.product?.product_title || 'Produit');
+  }
+
+  showStatus(message) {
+    const status = this.querySelector('[data-cart-drawer-status]');
+    if (!status) return;
+
+    clearTimeout(this.statusTimeout);
+    status.textContent = `${message} ajout\u00e9 au panier`;
+    status.hidden = false;
+    this.statusTimeout = setTimeout(() => {
+      status.hidden = true;
+    }, 3500);
   }
 
   async onCartRefresh(event) {
