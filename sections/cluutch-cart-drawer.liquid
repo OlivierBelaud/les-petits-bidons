@@ -75,9 +75,12 @@
           <span class="sr-only">{{ 'general.cart.title' | t }}</span>
           <div class="flex flex-col h-full">
             {%- if cart == empty -%}
+              {%- liquid
+                assign empty_cart_custom_cards = section.blocks | where: 'type', 'empty_cart_card'
+              -%}
               <div class="drawer__scrollable cart-empty-state relative flex flex-col grow shrink">
                 <h2 class="cart-empty-state__title heading leading-none tracking-tight text-center">
-                  {{ 'cart.general.empty' | t }}
+                  {{- section.settings.empty_cart_title | default: 'Votre panier est vide.' -}}
                 </h2>
 
                 {%- comment -%}
@@ -97,10 +100,32 @@
                 -%}
                 {%- if essentials_collections.size > 0 -%}
                   <div class="cart-empty-state__section">
-                    <p class="cart-empty-state__heading text-center">
-                      Découvrez nos gammes naturelles
-                    </p>
+                    {%- if section.settings.empty_cart_collections_heading != blank -%}
+                      <p class="cart-empty-state__heading text-center">
+                        {{- section.settings.empty_cart_collections_heading | escape -}}
+                      </p>
+                    {%- endif -%}
                     <div class="cart-empty-state__slider">
+                      {%- for block in empty_cart_custom_cards -%}
+                        <a
+                          class="cart-empty-collection-card"
+                          href="{{ block.settings.link | default: routes.all_products_collection_url }}"
+                          {{ block.shopify_attributes }}
+                        >
+                          <div class="cart-empty-collection-card__media">
+                            {%- if block.settings.image != blank -%}
+                              {{ block.settings.image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                            {%- endif -%}
+                            <span class="cart-empty-collection-card__arrow" aria-hidden="true">
+                              {%- render 'icon', icon: 'arrow-right', size: 'xs' -%}
+                            </span>
+                          </div>
+                          {%- if block.settings.title != blank -%}
+                            <span class="cart-empty-collection-card__label">{{ block.settings.title | escape }}</span>
+                          {%- endif -%}
+                        </a>
+                      {%- endfor -%}
+
                       {%- for entry in essentials_collections -%}
                         {%- liquid
                           if entry.url
@@ -137,9 +162,11 @@
                 -%}
                 {%- if best_sellers_products.size > 0 -%}
                   <div class="cart-empty-state__section">
-                    <p class="cart-empty-state__heading text-center">
-                      Nos recommandations
-                    </p>
+                    {%- if section.settings.empty_cart_products_heading != blank -%}
+                      <p class="cart-empty-state__heading text-center">
+                        {{- section.settings.empty_cart_products_heading | escape -}}
+                      </p>
+                    {%- endif -%}
                     <div class="cart-empty-state__slider cart-empty-state__slider--products">
                       {%- for product in best_sellers_products limit: 12 -%}
                         {%- liquid
@@ -1189,9 +1216,21 @@
       "content": "t:sections.cart-drawer.settings.header__empty_cart.content"
     },
     {
+      "type": "text",
+      "id": "empty_cart_title",
+      "default": "Votre panier est vide.",
+      "label": "t:sections.cart-drawer.settings.empty_cart_title.label"
+    },
+    {
       "type": "richtext",
       "id": "empty_cart_message",
       "label": "t:sections.cart-drawer.settings.empty_cart_message.label"
+    },
+    {
+      "type": "text",
+      "id": "empty_cart_collections_heading",
+      "default": "Découvrez nos gammes naturelles",
+      "label": "t:sections.cart-drawer.settings.empty_cart_collections_heading.label"
     },
     {
       "type": "collection_list",
@@ -1199,10 +1238,16 @@
       "label": "t:sections.cart-drawer.settings.empty_cart_collections.label"
     },
     {
+      "type": "text",
+      "id": "empty_cart_products_heading",
+      "default": "Nos recommandations",
+      "label": "t:sections.cart-drawer.settings.empty_cart_products_heading.label"
+    },
+    {
       "type": "product_list",
       "id": "empty_cart_products",
-      "label": "Produits recommandes panier vide",
-      "info": "Choisir les produits affiches dans l'etat panier vide. Si vide, la collection best-sellers est utilisee."
+      "label": "t:sections.cart-drawer.settings.empty_cart_products.label",
+      "info": "t:sections.cart-drawer.settings.empty_cart_products.info"
     },
     {
       "type": "header",
@@ -1260,6 +1305,27 @@
           "type": "text",
           "id": "text",
           "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "empty_cart_card",
+      "name": "Empty cart card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
         }
       ]
     }
