@@ -73,7 +73,11 @@
     },
     "cluutch_banner_Me6w8c": {
       "type": "cluutch-banner",
+      "custom_css": [
+        "h1 {display: none;}"
+      ],
       "settings": {
+        "img": "shopify://shop_images/Best-sellers_-_soldes_-_desktop.webp",
         "text": "<h1>{{ collection.title }}</h1>"
       }
     },
