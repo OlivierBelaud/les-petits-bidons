@@ -238,11 +238,6 @@
                   </div>
                 {%- endif -%}
 
-                {%- if section.settings.empty_cart_message != blank -%}
-                  <div class="cart-empty-state__message text-sm leading-tight rte text-center">
-                    {{- section.settings.empty_cart_message -}}
-                  </div>
-                {%- endif -%}
               </div>
             {%- endif -%}
             <div class="drawer__scrollable relative flex flex-col gap-9 grow shrink{% if cart == empty %} hidden{% endif %}">
@@ -1220,11 +1215,6 @@
       "id": "empty_cart_title",
       "default": "Votre panier est vide.",
       "label": "t:sections.cart-drawer.settings.empty_cart_title.label"
-    },
-    {
-      "type": "richtext",
-      "id": "empty_cart_message",
-      "label": "t:sections.cart-drawer.settings.empty_cart_message.label"
     },
     {
       "type": "text",
