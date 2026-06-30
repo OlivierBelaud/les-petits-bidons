@@ -77,7 +77,7 @@
         "h1 {display: none;}"
       ],
       "settings": {
-        "text": ""
+        "text": "<h1>{{ collection.title }}</h1>"
       }
     },
     "cluutch_multicolumn_with_icons_8xJVG9": {
