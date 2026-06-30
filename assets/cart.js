@@ -248,6 +248,45 @@ class CartItems extends HTMLElement {
     });
   }
 
+  getCartScrollContainers(container) {
+    if (!container) return [];
+
+    return [
+      container,
+      ...container.querySelectorAll('.drawer__content, .drawer__panel, .drawer__scrollable')
+    ].filter((element) => element && (element.scrollTop > 0 || element.scrollHeight > element.clientHeight));
+  }
+
+  captureCartScroll(container) {
+    return this.getCartScrollContainers(container).map((element) => ({
+      selector: element.id ? `#${element.id}` : `.${Array.from(element.classList).join('.')}`,
+      scrollTop: element.scrollTop,
+      scrollLeft: element.scrollLeft
+    }));
+  }
+
+  restoreCartScroll(container, savedScroll) {
+    if (!container || !savedScroll.length) return;
+
+    const restore = () => {
+      savedScroll.forEach(({ selector, scrollTop, scrollLeft }) => {
+        const element = container.matches(selector) ? container : container.querySelector(selector);
+        if (!element) return;
+
+        const previousScrollBehavior = element.style.scrollBehavior;
+        element.style.scrollBehavior = 'auto';
+        element.scrollTop = scrollTop;
+        element.scrollLeft = scrollLeft;
+        element.style.scrollBehavior = previousScrollBehavior;
+      });
+    };
+
+    restore();
+    requestAnimationFrame(restore);
+    requestAnimationFrame(() => requestAnimationFrame(restore));
+    setTimeout(restore, 80);
+  }
+
   onCartUpdate(event) {
     if (event.cart.errors) {
       this.onCartError(event.cart.errors, event.target);
@@ -258,9 +297,7 @@ class CartItems extends HTMLElement {
 
     const miniCart = document.querySelector(`#MiniCart-${this.sectionId}`);
     if (miniCart) {
-      // Save scroll position of the drawer's scrollable area before innerHTML replace
-      const prevScrollable = miniCart.querySelector('.drawer__scrollable');
-      const savedScrollTop = prevScrollable ? prevScrollable.scrollTop : 0;
+      const savedScroll = this.captureCartScroll(miniCart);
       const preservedRecommendationBlocks = event.cartRecommendation
         ? this.getCartRecommendationBlocks(miniCart)
         : [];
@@ -269,20 +306,7 @@ class CartItems extends HTMLElement {
       if (updatedElement) {
         miniCart.innerHTML = updatedElement.innerHTML;
         this.restoreCartRecommendationBlocks(miniCart, preservedRecommendationBlocks);
-
-        // Restore scroll position so the drawer doesn't jump to the top after a quantity update.
-        // CSS sets `scroll-behavior: smooth` on .drawer__scrollable, which would animate the
-        // restore (visible "remonte/redescend"). We override it to instant for the restore,
-        // then revert on the next frame so user-initiated scrolling stays smooth.
-        const newScrollable = miniCart.querySelector('.drawer__scrollable');
-        if (newScrollable && savedScrollTop > 0) {
-          const prevScrollBehavior = newScrollable.style.scrollBehavior;
-          newScrollable.style.scrollBehavior = 'auto';
-          newScrollable.scrollTop = savedScrollTop;
-          requestAnimationFrame(() => {
-            newScrollable.style.scrollBehavior = prevScrollBehavior;
-          });
-        }
+        this.restoreCartScroll(miniCart, savedScroll);
       }
     }
 
@@ -298,20 +322,10 @@ class CartItems extends HTMLElement {
       }
     }
 
-    const lineItem = document.getElementById(`CartItem-${event.line}`) || document.getElementById(`CartDrawer-Item-${event.line}`);
-    // preventScroll: true so the browser doesn't auto-scroll the drawer to bring focus into view
-    if (lineItem && lineItem.querySelector(`[name="${event.name}"]`)) {
-      theme.a11y.trapFocus(mainCart || miniCart, lineItem.querySelector(`[name="${event.name}"]`), { preventScroll: true });
-    }
-    else if (event.cart.item_count === 0) {
+    if (event.cart.item_count === 0) {
       miniCart
         ? theme.a11y.trapFocus(miniCart, miniCart.querySelector('a'), { preventScroll: true })
         : theme.a11y.trapFocus(document.querySelector('.empty-state'), document.querySelector('.empty-state__link'), { preventScroll: true });
-    }
-    // Do NOT trap focus on the first item title when the modified line still exists
-    // (it scrolls the drawer back to the top). Trap focus on the modified line instead.
-    else if (lineItem) {
-      theme.a11y.trapFocus(mainCart || miniCart, lineItem, { preventScroll: true });
     }
 
     document.dispatchEvent(new CustomEvent('cart:updated', {

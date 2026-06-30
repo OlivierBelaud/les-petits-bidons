@@ -6092,7 +6092,7 @@ class ProductForm extends HTMLFormElement {
             { once: true }
           );
           quickViewModal.hide(true);
-        } else {
+        } else if (!isCartRecommendation) {
           this.cartDrawer?.show(this.activeElement);
         }
       })
