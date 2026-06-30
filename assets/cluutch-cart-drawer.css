@@ -579,9 +579,11 @@ html.touch .has-modal-open {
 }
 
 .cluutch-reco-card__btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 72px;
     height: 28px;
     padding: 0 9px;
     border: 1px solid #37b6ad;
@@ -596,6 +598,37 @@ html.touch .has-modal-open {
     white-space: nowrap;
     transition: background-color 0.15s ease;
     flex-shrink: 0;
+}
+
+.cluutch-reco-card__btn[aria-busy="true"] {
+    color: transparent;
+    cursor: progress;
+    pointer-events: none;
+}
+
+.cluutch-reco-card__btn[aria-busy="true"]::after {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    color: #37b6ad;
+    animation: cluutch-reco-button-spin 0.65s linear infinite;
+}
+
+.cluutch-reco-card__btn[aria-busy="true"]:hover::after,
+.cluutch-reco-card__variant-submit[aria-busy="true"]::after {
+    color: #ffffff;
+}
+
+@keyframes cluutch-reco-button-spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .cluutch-reco-card__btn:hover {
