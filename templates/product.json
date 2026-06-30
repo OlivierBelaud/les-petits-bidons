@@ -110,7 +110,7 @@
             "item_4_text": "<p><strong>Paiement sécurisé</strong> – CB, Apple Pay...</p>",
             "item_5_icon": "",
             "item_5_text": "",
-            "display_as_list": true,
+            "display_as_list": false,
             "text_color": "#003435",
             "autoplay_speed": 3000
           }
