@@ -3,10 +3,18 @@
   assign desktop_image = section.settings.img
 
   if template.name == 'collection' and desktop_image == blank
-    assign desktop_image = collection.metafields.custom.cluutch_banner.value
+    assign metafield_image = collection.metafields.custom.cluutch_banner.value
+
+    if metafield_image.preview_image != blank
+      assign desktop_image = metafield_image.preview_image
+    elsif metafield_image.image != blank
+      assign desktop_image = metafield_image.image
+    elsif metafield_image.src != blank
+      assign desktop_image = metafield_image
+    endif
   endif
 
-  if desktop_image == blank and collection.image != blank
+  if desktop_image == blank and collection.image.src != blank
     assign desktop_image = collection.image
   endif
 %}
