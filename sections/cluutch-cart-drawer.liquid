@@ -404,18 +404,6 @@
                                                     <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
                                                       Promo : -{{ shopify_pct | round }}%
                                                     </span>
-                                                  {%- elsif item.line_level_discount_allocations != blank -%}
-                                                    {%- assign lot_pct = 0 -%}
-                                                    {%- for discount in item.discount_allocations -%}
-                                                      {%- if discount.discount_application.value_type == "percentage" -%}
-                                                        {%- assign lot_pct = lot_pct | plus: discount.discount_application.value -%}
-                                                      {%- endif -%}
-                                                    {%- endfor -%}
-                                                    {%- if lot_pct > 0 -%}
-                                                      <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
-                                                        Lot de 2 : -{{ lot_pct | round }}%
-                                                      </span>
-                                                    {%- endif -%}
                                                   {%- endif -%}
 
                                                   {%- if item.selling_plan_allocation != null and has_shopify_sale == false -%}
