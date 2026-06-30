@@ -1,9 +1,15 @@
 {{ 'cluutch-banner.css' | asset_url | stylesheet_tag }}
-{% if template.name == 'collection' %}
-  {% assign desktop_image = section.settings.img | default: collection.metafields.custom.cluutch_banner %}
-{% else %}
-  {% assign desktop_image = section.settings.img | default: collection.image %}
-{% endif %}
+{% liquid
+  assign desktop_image = section.settings.img
+
+  if template.name == 'collection' and desktop_image == blank
+    assign desktop_image = collection.metafields.custom.cluutch_banner.value
+  endif
+
+  if desktop_image == blank and collection.image != blank
+    assign desktop_image = collection.image
+  endif
+%}
 
 {% if section.settings.img_mobile != blank %}
   <style>
