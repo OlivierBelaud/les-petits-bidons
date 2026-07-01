@@ -86,6 +86,9 @@
             {%- if cart == empty -%}
               {%- liquid
                 assign empty_cart_custom_cards = section.blocks | where: 'type', 'empty_cart_card'
+                assign empty_cart_collection_image_sizes = '(max-width: 767px) calc((100vw - 38px) / 2.5), 136px'
+                assign empty_cart_product_image_sizes = '(max-width: 767px) calc((100vw - 38px) / 2), 136px'
+                assign empty_cart_image_widths = '132,176,264,352,396,528,600'
               -%}
               <div class="drawer__scrollable cart-empty-state relative flex flex-col grow shrink">
                 <h2 class="cart-empty-state__title heading leading-none tracking-tight text-center">
@@ -123,7 +126,7 @@
                         >
                           <div class="cart-empty-collection-card__media">
                             {%- if block.settings.image != blank -%}
-                              {{ block.settings.image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                              {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: empty_cart_collection_image_sizes, widths: empty_cart_image_widths, alt: '', class: 'cart-empty-collection-card__img' }}
                             {%- endif -%}
                             <span class="cart-empty-collection-card__arrow" aria-hidden="true">
                               {%- render 'icon', icon: 'arrow-right', size: 'xs' -%}
@@ -147,9 +150,9 @@
                           <a class="cart-empty-collection-card" href="{{ col.url }}">
                             <div class="cart-empty-collection-card__media">
                               {%- if col.image -%}
-                                {{ col.image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                                {{ col.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: empty_cart_collection_image_sizes, widths: empty_cart_image_widths, alt: '', class: 'cart-empty-collection-card__img' }}
                               {%- elsif col.products.first.featured_image -%}
-                                {{ col.products.first.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-collection-card__img' }}
+                                {{ col.products.first.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: empty_cart_collection_image_sizes, widths: empty_cart_image_widths, alt: '', class: 'cart-empty-collection-card__img' }}
                               {%- endif -%}
                               <span class="cart-empty-collection-card__arrow" aria-hidden="true">
                                 {%- render 'icon', icon: 'arrow-right', size: 'xs' -%}
@@ -195,7 +198,7 @@
                         <div class="cart-empty-product-card">
                           <a class="cart-empty-product-card__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
                             {%- if product.featured_image -%}
-                              {{ product.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', widths: '88,176,264', alt: '', class: 'cart-empty-product-card__img', width: 88, height: 88 }}
+                              {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: empty_cart_product_image_sizes, widths: empty_cart_image_widths, alt: '', class: 'cart-empty-product-card__img' }}
                             {%- endif -%}
                             <div class="cluutch-badges-wrapper">
                               {%- if p_variant.metafields.custom.label_texte != blank and p_variant.metafields.custom.label_color != blank -%}
