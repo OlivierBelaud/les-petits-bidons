@@ -277,7 +277,7 @@ class CartItems extends HTMLElement {
     return container?.querySelector(':scope > .flex > .drawer__footer');
   }
 
-  replaceCartDrawerContentsWithoutScrollJump(miniCart, updatedElement) {
+  replaceCartDrawerContents(miniCart, updatedElement) {
     const currentScrollable = this.getPrimaryCartScrollContainer(miniCart);
     const updatedScrollable = this.getPrimaryCartScrollContainer(updatedElement);
     if (!currentScrollable || !updatedScrollable) return false;
@@ -302,45 +302,6 @@ class CartItems extends HTMLElement {
     return true;
   }
 
-  getCartScrollContainers(container) {
-    if (!container) return [];
-
-    return [
-      container,
-      ...container.querySelectorAll('.drawer__content, .drawer__panel, .drawer__scrollable')
-    ].filter((element) => element && (element.scrollTop > 0 || element.scrollHeight > element.clientHeight));
-  }
-
-  captureCartScroll(container) {
-    return this.getCartScrollContainers(container).map((element) => ({
-      selector: element.id ? `#${element.id}` : `.${Array.from(element.classList).join('.')}`,
-      scrollTop: element.scrollTop,
-      scrollLeft: element.scrollLeft
-    }));
-  }
-
-  restoreCartScroll(container, savedScroll) {
-    if (!container || !savedScroll.length) return;
-
-    const restore = () => {
-      savedScroll.forEach(({ selector, scrollTop, scrollLeft }) => {
-        const element = container.matches(selector) ? container : container.querySelector(selector);
-        if (!element) return;
-
-        const previousScrollBehavior = element.style.scrollBehavior;
-        element.style.scrollBehavior = 'auto';
-        element.scrollTop = scrollTop;
-        element.scrollLeft = scrollLeft;
-        element.style.scrollBehavior = previousScrollBehavior;
-      });
-    };
-
-    restore();
-    requestAnimationFrame(restore);
-    requestAnimationFrame(() => requestAnimationFrame(restore));
-    setTimeout(restore, 80);
-  }
-
   onCartUpdate(event) {
     if (event.cart.errors) {
       this.onCartError(event.cart.errors, event.target);
@@ -351,25 +312,19 @@ class CartItems extends HTMLElement {
 
     const miniCart = document.querySelector(`#MiniCart-${this.sectionId}`);
     if (miniCart) {
-      const savedScroll = this.captureCartScroll(miniCart);
       const preservedRecommendationBlocks = event.cartRecommendation
         ? this.getCartRecommendationBlocks(miniCart)
         : [];
 
       const updatedElement = sectionToRender.querySelector(`#MiniCart-${this.sectionId}`);
       if (updatedElement) {
-        const replacedWithoutScrollJump = event.cartRecommendation
-          ? this.replaceCartDrawerContentsWithoutScrollJump(miniCart, updatedElement)
-          : false;
+        const replacedWithoutScrollJump = this.replaceCartDrawerContents(miniCart, updatedElement);
 
         if (!replacedWithoutScrollJump) {
           miniCart.innerHTML = updatedElement.innerHTML;
         }
 
         this.restoreCartRecommendationBlocks(miniCart, preservedRecommendationBlocks);
-        if (!event.cartRecommendation) {
-          this.restoreCartScroll(miniCart, savedScroll);
-        }
       }
     }
 
