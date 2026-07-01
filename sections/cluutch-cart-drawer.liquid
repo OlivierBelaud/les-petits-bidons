@@ -435,6 +435,23 @@
                                                     <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
                                                       Promo : -{{ shopify_pct | round }}%
                                                     </span>
+                                                  {%- elsif item.line_level_discount_allocations != blank -%}
+                                                    {%- assign promo_pct = 0 -%}
+                                                    {%- for discount in item.discount_allocations -%}
+                                                      {%- assign discount_title = discount.discount_application.title | downcase -%}
+                                                      {%- assign show_promo_badge = true -%}
+                                                      {%- if discount_title contains 'quantité' or discount_title contains 'abonnement' or discount_title contains 'lot' -%}
+                                                        {%- assign show_promo_badge = false -%}
+                                                      {%- endif -%}
+                                                      {%- if show_promo_badge and discount.discount_application.value_type == "percentage" -%}
+                                                        {%- assign promo_pct = promo_pct | plus: discount.discount_application.value -%}
+                                                      {%- endif -%}
+                                                    {%- endfor -%}
+                                                    {%- if promo_pct > 0 -%}
+                                                      <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
+                                                        Promo : -{{ promo_pct | round }}%
+                                                      </span>
+                                                    {%- endif -%}
                                                   {%- endif -%}
 
                                                   {%- if item.selling_plan_allocation != null and has_shopify_sale == false -%}
