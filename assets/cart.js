@@ -150,6 +150,21 @@ class CartDrawer extends DrawerElement {
     this.showStatus(event.detail?.product?.product_title || 'Produit');
   }
 
+  getActiveScrollable() {
+    return this.querySelector(`#MiniCart-${this.sectionId} .drawer__scrollable:not(.hidden)`);
+  }
+
+  resetScrollPosition() {
+    const scrollable = this.getActiveScrollable();
+    if (!scrollable) return;
+
+    const previousScrollBehavior = scrollable.style.scrollBehavior;
+    scrollable.style.scrollBehavior = 'auto';
+    scrollable.scrollTop = 0;
+    scrollable.scrollLeft = 0;
+    scrollable.style.scrollBehavior = previousScrollBehavior;
+  }
+
   showStatus(message) {
     const status = this.querySelector('[data-cart-drawer-status]');
     if (!status) return;
@@ -174,6 +189,11 @@ class CartDrawer extends DrawerElement {
     if (this.shouldOpenAfterCartRefresh(event)) {
       this.show();
     }
+  }
+
+  afterHide() {
+    super.afterHide();
+    this.resetScrollPosition();
   }
 
   show(focusElement = null, animate = true) {
@@ -249,46 +269,37 @@ class CartItems extends HTMLElement {
   }
 
   getPrimaryCartScrollContainer(container) {
-    return container?.querySelector(':scope > .drawer__scrollable:not(.hidden)');
+    return container?.querySelector(':scope > .flex > .drawer__scrollable:not(.hidden)')
+      || container?.querySelector('.drawer__scrollable:not(.hidden)');
   }
 
-  getCartRecommendationCard(container, productHandle) {
-    if (!container || !productHandle) return null;
-
-    return Array.from(container.querySelectorAll('[data-product-handle]'))
-      .find((element) => element.dataset.productHandle === productHandle);
+  getCartFooter(container) {
+    return container?.querySelector(':scope > .flex > .drawer__footer');
   }
 
-  captureCartRecommendationAnchor(container, productHandle) {
-    const scrollContainer = this.getPrimaryCartScrollContainer(container);
-    if (!scrollContainer || !productHandle) return null;
+  replaceCartDrawerContentsWithoutScrollJump(miniCart, updatedElement) {
+    const currentScrollable = this.getPrimaryCartScrollContainer(miniCart);
+    const updatedScrollable = this.getPrimaryCartScrollContainer(updatedElement);
+    if (!currentScrollable || !updatedScrollable) return false;
+    if (currentScrollable.classList.contains('cart-empty-state') || updatedScrollable.classList.contains('cart-empty-state')) return false;
 
-    const anchor = this.getCartRecommendationCard(scrollContainer, productHandle);
-    if (!anchor) return null;
+    const scrollTop = currentScrollable.scrollTop;
+    const scrollLeft = currentScrollable.scrollLeft;
+    const previousScrollBehavior = currentScrollable.style.scrollBehavior;
 
-    return {
-      productHandle,
-      top: anchor.getBoundingClientRect().top
-    };
-  }
+    currentScrollable.style.scrollBehavior = 'auto';
+    currentScrollable.innerHTML = updatedScrollable.innerHTML;
+    currentScrollable.scrollTop = scrollTop;
+    currentScrollable.scrollLeft = scrollLeft;
+    currentScrollable.style.scrollBehavior = previousScrollBehavior;
 
-  restoreCartRecommendationAnchor(container, savedAnchor) {
-    const scrollContainer = this.getPrimaryCartScrollContainer(container);
-    if (!scrollContainer || !savedAnchor) return;
+    const currentFooter = this.getCartFooter(miniCart);
+    const updatedFooter = this.getCartFooter(updatedElement);
+    if (currentFooter && updatedFooter) {
+      currentFooter.replaceWith(updatedFooter);
+    }
 
-    const anchor = this.getCartRecommendationCard(scrollContainer, savedAnchor.productHandle);
-    if (!anchor) return;
-
-    const restore = () => {
-      const previousScrollBehavior = scrollContainer.style.scrollBehavior;
-      scrollContainer.style.scrollBehavior = 'auto';
-      scrollContainer.scrollTop += anchor.getBoundingClientRect().top - savedAnchor.top;
-      scrollContainer.style.scrollBehavior = previousScrollBehavior;
-    };
-
-    restore();
-    requestAnimationFrame(restore);
-    setTimeout(restore, 80);
+    return true;
   }
 
   getCartScrollContainers(container) {
@@ -341,21 +352,22 @@ class CartItems extends HTMLElement {
     const miniCart = document.querySelector(`#MiniCart-${this.sectionId}`);
     if (miniCart) {
       const savedScroll = this.captureCartScroll(miniCart);
-      const savedRecommendationAnchor = event.cartRecommendation
-        ? this.captureCartRecommendationAnchor(miniCart, event.cartRecommendationProductHandle)
-        : null;
       const preservedRecommendationBlocks = event.cartRecommendation
         ? this.getCartRecommendationBlocks(miniCart)
         : [];
 
       const updatedElement = sectionToRender.querySelector(`#MiniCart-${this.sectionId}`);
       if (updatedElement) {
-        miniCart.innerHTML = updatedElement.innerHTML;
-        this.restoreCartRecommendationBlocks(miniCart, preservedRecommendationBlocks);
-        if (savedRecommendationAnchor) {
-          this.restoreCartRecommendationAnchor(miniCart, savedRecommendationAnchor);
+        const replacedWithoutScrollJump = event.cartRecommendation
+          ? this.replaceCartDrawerContentsWithoutScrollJump(miniCart, updatedElement)
+          : false;
+
+        if (!replacedWithoutScrollJump) {
+          miniCart.innerHTML = updatedElement.innerHTML;
         }
-        else {
+
+        this.restoreCartRecommendationBlocks(miniCart, preservedRecommendationBlocks);
+        if (!event.cartRecommendation) {
           this.restoreCartScroll(miniCart, savedScroll);
         }
       }
