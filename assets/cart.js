@@ -248,6 +248,49 @@ class CartItems extends HTMLElement {
     });
   }
 
+  getPrimaryCartScrollContainer(container) {
+    return container?.querySelector(':scope > .drawer__scrollable:not(.hidden)');
+  }
+
+  getCartRecommendationCard(container, productHandle) {
+    if (!container || !productHandle) return null;
+
+    return Array.from(container.querySelectorAll('[data-product-handle]'))
+      .find((element) => element.dataset.productHandle === productHandle);
+  }
+
+  captureCartRecommendationAnchor(container, productHandle) {
+    const scrollContainer = this.getPrimaryCartScrollContainer(container);
+    if (!scrollContainer || !productHandle) return null;
+
+    const anchor = this.getCartRecommendationCard(scrollContainer, productHandle);
+    if (!anchor) return null;
+
+    return {
+      productHandle,
+      top: anchor.getBoundingClientRect().top
+    };
+  }
+
+  restoreCartRecommendationAnchor(container, savedAnchor) {
+    const scrollContainer = this.getPrimaryCartScrollContainer(container);
+    if (!scrollContainer || !savedAnchor) return;
+
+    const anchor = this.getCartRecommendationCard(scrollContainer, savedAnchor.productHandle);
+    if (!anchor) return;
+
+    const restore = () => {
+      const previousScrollBehavior = scrollContainer.style.scrollBehavior;
+      scrollContainer.style.scrollBehavior = 'auto';
+      scrollContainer.scrollTop += anchor.getBoundingClientRect().top - savedAnchor.top;
+      scrollContainer.style.scrollBehavior = previousScrollBehavior;
+    };
+
+    restore();
+    requestAnimationFrame(restore);
+    setTimeout(restore, 80);
+  }
+
   getCartScrollContainers(container) {
     if (!container) return [];
 
@@ -298,6 +341,9 @@ class CartItems extends HTMLElement {
     const miniCart = document.querySelector(`#MiniCart-${this.sectionId}`);
     if (miniCart) {
       const savedScroll = this.captureCartScroll(miniCart);
+      const savedRecommendationAnchor = event.cartRecommendation
+        ? this.captureCartRecommendationAnchor(miniCart, event.cartRecommendationProductHandle)
+        : null;
       const preservedRecommendationBlocks = event.cartRecommendation
         ? this.getCartRecommendationBlocks(miniCart)
         : [];
@@ -306,7 +352,12 @@ class CartItems extends HTMLElement {
       if (updatedElement) {
         miniCart.innerHTML = updatedElement.innerHTML;
         this.restoreCartRecommendationBlocks(miniCart, preservedRecommendationBlocks);
-        this.restoreCartScroll(miniCart, savedScroll);
+        if (savedRecommendationAnchor) {
+          this.restoreCartRecommendationAnchor(miniCart, savedRecommendationAnchor);
+        }
+        else {
+          this.restoreCartScroll(miniCart, savedScroll);
+        }
       }
     }
 
