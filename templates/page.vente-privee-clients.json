@@ -64,7 +64,7 @@
       "name": "LPB Hero Promo",
       "settings": {
         "show_badge": true,
-        "badge_text": "",
+        "badge_text": "DERNIERS JOURS",
         "title": "Soldes d'été ☀️",
         "subtitle": "à partir de -15% sur tout le site dès 20€ d'achat",
         "description": "Réduction AUTOMATIQUE dès 20€ d'achat.  Livraison OFFERTE dès 50€ d'achat 🚛",
@@ -80,7 +80,7 @@
         "title_color": "#ffbb11",
         "text_color": "#000000",
         "badge_background": "#fcecbf",
-        "badge_text_color": "#e5a83b",
+        "badge_text_color": "#E53B52",
         "coupon_background": "#fcecbf",
         "coupon_border_color": "#e5a83b",
         "button_background": "#f6f0f3",
