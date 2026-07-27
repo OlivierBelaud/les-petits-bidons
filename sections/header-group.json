@@ -352,6 +352,7 @@
     },
     "lpb_scrolling_banner_giKLhH": {
       "type": "lpb-scrolling-banner",
+      "disabled": true,
       "name": "LPB scrolling banner",
       "settings": {
         "text": "<p>DERNIERS JOURS : -20% sur TOUT dès 20€ d'achat</p>",
