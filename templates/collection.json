@@ -73,9 +73,7 @@
     },
     "cluutch_banner_Me6w8c": {
       "type": "cluutch-banner",
-      "custom_css": [
-        "h1 {display: none;}"
-      ],
+      "custom_css": [],
       "settings": {
         "text": "<h1>{{ collection.title }}</h1>"
       }
