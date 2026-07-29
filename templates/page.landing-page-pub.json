@@ -30,8 +30,8 @@
       "settings": {
         "show_badge": true,
         "badge_text": "OFFRE LIMITÉE",
-        "title": "",
-        "subtitle": "-10% sur votre 1ère commande code : WELCOME10",
+        "title": "-10% sur votre 1ère commande",
+        "subtitle": "code : WELCOME10",
         "description": "Livraison OFFERTE dès 50€ d'achat 🚛",
         "show_coupon_code": false,
         "coupon_code": "PRINTEMPS15",
