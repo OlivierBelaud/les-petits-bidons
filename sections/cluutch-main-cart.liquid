@@ -273,10 +273,12 @@
                                           if discount_title contains 'quantité' or discount_title contains 'abonnement' or discount_title contains 'lot'
                                             assign show_promo_badge = false
                                           endif
-                                          if show_promo_badge and discount.discount_application.value_type == 'percentage'
-                                            assign promo_pct = promo_pct | plus: discount.discount_application.value
-                                            if promo_title == blank
+                                          if show_promo_badge
+                                            if promo_title == blank and discount.discount_application.title != blank
                                               assign promo_title = discount.discount_application.title
+                                            endif
+                                            if discount.discount_application.value_type == 'percentage'
+                                              assign promo_pct = promo_pct | plus: discount.discount_application.value
                                             endif
                                           endif
                                         endfor
@@ -292,7 +294,7 @@
                                             Promo : -{{ shopify_pct | round }}%
                                           {%- endif -%}
                                         </span>
-                                      {%- elsif promo_pct > 0 -%}
+                                      {%- elsif promo_title != blank or promo_pct > 0 -%}
                                         <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
                                           {%- if promo_title != blank -%}
                                             {{- promo_title | escape -}}
