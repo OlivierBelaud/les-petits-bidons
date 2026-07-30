@@ -3,6 +3,11 @@
     --section-padding-top: {{ section.settings.padding_top }}px;
     --section-padding-bottom: {{ section.settings.padding_bottom }}px;
   }
+
+  #shopify-section-{{ section.id }} .cluutch-badge--subscription {
+    --badge-background: #EFEFEF;
+    --badge-foreground: #5A5A5A;
+  }
 </style>
 <script src="{{ 'cluutch-cart.js' | asset_url }}" defer="defer"></script>
 {%- assign cart_product_handles = '' -%}
@@ -267,6 +272,7 @@
                                         </span>
                                       {%- elsif item.line_level_discount_allocations != blank -%}
                                         {%- assign promo_pct = 0 -%}
+                                        {%- assign promo_title = blank -%}
                                         {%- for discount in item.discount_allocations -%}
                                           {%- assign discount_title = discount.discount_application.title | downcase -%}
                                           {%- assign show_promo_badge = true -%}
@@ -275,11 +281,18 @@
                                           {%- endif -%}
                                           {%- if show_promo_badge and discount.discount_application.value_type == "percentage" -%}
                                             {%- assign promo_pct = promo_pct | plus: discount.discount_application.value -%}
+                                            {%- if promo_title == blank -%}
+                                              {%- assign promo_title = discount.discount_application.title -%}
+                                            {%- endif -%}
                                           {%- endif -%}
                                         {%- endfor -%}
                                         {%- if promo_pct > 0 -%}
                                           <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
-                                            Promo : -{{ promo_pct | round }}%
+                                            {%- if promo_title != blank -%}
+                                              {{- promo_title | escape -}}
+                                            {%- else -%}
+                                              Promo : -{{ promo_pct | round }}%
+                                            {%- endif -%}
                                           </span>
                                         {%- endif -%}
                                       {%- endif -%}
@@ -308,7 +321,7 @@
                                   </div>
         
                                         {%- if item.selling_plan_allocation != null and has_shopify_sale == false -%}
-                                            <p class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full ">
+                                            <p class="cluutch-badge cluutch-badge--subscription badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full ">
                                                
                                             {% assign selling_plan_fixed = item.selling_plan_allocation.selling_plan.name 
                                              | replace: 'Livraison tous les 1', 'Livré tous les'
