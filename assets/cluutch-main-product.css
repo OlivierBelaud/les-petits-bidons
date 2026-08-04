@@ -444,10 +444,6 @@
     height: 100%;
 }
 
-.thumb-swiper .swiper-slide-thumb-active {
-    display: none;
-}
-
 /* 
 .product__media-container {
     max-width: 217px;
