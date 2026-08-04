@@ -89,6 +89,17 @@ body:has(.cluutch-cart-drawer .cart-drawer[active]) .needsclick[style*="position
     text-align: center;
 }
 
+@media (max-width: 767px) {
+    .cluutch-cart-drawer .icon-block__image {
+        max-width: 48px;
+    }
+
+    .cluutch-cart-drawer .icon-block__text {
+        font-size: 14px;
+        line-height: 1.25;
+    }
+}
+
 .cluutch-cart-drawer .cluutch-horizontal-product {
     max-width: 230px;
     gap: 5px;
