@@ -432,29 +432,44 @@
 
                                                   {%- endif -%}
 
+                                                  {%- liquid
+                                                    assign promo_pct = 0
+                                                    assign promo_title = blank
+                                                    for discount in item.discount_allocations
+                                                      assign discount_title = discount.discount_application.title | downcase
+                                                      assign show_promo_badge = true
+                                                      if discount_title contains 'quantité' or discount_title contains 'abonnement' or discount_title contains 'lot'
+                                                        assign show_promo_badge = false
+                                                      endif
+                                                      if show_promo_badge
+                                                        if promo_title == blank and discount.discount_application.title != blank
+                                                          assign promo_title = discount.discount_application.title
+                                                        endif
+                                                        if discount.discount_application.value_type == 'percentage'
+                                                          assign promo_pct = promo_pct | plus: discount.discount_application.value
+                                                        endif
+                                                      endif
+                                                    endfor
+                                                  -%}
+
                                                   {%- if has_shopify_sale -%}
                                                     {%- assign shopify_diff = item.variant.compare_at_price | minus: item.variant.price -%}
                                                     {%- assign shopify_pct = shopify_diff | times: 100.0 | divided_by: item.variant.compare_at_price -%}
                                                     <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
-                                                      Promo : -{{ shopify_pct | round }}%
+                                                      {%- if promo_title != blank -%}
+                                                        {{- promo_title | escape -}}
+                                                      {%- else -%}
+                                                        Promo : -{{ shopify_pct | round }}%
+                                                      {%- endif -%}
                                                     </span>
-                                                  {%- elsif item.line_level_discount_allocations != blank -%}
-                                                    {%- assign promo_pct = 0 -%}
-                                                    {%- for discount in item.discount_allocations -%}
-                                                      {%- assign discount_title = discount.discount_application.title | downcase -%}
-                                                      {%- assign show_promo_badge = true -%}
-                                                      {%- if discount_title contains 'quantité' or discount_title contains 'abonnement' or discount_title contains 'lot' -%}
-                                                        {%- assign show_promo_badge = false -%}
-                                                      {%- endif -%}
-                                                      {%- if show_promo_badge and discount.discount_application.value_type == "percentage" -%}
-                                                        {%- assign promo_pct = promo_pct | plus: discount.discount_application.value -%}
-                                                      {%- endif -%}
-                                                    {%- endfor -%}
-                                                    {%- if promo_pct > 0 -%}
-                                                      <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
+                                                  {%- elsif promo_title != blank or promo_pct > 0 -%}
+                                                    <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
+                                                      {%- if promo_title != blank -%}
+                                                        {{- promo_title | escape -}}
+                                                      {%- else -%}
                                                         Promo : -{{ promo_pct | round }}%
-                                                      </span>
-                                                    {%- endif -%}
+                                                      {%- endif -%}
+                                                    </span>
                                                   {%- endif -%}
 
                                                   {%- if item.selling_plan_allocation != null and has_shopify_sale == false -%}
@@ -465,7 +480,7 @@
                                                       | replace: 'Month', 'Mois'
                                                       | remove: ','
                                                     -%}
-                                                    <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
+                                                    <span class="cluutch-badge cluutch-badge--subscription badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
                                                       {{ sp_name }} (-{{ item.selling_plan_allocation.selling_plan.price_adjustments.first.value }}%)
                                                     </span>
                                                   {%- endif -%}
@@ -721,6 +736,10 @@
                                       font-size: 12px;
                                       padding-inline: 12px !important;
                                       width: fit-content;
+                                  }
+                                  .badge.cluutch-badge--subscription{
+                                      background: #EFEFEF;
+                                      color: #5A5A5A;
                                   }
                               </style>
                       </li>
