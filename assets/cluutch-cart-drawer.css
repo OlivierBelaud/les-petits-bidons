@@ -820,8 +820,10 @@ html.touch .has-modal-open {
     transition: transform 0.15s ease;
 }
 
-.cart-empty-collection-card:hover {
-    transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+    .cart-empty-collection-card:hover {
+        transform: translateY(-2px);
+    }
 }
 
 .cart-empty-collection-card__media {
@@ -894,6 +896,17 @@ html.touch .has-modal-open {
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     padding-bottom: 4px;
+}
+
+.cart-empty-state__slider a {
+    touch-action: manipulation;
+}
+
+@media (hover: none), (pointer: coarse) {
+    .cart-empty-state__slider {
+        scroll-snap-type: x proximity;
+        scroll-behavior: auto;
+    }
 }
 
 .cart-empty-state__slider::-webkit-scrollbar {
@@ -1084,9 +1097,11 @@ html.touch .has-modal-open {
     margin-top: 2px;
 }
 
-.cart-empty-product-card__btn:hover {
-    background: #5aa89f;
-    color: #ffffff;
+@media (hover: hover) and (pointer: fine) {
+    .cart-empty-product-card__btn:hover {
+        background: #5aa89f;
+        color: #ffffff;
+    }
 }
 
 @media (max-width: 767px) {
