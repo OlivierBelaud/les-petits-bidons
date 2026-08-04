@@ -396,19 +396,77 @@ body:has(.cluutch-cart-drawer .cart-drawer[active]) .needsclick[style*="position
         border-radius: 0;
     }
 
+    .cluutch-cart-drawer .drawer__header {
+        min-height: 64px;
+        padding: 10px 16px;
+    }
+
+    .cluutch-cart-drawer .drawer__header-logo img {
+        width: auto;
+        max-width: 112px;
+        max-height: 28px !important;
+    }
+
+    .cluutch-cart-drawer .drawer__header-right {
+        gap: 12px;
+    }
+
+    .cluutch-cart-drawer .drawer__title {
+        font-size: 22px;
+    }
+
     html.js .cluutch-cart-drawer .drawer__header::before {
         display: none;
     }
 
     html.js .cluutch-cart-drawer .drawer__close {
         clip: auto !important;
-        height: var(--sp-12) !important;
-        width: var(--sp-12) !important;
+        height: 40px !important;
+        width: 40px !important;
         margin: 0 0 0 auto !important;
         padding: 0 !important;
         position: relative !important;
         white-space: normal !important;
         overflow: hidden !important;
+    }
+
+    .cluutch-cart-drawer [id^="CartDrawer-Item-"] {
+        display: grid;
+        grid-template-columns: var(--cart-item-media-width) minmax(0, 1fr);
+        gap: 12px !important;
+    }
+
+    .cluutch-cart-drawer [id^="CartDrawer-Item-"]:not(:has(> .horizontal-product__media)) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .cluutch-cart-drawer [id^="CartDrawer-Item-"] .horizontal-product__details {
+        min-height: 0;
+        padding-bottom: 0;
+    }
+
+    .cluutch-cart-drawer [id^="CartDrawer-Item-"] .cart-item__bottom {
+        position: static;
+        margin-top: auto;
+    }
+
+    .cluutch-cart-drawer [id^="CartDrawer-Item-"] .cart-item__price-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 8px !important;
+    }
+
+    .cluutch-cart-drawer [id^="CartDrawer-Item-"] .cart-item__price-row > .price {
+        min-width: 0;
+    }
+
+    .cluutch-cart-drawer [id^="CartDrawer-Item-"] .cart-item__price-row .cluutch-badge {
+        flex-basis: 100%;
+        max-width: 100%;
+        white-space: normal;
+        line-height: 1.15;
+        text-align: center;
     }
 }
 
