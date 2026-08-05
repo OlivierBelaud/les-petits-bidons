@@ -115,10 +115,7 @@
         "image_3DcCCQ",
         "image_pR3qmW"
       ],
-      "custom_css": [
-        ".page-width.absolute.bottom-0 {bottom: auto !important; top: 50px !important;}",
-        ".slideshow-dots__cluutch {position: absolute !important; top: 500px !important;}"
-      ],
+      "custom_css": [],
       "settings": {
         "autoplay": true,
         "autoplay_speed": 5,
