@@ -4,6 +4,9 @@
   #shopify-section-{{ section.id }} {
     --section-padding-top: {{ section.settings.padding_top }}px;
     --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --hero-content-padding-mobile: {{ section.settings.content_padding_mobile }}px;
+    --hero-title-size-mobile: {{ section.settings.title_size_mobile }}px;
+    --hero-title-size-desktop: {{ section.settings.title_size }}px;
     {%- render 'section-variables', section: section -%}
     {%- if first_block != blank and first_block.settings.image != blank and section.settings.image_height == 'adapt' %}
       --ratio-percent: {{ 1 | divided_by: first_block.settings.image.aspect_ratio | times: 100 }}%;
@@ -29,12 +32,11 @@
     }
 
   }
-  .cluutch-slideshow .h1{
-    font-size: 32px;
-    @media(min-width: 1024px){
-      font-size: {{ section.settings.title_size }}px ;
+  .cluutch-slideshow .slideshow-word .heading{
+    font-size: var(--slide-title-size-mobile, var(--hero-title-size-mobile));
+    @media(min-width: 768px){
+      font-size: var(--slide-title-size-desktop, var(--hero-title-size-desktop));
     }
-
   }
 </style>
 
@@ -205,15 +207,20 @@
           {%- endcase -%}
         {%- endfor -%}
       </slideshow-element>
-      <div class="page-width absolute bottom-0 left-0 w-full pointer-events-none">
-        <div class="slideshow-content cluutch-slideshow-content">
-          <slideshow-words class="slideshow-words grid items-center" aria-controls="Slider-{{ section.id }}">
+      <div
+        class="cluutch-slideshow__overlay absolute top-0 h-full pointer-events-none"
+        style="left: {% if section.settings.full_width %}0{% else %}var(--page-padding){% endif %}; right: {% if section.settings.full_width %}0{% else %}var(--page-padding){% endif %};"
+      >
+        <div class="slideshow-content cluutch-slideshow-content relative w-full h-full{% if section.blocks.size > 1 and section.settings.show_navigation %} slideshow-content--with-navigation{% endif %}">
+          <slideshow-words class="slideshow-words grid w-full h-full" aria-controls="Slider-{{ section.id }}">
             {%- for block in section.blocks -%}
               <div
-                {% comment %} class="slideshow-word flex flex-col md:flex-row md:items-end justify-between gap-6" {% endcomment %}
-                class="slideshow-word slideshow-content__flex"
+                class="slideshow-word slideshow-content__flex w-full h-full {{ block.settings.content_position_mobile | default: 'items-start justify-end text-left' }} {{ block.settings.content_position_desktop | default: 'md:items-start md:justify-end md:text-left' }}{% if block.settings.content_position_mobile == blank or block.settings.content_position_mobile contains 'justify-end' %} slideshow-word--mobile-bottom{% endif %}{% if block.settings.content_position_desktop == blank or block.settings.content_position_desktop contains 'justify-end' %} slideshow-word--desktop-bottom{% endif %}"
                 data-index="{{ forloop.index0 }}"
                 aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                {% if block.settings.title_size_mobile > 0 or block.settings.title_size_desktop > 0 %}
+                  style="{% if block.settings.title_size_mobile > 0 %}--slide-title-size-mobile: {{ block.settings.title_size_mobile }}px;{% endif %}{% if block.settings.title_size_desktop > 0 %} --slide-title-size-desktop: {{ block.settings.title_size_desktop }}px;{% endif %}"
+                {% endif %}
               >
                 {% if block.settings.heading_img != blank %}
                   {{-
@@ -228,7 +235,7 @@
                       class: 'slideshow-words__image'
                   -}}
                 {% endif %}
-                {%- if block.settings.heading != blank -%}
+                {%- if block.settings.heading != blank or block.settings.heading_line_2 != blank or block.settings.heading_line_3 != blank -%}
                   <div class="banner__box banner__box--{{ section.settings.content_width }}">
                     <{{ block.settings.heading_tag }} class="heading leading-none {{ block.settings.heading_size }}">
                       <split-words
@@ -236,7 +243,17 @@
                         data-animate="fade-up-large"
                         data-animate-delay="0"
                       >
-                        {{- block.settings.heading -}}
+                        {%- if block.settings.heading != blank -%}
+                          <span>{{ block.settings.heading }}</span>
+                        {%- endif -%}
+                        {%- if block.settings.heading_line_2 != blank -%}
+                          {%- if block.settings.heading != blank -%}<br>{%- endif -%}
+                          <span>{{ block.settings.heading_line_2 }}</span>
+                        {%- endif -%}
+                        {%- if block.settings.heading_line_3 != blank -%}
+                          {%- if block.settings.heading != blank or block.settings.heading_line_2 != blank -%}<br>{%- endif -%}
+                          <span>{{ block.settings.heading_line_3 }}</span>
+                        {%- endif -%}
                       </split-words>
                     </{{ block.settings.heading_tag }}>
                   </div>
@@ -456,6 +473,26 @@
       "label": "t:sections.global.settings.image_height_mobile.label"
     },
     {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 20,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du titre sur mobile",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "content_padding_mobile",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Marge du contenu sur mobile",
+      "default": 12
+    },
+    {
       "type": "header",
       "content": "t:sections.global.settings.header__colors.content",
       "info": "t:sections.global.settings.header__colors.info"
@@ -634,8 +671,20 @@
         {
           "type": "inline_richtext",
           "id": "heading",
-          "label": "t:sections.global.settings.heading.label",
+          "label": "Titre — ligne 1",
           "default": "Image slide"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading_line_2",
+          "label": "Titre — ligne 2",
+          "info": "Facultatif. Utilisez les commandes de l’éditeur pour mettre des mots en gras ou en italique."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading_line_3",
+          "label": "Titre — ligne 3",
+          "info": "Facultatif."
         },
         {
           "type": "select",
@@ -709,6 +758,62 @@
           "default": "h2",
           "label": "t:sections.global.settings.heading_tag.label",
           "info": "t:sections.global.settings.heading_tag.info"
+        },
+        {
+          "type": "range",
+          "id": "title_size_mobile",
+          "min": 0,
+          "max": 60,
+          "step": 1,
+          "unit": "px",
+          "label": "Taille du titre sur mobile",
+          "info": "0 utilise la taille commune du diaporama.",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "title_size_desktop",
+          "min": 0,
+          "max": 100,
+          "step": 2,
+          "unit": "px",
+          "label": "Taille du titre sur ordinateur",
+          "info": "0 utilise la taille commune du diaporama.",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "content_position_mobile",
+          "label": "Position du contenu sur mobile",
+          "default": "items-start justify-end text-left",
+          "options": [
+            { "value": "items-start justify-start text-left", "label": "En haut à gauche" },
+            { "value": "items-center justify-start text-center", "label": "En haut au centre" },
+            { "value": "items-end justify-start text-right", "label": "En haut à droite" },
+            { "value": "items-start justify-center text-left", "label": "Au milieu à gauche" },
+            { "value": "items-center justify-center text-center", "label": "Au centre" },
+            { "value": "items-end justify-center text-right", "label": "Au milieu à droite" },
+            { "value": "items-start justify-end text-left", "label": "En bas à gauche" },
+            { "value": "items-center justify-end text-center", "label": "En bas au centre" },
+            { "value": "items-end justify-end text-right", "label": "En bas à droite" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "content_position_desktop",
+          "label": "Position du contenu sur ordinateur",
+          "default": "md:items-start md:justify-end md:text-left",
+          "options": [
+            { "value": "md:items-start md:justify-start md:text-left", "label": "En haut à gauche" },
+            { "value": "md:items-center md:justify-start md:text-center", "label": "En haut au centre" },
+            { "value": "md:items-end md:justify-start md:text-right", "label": "En haut à droite" },
+            { "value": "md:items-start md:justify-center md:text-left", "label": "Au milieu à gauche" },
+            { "value": "md:items-center md:justify-center md:text-center", "label": "Au centre" },
+            { "value": "md:items-end md:justify-center md:text-right", "label": "Au milieu à droite" },
+            { "value": "md:items-start md:justify-end md:text-left", "label": "En bas à gauche" },
+            { "value": "md:items-center md:justify-end md:text-center", "label": "En bas au centre" },
+            { "value": "md:items-end md:justify-end md:text-right", "label": "En bas à droite" }
+          ]
         },
         {
           "type": "text",
@@ -820,8 +925,20 @@
         {
           "type": "inline_richtext",
           "id": "heading",
-          "label": "t:sections.global.settings.heading.label",
+          "label": "Titre — ligne 1",
           "default": "Video slide"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading_line_2",
+          "label": "Titre — ligne 2",
+          "info": "Facultatif. Utilisez les commandes de l’éditeur pour mettre des mots en gras ou en italique."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading_line_3",
+          "label": "Titre — ligne 3",
+          "info": "Facultatif."
         },
         {
           "type": "select",
@@ -891,6 +1008,62 @@
           "default": "h2",
           "label": "t:sections.global.settings.heading_tag.label",
           "info": "t:sections.global.settings.heading_tag.info"
+        },
+        {
+          "type": "range",
+          "id": "title_size_mobile",
+          "min": 0,
+          "max": 60,
+          "step": 1,
+          "unit": "px",
+          "label": "Taille du titre sur mobile",
+          "info": "0 utilise la taille commune du diaporama.",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "title_size_desktop",
+          "min": 0,
+          "max": 100,
+          "step": 2,
+          "unit": "px",
+          "label": "Taille du titre sur ordinateur",
+          "info": "0 utilise la taille commune du diaporama.",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "content_position_mobile",
+          "label": "Position du contenu sur mobile",
+          "default": "items-start justify-end text-left",
+          "options": [
+            { "value": "items-start justify-start text-left", "label": "En haut à gauche" },
+            { "value": "items-center justify-start text-center", "label": "En haut au centre" },
+            { "value": "items-end justify-start text-right", "label": "En haut à droite" },
+            { "value": "items-start justify-center text-left", "label": "Au milieu à gauche" },
+            { "value": "items-center justify-center text-center", "label": "Au centre" },
+            { "value": "items-end justify-center text-right", "label": "Au milieu à droite" },
+            { "value": "items-start justify-end text-left", "label": "En bas à gauche" },
+            { "value": "items-center justify-end text-center", "label": "En bas au centre" },
+            { "value": "items-end justify-end text-right", "label": "En bas à droite" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "content_position_desktop",
+          "label": "Position du contenu sur ordinateur",
+          "default": "md:items-start md:justify-end md:text-left",
+          "options": [
+            { "value": "md:items-start md:justify-start md:text-left", "label": "En haut à gauche" },
+            { "value": "md:items-center md:justify-start md:text-center", "label": "En haut au centre" },
+            { "value": "md:items-end md:justify-start md:text-right", "label": "En haut à droite" },
+            { "value": "md:items-start md:justify-center md:text-left", "label": "Au milieu à gauche" },
+            { "value": "md:items-center md:justify-center md:text-center", "label": "Au centre" },
+            { "value": "md:items-end md:justify-center md:text-right", "label": "Au milieu à droite" },
+            { "value": "md:items-start md:justify-end md:text-left", "label": "En bas à gauche" },
+            { "value": "md:items-center md:justify-end md:text-center", "label": "En bas au centre" },
+            { "value": "md:items-end md:justify-end md:text-right", "label": "En bas à droite" }
+          ]
         },
         {
           "type": "text",
