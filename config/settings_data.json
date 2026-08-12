@@ -232,10 +232,12 @@
         "disabled": true,
         "settings": {}
       },
-      "8605505498557855500": {
-        "type": "shopify://apps/bogos-io-free-gift/blocks/app-embed/0432bba6-720a-4e95-be5a-b868386f7aa6",
+      "1530068250781986104": {
+        "type": "shopify://apps/fbp-fast-bundle/blocks/fast_bundle/9e87fbe2-9041-4c23-acf5-322413994cef",
         "disabled": false,
-        "settings": {}
+        "settings": {
+          "home": false
+        }
       },
       "11077559776736408198": {
         "type": "shopify://apps/wheelio-spin-popup-email-sms/blocks/wheelio/f45cb831-26a4-40d6-92e9-b57362611b34",

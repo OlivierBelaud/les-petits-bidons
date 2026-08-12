@@ -52,7 +52,7 @@
                   <ul class="drawer__empty-collections grid gap-3">
                     {%- if section.settings.empty_cart_collections == blank -%}
                       <li>
-                        <a class="flex items-center justify-between" href="{{ routes.all_products_collection_url }}">
+                        <a class="flex items-center justify-between" href="/collections/tous-les-produits-ecologiques-les-petits-bidons">
                           <span class="flex items-center">{{ 'cart.general.continue_shopping' | t }}</span>
                           {%- render 'icon', icon: 'arrow-right', size: 'sm', class: 'transform' -%}
                         </a>

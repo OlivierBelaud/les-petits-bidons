@@ -1030,11 +1030,24 @@
         "header__empty_cart": {
           "content": "Đề xuất khi giỏ hàng trống"
         },
+        "empty_cart_title": {
+          "label": "Empty cart title"
+        },
         "empty_cart_message": {
-          "label": "Chữ"
+          "label": "Empty cart intro text"
+        },
+        "empty_cart_collections_heading": {
+          "label": "Empty cart collection heading"
         },
         "empty_cart_collections": {
-          "label": "Danh sách bộ sưu tập"
+          "label": "Collection list"
+        },
+        "empty_cart_products_heading": {
+          "label": "Empty cart product recommendations heading"
+        },
+        "empty_cart_products": {
+          "label": "Empty cart recommended products",
+          "info": "Choose products shown in the empty cart state. If empty, the best-sellers collection is used."
         },
         "header__recent_products": {
           "content": "Sản phẩm đã xem gần đây"
@@ -4459,7 +4472,7 @@
           "label": "Tin nhắn 1"
         },
         "tab_attention_message_2": {
-          "label": "Tin nhắn 2",
+          "label": "Tin nhắn 2"
         },
         "tab_attention_message_delay": {
           "label": "Độ trễ tin nhắn"

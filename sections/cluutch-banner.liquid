@@ -1,9 +1,23 @@
 {{ 'cluutch-banner.css' | asset_url | stylesheet_tag }}
-{% if template.name == 'collection' %}
-  {% assign desktop_image = section.settings.img | default: collection.metafields.custom.cluutch_banner %}
-{% else %}
-  {% assign desktop_image = section.settings.img | default: collection.image %}
-{% endif %}
+{% liquid
+  assign desktop_image = section.settings.img
+
+  if template.name == 'collection' and desktop_image == blank
+    assign metafield_image = collection.metafields.custom.cluutch_banner.value
+
+    if metafield_image.preview_image != blank
+      assign desktop_image = metafield_image.preview_image
+    elsif metafield_image.image != blank
+      assign desktop_image = metafield_image.image
+    elsif metafield_image.src != blank
+      assign desktop_image = metafield_image
+    endif
+  endif
+
+  if desktop_image == blank and collection.image.src != blank
+    assign desktop_image = collection.image
+  endif
+%}
 
 {% if section.settings.img_mobile != blank %}
   <style>
@@ -26,7 +40,9 @@
 <div class="cluutch-banner__wrapper">
   <div class="cluutch-banner__image-wrapper">
     {% if section.settings.img == blank %}
-      {{- desktop_image | image_url: width: master | image_tag: loading: eager, class: 'cluutch-banner__image' -}}
+      {% if desktop_image != blank %}
+        {{- desktop_image | image_url: width: master | image_tag: loading: eager, class: 'cluutch-banner__image' -}}
+      {% endif %}
 
       {% if section.settings.img_mobile == blank %}
         {% if collection.metafields.custom.cluutch_mobile_banner != blank %}
@@ -88,7 +104,9 @@
           {%- endif %}
         {% endif %}
       {% else %}
-        {{ collection.image | image_url: width: master | image_tag: loading: eager, class: 'cluutch-banner__image' -}}
+        {% if collection.image != blank %}
+          {{ collection.image | image_url: width: master | image_tag: loading: eager, class: 'cluutch-banner__image' -}}
+        {% endif %}
       {% endif %}
     {% endif %}
     <div

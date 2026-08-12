@@ -184,6 +184,11 @@
                                 {{ variant.metafields.custom.label_texte | escape }}
                               </p>
                             {% endif %}
+                            {% if variant.metafields.custom.label_text_2 != blank and variant.metafields.custom.label_color_2 != blank %}
+                              <p class="cluutch-badge" style="background: {{ variant.metafields.custom.label_color_2 }}; color: #ffffff;">
+                                {{ variant.metafields.custom.label_text_2 | escape }}
+                              </p>
+                            {% endif %}
                             {% if variant.metafields.custom.cluutch_meilleure != blank %}
                               <p class="cluutch-badge cluutch-badge--yellow">
                                 {{ variant.metafields.custom.cluutch_meilleure }}
@@ -267,9 +272,9 @@
                                   type="submit"
                                   class="button button--primary pointer-events-auto "
                                   is="hover-button"
-                                  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                                  data-variant-id="{{ variant.id }}"
                                   aria-label="{{ quick_add_label | escape }}"
-                                  {% unless product.variants.first.available %}
+                                  {% unless variant.available %}
                                     disabled="disabled"
                                   {% endunless %}
                                 >
@@ -281,7 +286,7 @@
                                         class=" hidden md:block"
                                         data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                       >
-                                        {% if product.variants.first.available %}
+                                        {% if variant.available %}
                                           {{- quick_add_label -}}
                                         {% else %}
                                           Épuisé
@@ -291,7 +296,7 @@
                                         class="block  md:hidden"
                                         data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                       >
-                                        {% if product.variants.first.available %}
+                                        {% if variant.available %}
                                           {{- quick_add_label -}}
                                         {% else %}
                                           Épuisé
@@ -302,7 +307,7 @@
                                         class="block"
                                         data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                       >
-                                        {% if product.variants.first.available %}
+                                        {% if variant.available %}
                                           {{- quick_add_label -}}
                                         {% else %}
                                           Épuisé
@@ -336,6 +341,11 @@
             {% if variant.metafields.custom.label_texte != blank and variant.metafields.custom.label_color != blank %}
               <p class="cluutch-badge" style="background: {{ variant.metafields.custom.label_color }}; color: #ffffff;">
                 {{ variant.metafields.custom.label_texte | escape }}
+              </p>
+            {% endif %}
+            {% if variant.metafields.custom.label_text_2 != blank and variant.metafields.custom.label_color_2 != blank %}
+              <p class="cluutch-badge" style="background: {{ variant.metafields.custom.label_color_2 }}; color: #ffffff;">
+                {{ variant.metafields.custom.label_text_2 | escape }}
               </p>
             {% endif %}
             {% if variant.metafields.custom.cluutch_meilleure != blank %}
@@ -393,21 +403,21 @@
                   endif
                 -%}
                 <button type="submit" class="button button--primary pointer-events-auto" is="hover-button"
-                  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                  data-variant-id="{{ variant.id }}"
                   aria-label="{{ quick_add_label | escape }}"
-                  {% unless product.variants.first.available %}disabled="disabled"{% endunless %}>
+                  {% unless variant.available %}disabled="disabled"{% endunless %}>
                   <span class="btn-fill" data-fill></span>
                   <span class="btn-text">
                     {% if template.name == 'collection' %}
                       <span class="hidden md:block" data-sold-out="{{ 'products.product.sold_out' | t | escape }}">
-                        {% if product.variants.first.available %}{{- quick_add_label -}}{% else %}Épuisé{% endif %}
+                        {% if variant.available %}{{- quick_add_label -}}{% else %}Épuisé{% endif %}
                       </span>
                       <span class="block md:hidden" data-sold-out="{{ 'products.product.sold_out' | t | escape }}">
-                        {% if product.variants.first.available %}{{- quick_add_label -}}{% else %}Épuisé{% endif %}
+                        {% if variant.available %}{{- quick_add_label -}}{% else %}Épuisé{% endif %}
                       </span>
                     {% else %}
                       <span class="block" data-sold-out="{{ 'products.product.sold_out' | t | escape }}">
-                        {% if product.variants.first.available %}{{- quick_add_label -}}{% else %}Épuisé{% endif %}
+                        {% if variant.available %}{{- quick_add_label -}}{% else %}Épuisé{% endif %}
                       </span>
                     {% endif %}
                   </span>
@@ -449,6 +459,11 @@
                             {% if variant.metafields.custom.label_texte != blank and variant.metafields.custom.label_color != blank %}
                               <p class="cluutch-badge" style="background: {{ variant.metafields.custom.label_color }}; color: #ffffff;">
                                 {{ variant.metafields.custom.label_texte | escape }}
+                              </p>
+                            {% endif %}
+                            {% if variant.metafields.custom.label_text_2 != blank and variant.metafields.custom.label_color_2 != blank %}
+                              <p class="cluutch-badge" style="background: {{ variant.metafields.custom.label_color_2 }}; color: #ffffff;">
+                                {{ variant.metafields.custom.label_text_2 | escape }}
                               </p>
                             {% endif %}
                             {% if variant.metafields.custom.cluutch_meilleure != blank %}
@@ -534,9 +549,9 @@
                                   type="submit"
                                   class="button button--primary pointer-events-auto "
                                   is="hover-button"
-                                  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                                  data-variant-id="{{ variant.id }}"
                                   aria-label="{{ quick_add_label | escape }}"
-                                  {% unless product.variants.first.available %}
+                                  {% unless variant.available %}
                                     disabled="disabled"
                                   {% endunless %}
                                 >
@@ -548,7 +563,7 @@
                                         class=" hidden md:block"
                                         data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                       >
-                                        {% if product.variants.first.available %}
+                                        {% if variant.available %}
                                           {{- quick_add_label -}}
                                         {% else %}
                                           Épuisé
@@ -565,7 +580,7 @@
                                         class="block"
                                         data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                       >
-                                        {% if product.variants.first.available %}
+                                        {% if variant.available %}
                                           {{- quick_add_label -}}
                                         {% else %}
                                           Épuisé
@@ -609,6 +624,11 @@
                           {% if variant.metafields.custom.label_texte != blank and variant.metafields.custom.label_color != blank %}
                             <p class="cluutch-badge" style="background: {{ variant.metafields.custom.label_color }}; color: #ffffff;">
                               {{ variant.metafields.custom.label_texte | escape }}
+                            </p>
+                          {% endif %}
+                          {% if variant.metafields.custom.label_text_2 != blank and variant.metafields.custom.label_color_2 != blank %}
+                            <p class="cluutch-badge" style="background: {{ variant.metafields.custom.label_color_2 }}; color: #ffffff;">
+                              {{ variant.metafields.custom.label_text_2 | escape }}
                             </p>
                           {% endif %}
                           {% if variant.metafields.custom.cluutch_meilleure != blank %}
@@ -694,9 +714,9 @@
                                 type="submit"
                                 class="button button--primary pointer-events-auto "
                                 is="hover-button"
-                                data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                                data-variant-id="{{ variant.id }}"
                                 aria-label="{{ quick_add_label | escape }}"
-                                {% unless product.variants.first.available %}
+                                {% unless variant.available %}
                                   disabled="disabled"
                                 {% endunless %}
                               >
@@ -708,7 +728,7 @@
                                       class=" hidden md:block"
                                       data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                     >
-                                      {% if product.variants.first.available %}
+                                      {% if variant.available %}
                                         {{- quick_add_label -}}
                                       {% else %}
                                         Épuisé
@@ -725,7 +745,7 @@
                                       class="block"
                                       data-sold-out="{{ 'products.product.sold_out' | t | escape }}"
                                     >
-                                      {% if product.variants.first.available %}
+                                      {% if variant.available %}
                                         {{- quick_add_label -}}
                                       {% else %}
                                         Épuisé

@@ -1,1 +1,407 @@
-{"name":"t:sections.overlay-group.name","type":"custom.overlay","sections":{"cart-drawer":{"type":"cart-drawer","disabled":true,"settings":{"show_vendor":false,"show_cart_note":true,"show_shipping_calculator":true,"show_view_cart_button":true,"show_checkout_button":true,"show_free_shipping_bar":true,"free_shipping_minimum_amount":"50","cart_recommendations_enabled":true,"cart_recommendations_heading":"You may also like","cart_recommendations_limit":5,"show_cart_recommendations_vendor":false,"show_cart_recommendations_price":true,"cart_recommendations_products":[],"empty_cart_message":"<p>Not sure where to start?<br\/>Try these collections:<\/p>","empty_cart_collections":[],"recent_products_enabled":true,"recent_products_heading":"Recently viewed","recent_products_limit":5,"show_recent_products_vendor":false,"show_recent_products_price":true}},"search-drawer":{"type":"search-drawer","settings":{}},"newsletter-popup":{"type":"newsletter-popup","blocks":{"text-1":{"type":"text","settings":{"text":"<p>FIRST TIMER?<\/p>","text_size":"subtext-custom","text_max_size":12,"text_font":"body","secondary_color":true,"highlighted_text":"none","highlighted_scribble":"circle"}},"heading":{"type":"heading","settings":{"heading":"Sign up and get <em>20% off<\/em> your first order","heading_size":"text-2xl lg:text-3xl","heading_tag":"h2","highlighted_text":"scribble","highlighted_scribble":"basic-underline"}},"spacing":{"type":"spacing","settings":{"height":32,"height_mobile":12}},"form":{"type":"form","settings":{}},"text-2":{"type":"text","settings":{"text":"<p>Subscribe to our newsletter and be the first to hear about our new arrivals, special promotions and online exclusives.<\/p>","text_size":"text-sm","text_max_size":32,"text_font":"body","secondary_color":true,"highlighted_text":"none","highlighted_scribble":"circle"}},"media":{"type":"media","settings":{}},"floating":{"type":"floating","settings":{"heading":"Get 20% Off","content_position":"left-0","show_social":true,"social_heading":"Follow us","mobile_disabled":true,"mobile_hide_social":false,"color_text":"#171717","color_background":"#ffffff"}}},"block_order":["text-1","heading","spacing","form","text-2","media","floating"],"disabled":true,"settings":{"mode":"enabled","only_homepage":true,"only_visitor":true,"delay":7,"expiry":30,"text_alignment":"left","content_position":"right-0","color_drawer_text":"#171717","color_drawer_background":"#ffffff","color_drawer_highlight":"#ffddbf","color_drawer_button_text":"#ffffff","color_drawer_button_background":"#171717","color_drawer_button_gradient":"","color_drawer_overlay":"#171717"}},"age-verifier":{"type":"age-verifier","blocks":{"heading":{"type":"heading","settings":{"heading":"Confirm your age","heading_size":"text-lg-2xl","heading_tag":"h2","highlighted_text":"none","highlighted_scribble":"circle"}},"text":{"type":"text","settings":{"text":"<p>Are you 18 years old or older?<\/p>","text_size":"text-base","text_max_size":32,"text_font":"body","secondary_color":false,"highlighted_text":"none","highlighted_scribble":"circle"}},"spacing":{"type":"spacing","settings":{"height":16,"height_mobile":12}},"buttons":{"type":"buttons","settings":{"button_label_1":"Yes, I am","button_label_2":"No, I’m not","button_link_2":"","button_external_2":false}}},"block_order":["heading","text","spacing","buttons"],"disabled":true,"settings":{"mode":"enabled","expiry":30,"text_alignment":"center","content_position":"center-0","blur_background_image":false,"color_drawer_text":"#171717","color_drawer_background":"#ffffff","color_drawer_highlight":"#ffddbf","color_drawer_button_text":"#ffffff","color_drawer_button_background":"#171717","color_drawer_button_gradient":"","color_drawer_overlay":"#171717"}},"cookie-banner":{"type":"cookie-banner","blocks":{"heading":{"type":"heading","settings":{"heading":"We use cookies","heading_size":"text-lg-2xl","heading_tag":"h2","highlighted_text":"none","highlighted_scribble":"circle"}},"text":{"type":"text","settings":{"text":"<p>This site uses cookies for better user experience and analytics.<\/p>","text_size":"text-base","text_max_size":32,"text_font":"body","secondary_color":false,"highlighted_text":"none","highlighted_scribble":"circle"}},"spacing":{"type":"spacing","settings":{"height":16,"height_mobile":12}},"buttons":{"type":"buttons","settings":{"button_label_1":"Accept","button_label_2":"Decline"}}},"block_order":["heading","text","spacing","buttons"],"disabled":true,"settings":{"mode":"enabled","delay":5,"text_alignment":"center","content_position":"left-0","color_drawer_text":"#171717","color_drawer_background":"#ffffff","color_drawer_highlight":"#ffddbf","color_drawer_button_text":"#ffffff","color_drawer_button_background":"#171717","color_drawer_button_gradient":""}},"mobile-dock":{"type":"mobile-dock","blocks":{"mobile-dock-1":{"type":"home","settings":{"custom_icon":"","title":"Home"}},"mobile-dock-2":{"type":"menu","settings":{"custom_icon":"","title":"Menu"}},"mobile-dock-3":{"type":"search","settings":{"custom_icon":"","title":"Search"}},"mobile-dock-4":{"type":"link","settings":{"custom_icon":"","title":"Shop","link":"shopify:\/\/collections\/all","external":false}},"mobile-dock-5":{"type":"cart","settings":{"custom_icon":"","title":"Cart"}},"mobile-dock-6":{"type":"account","settings":{"custom_icon":"","title":"Account"}}},"block_order":["mobile-dock-1","mobile-dock-2","mobile-dock-3","mobile-dock-4","mobile-dock-5","mobile-dock-6"],"disabled":true,"settings":{"color_text":"#000000","color_background":"#ffffff","gradient_background":"","padding_top":8,"padding_bottom":8,"divider":true,"rounded":true}},"cluutch_cart_drawer_tn6xWU":{"type":"cluutch-cart-drawer","blocks":{"image_iDQR4i":{"type":"image","settings":{"icon":"shopify:\/\/shop_images\/2_4ee67d5c-ff0f-4647-bfed-16df96ac9409.png","text":"Paiement sécurisé"}},"image_aXiVYg":{"type":"image","settings":{"icon":"shopify:\/\/shop_images\/Icones_3.png","text":"Livraison rapide"}},"image_3X7P47":{"type":"image","settings":{"icon":"shopify:\/\/shop_images\/3_b6139f58-0a21-4b54-8a2a-b7e444d15dca.png","text":"Service client réactif"}}},"block_order":["image_iDQR4i","image_aXiVYg","image_3X7P47"],"settings":{"show_vendor":true,"show_cart_note":false,"show_shipping_calculator":false,"show_view_cart_button":false,"show_checkout_button":true,"show_free_shipping_bar":true,"free_shipping_minimum_amount":"50","cart_recommendations_enabled":true,"cart_recommendations_heading":"Nos supers recommandations !","cart_recommendations_limit":5,"show_cart_recommendations_vendor":false,"show_cart_recommendations_price":true,"cart_recommendations_products":["le-super-detachant-les-petits-bidons","lultime-doseur","tablettes-lave-vaisselle-les-petits-bidons","gel-wc-naturel-les-petits-bidons","lessive-concentree-ecologique-1l-les-petits-bidons","lessive-poudre-ecologique-les-petits-bidons","vinaigre-menager-multi-usages-14-les-petits-bidons","bicarbonate-de-soude-les-petits-bidons","coffret-decouverte-les-petits-bidons","coffret-maison-engagee-les-petits-bidons-1","lincroyable-porte-savon-aimante-les-petits-bidons","le-kit-nettoyant-multi-surfaces-3-recharges-les-petits-bidons","kit-de-demarrage-nettoyant-multi-surfaces-les-petits-bidons","lessive-concentree-ecologique-10l-les-petits-bidons"],"empty_cart_message":"","empty_cart_collections":[],"recent_products_enabled":false,"recent_products_heading":"Vos derniers coups d’œil","recent_products_limit":5,"show_recent_products_vendor":false,"show_recent_products_price":true}}},"order":["cart-drawer","search-drawer","newsletter-popup","age-verifier","cookie-banner","mobile-dock","cluutch_cart_drawer_tn6xWU"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.overlay-group.name",
+  "type": "custom.overlay",
+  "sections": {
+    "cart-drawer": {
+      "type": "cart-drawer",
+      "disabled": true,
+      "settings": {
+        "show_vendor": false,
+        "show_cart_note": true,
+        "show_shipping_calculator": true,
+        "show_view_cart_button": true,
+        "show_checkout_button": true,
+        "show_free_shipping_bar": true,
+        "free_shipping_minimum_amount": "50",
+        "cart_recommendations_enabled": true,
+        "cart_recommendations_heading": "You may also like",
+        "cart_recommendations_limit": 5,
+        "show_cart_recommendations_vendor": false,
+        "show_cart_recommendations_price": true,
+        "cart_recommendations_products": [],
+        "empty_cart_message": "<p>Not sure where to start?<br/>Try these collections:</p>",
+        "empty_cart_collections": [],
+        "recent_products_enabled": true,
+        "recent_products_heading": "Recently viewed",
+        "recent_products_limit": 5,
+        "show_recent_products_vendor": false,
+        "show_recent_products_price": true
+      }
+    },
+    "search-drawer": {
+      "type": "search-drawer",
+      "settings": {}
+    },
+    "newsletter-popup": {
+      "type": "newsletter-popup",
+      "blocks": {
+        "text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>FIRST TIMER?</p>",
+            "text_size": "subtext-custom",
+            "text_max_size": 12,
+            "text_font": "body",
+            "secondary_color": true,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Sign up and get <em>20% off</em> your first order",
+            "heading_size": "text-2xl lg:text-3xl",
+            "heading_tag": "h2",
+            "highlighted_text": "scribble",
+            "highlighted_scribble": "basic-underline"
+          }
+        },
+        "spacing": {
+          "type": "spacing",
+          "settings": {
+            "height": 32,
+            "height_mobile": 12
+          }
+        },
+        "form": {
+          "type": "form",
+          "settings": {}
+        },
+        "text-2": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Subscribe to our newsletter and be the first to hear about our new arrivals, special promotions and online exclusives.</p>",
+            "text_size": "text-sm",
+            "text_max_size": 32,
+            "text_font": "body",
+            "secondary_color": true,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "media": {
+          "type": "media",
+          "settings": {}
+        },
+        "floating": {
+          "type": "floating",
+          "settings": {
+            "heading": "Get 20% Off",
+            "content_position": "left-0",
+            "show_social": true,
+            "social_heading": "Follow us",
+            "mobile_disabled": true,
+            "mobile_hide_social": false,
+            "color_text": "#171717",
+            "color_background": "#ffffff"
+          }
+        }
+      },
+      "block_order": [
+        "text-1",
+        "heading",
+        "spacing",
+        "form",
+        "text-2",
+        "media",
+        "floating"
+      ],
+      "disabled": true,
+      "settings": {
+        "mode": "enabled",
+        "only_homepage": true,
+        "only_visitor": true,
+        "delay": 7,
+        "expiry": 30,
+        "text_alignment": "left",
+        "content_position": "right-0",
+        "color_drawer_text": "#171717",
+        "color_drawer_background": "#ffffff",
+        "color_drawer_highlight": "#ffddbf",
+        "color_drawer_button_text": "#ffffff",
+        "color_drawer_button_background": "#171717",
+        "color_drawer_button_gradient": "",
+        "color_drawer_overlay": "#171717"
+      }
+    },
+    "age-verifier": {
+      "type": "age-verifier",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Confirm your age",
+            "heading_size": "text-lg-2xl",
+            "heading_tag": "h2",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Are you 18 years old or older?</p>",
+            "text_size": "text-base",
+            "text_max_size": 32,
+            "text_font": "body",
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "spacing": {
+          "type": "spacing",
+          "settings": {
+            "height": 16,
+            "height_mobile": 12
+          }
+        },
+        "buttons": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "Yes, I am",
+            "button_label_2": "No, I’m not",
+            "button_link_2": "",
+            "button_external_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "spacing",
+        "buttons"
+      ],
+      "disabled": true,
+      "settings": {
+        "mode": "enabled",
+        "expiry": 30,
+        "text_alignment": "center",
+        "content_position": "center-0",
+        "blur_background_image": false,
+        "color_drawer_text": "#171717",
+        "color_drawer_background": "#ffffff",
+        "color_drawer_highlight": "#ffddbf",
+        "color_drawer_button_text": "#ffffff",
+        "color_drawer_button_background": "#171717",
+        "color_drawer_button_gradient": "",
+        "color_drawer_overlay": "#171717"
+      }
+    },
+    "cookie-banner": {
+      "type": "cookie-banner",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "We use cookies",
+            "heading_size": "text-lg-2xl",
+            "heading_tag": "h2",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>This site uses cookies for better user experience and analytics.</p>",
+            "text_size": "text-base",
+            "text_max_size": 32,
+            "text_font": "body",
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "spacing": {
+          "type": "spacing",
+          "settings": {
+            "height": 16,
+            "height_mobile": 12
+          }
+        },
+        "buttons": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "Accept",
+            "button_label_2": "Decline"
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "spacing",
+        "buttons"
+      ],
+      "disabled": true,
+      "settings": {
+        "mode": "enabled",
+        "delay": 5,
+        "text_alignment": "center",
+        "content_position": "left-0",
+        "color_drawer_text": "#171717",
+        "color_drawer_background": "#ffffff",
+        "color_drawer_highlight": "#ffddbf",
+        "color_drawer_button_text": "#ffffff",
+        "color_drawer_button_background": "#171717",
+        "color_drawer_button_gradient": ""
+      }
+    },
+    "mobile-dock": {
+      "type": "mobile-dock",
+      "blocks": {
+        "mobile-dock-1": {
+          "type": "home",
+          "settings": {
+            "custom_icon": "",
+            "title": "Home"
+          }
+        },
+        "mobile-dock-2": {
+          "type": "menu",
+          "settings": {
+            "custom_icon": "",
+            "title": "Menu"
+          }
+        },
+        "mobile-dock-3": {
+          "type": "search",
+          "settings": {
+            "custom_icon": "",
+            "title": "Search"
+          }
+        },
+        "mobile-dock-4": {
+          "type": "link",
+          "settings": {
+            "custom_icon": "",
+            "title": "Shop",
+            "link": "shopify://collections/all",
+            "external": false
+          }
+        },
+        "mobile-dock-5": {
+          "type": "cart",
+          "settings": {
+            "custom_icon": "",
+            "title": "Cart"
+          }
+        },
+        "mobile-dock-6": {
+          "type": "account",
+          "settings": {
+            "custom_icon": "",
+            "title": "Account"
+          }
+        }
+      },
+      "block_order": [
+        "mobile-dock-1",
+        "mobile-dock-2",
+        "mobile-dock-3",
+        "mobile-dock-4",
+        "mobile-dock-5",
+        "mobile-dock-6"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_text": "#000000",
+        "color_background": "#ffffff",
+        "gradient_background": "",
+        "padding_top": 8,
+        "padding_bottom": 8,
+        "divider": true,
+        "rounded": true
+      }
+    },
+    "cluutch_cart_drawer_tn6xWU": {
+      "type": "cluutch-cart-drawer",
+      "blocks": {
+        "image_iDQR4i": {
+          "type": "image",
+          "settings": {
+            "icon": "shopify://shop_images/2_4ee67d5c-ff0f-4647-bfed-16df96ac9409.png",
+            "text": "Paiement sécurisé"
+          }
+        },
+        "image_aXiVYg": {
+          "type": "image",
+          "settings": {
+            "icon": "shopify://shop_images/Icones_3.png",
+            "text": "Livraison rapide"
+          }
+        },
+        "image_3X7P47": {
+          "type": "image",
+          "settings": {
+            "icon": "shopify://shop_images/3_b6139f58-0a21-4b54-8a2a-b7e444d15dca.png",
+            "text": "Service client réactif"
+          }
+        }
+      },
+      "block_order": [
+        "image_iDQR4i",
+        "image_aXiVYg",
+        "image_3X7P47"
+      ],
+      "settings": {
+        "show_vendor": true,
+        "show_cart_note": false,
+        "show_shipping_calculator": false,
+        "show_view_cart_button": false,
+        "show_checkout_button": true,
+        "show_free_shipping_bar": true,
+        "free_shipping_minimum_amount": "50",
+        "cart_recommendations_enabled": true,
+        "cart_recommendations_heading": "Nos supers recommandations !",
+        "cart_recommendations_limit": 5,
+        "show_cart_recommendations_vendor": false,
+        "show_cart_recommendations_price": true,
+        "cart_recommendations_products": [
+          "le-super-detachant-les-petits-bidons",
+          "lultime-doseur",
+          "tablettes-lave-vaisselle-les-petits-bidons",
+          "gel-wc-naturel-les-petits-bidons",
+          "lessive-concentree-ecologique-1l-les-petits-bidons",
+          "lessive-poudre-ecologique-les-petits-bidons",
+          "vinaigre-menager-multi-usages-14-les-petits-bidons",
+          "bicarbonate-de-soude-les-petits-bidons",
+          "coffret-decouverte-les-petits-bidons",
+          "coffret-maison-engagee-les-petits-bidons-1",
+          "lincroyable-porte-savon-aimante-les-petits-bidons",
+          "le-kit-nettoyant-multi-surfaces-3-recharges-les-petits-bidons",
+          "kit-de-demarrage-nettoyant-multi-surfaces-les-petits-bidons",
+          "lessive-concentree-ecologique-10l-les-petits-bidons"
+        ],
+        "empty_cart_message": "<p>Nos recommandations !!</p>",
+        "empty_cart_collections": [],
+        "empty_cart_products": [],
+        "recent_products_enabled": false,
+        "recent_products_heading": "Vos derniers coups d’œil",
+        "recent_products_limit": 5,
+        "show_recent_products_vendor": false,
+        "show_recent_products_price": true
+      }
+    }
+  },
+  "order": [
+    "cart-drawer",
+    "search-drawer",
+    "newsletter-popup",
+    "age-verifier",
+    "cookie-banner",
+    "mobile-dock",
+    "cluutch_cart_drawer_tn6xWU"
+  ]
+}

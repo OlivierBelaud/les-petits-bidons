@@ -100,18 +100,18 @@
         },
         "reassurance_LN6qD4": {
           "type": "reassurance",
+          "disabled": true,
           "settings": {
             "item_1_icon": "🚚",
-            "item_1_text": "<p><strong>Livraison offerte</strong> dès 50€</p>",
+            "item_1_text": "<p><strong>Livraison offerte</strong> des 50€</p>",
             "item_2_icon": "⭐",
-            "item_2_text": "<p><strong>4,8/5</strong> – 6 370 avis vérifiés</p>",
+            "item_2_text": "<p><strong>4,8/5</strong> – 6 370 avis verifies</p>",
             "item_3_icon": "💬",
             "item_3_text": "<p><strong>SAV aux petits soins</strong> – 94% de satisfaction</p>",
             "item_4_icon": "🔒",
-            "item_4_text": "<p><strong>Paiement sécurisé</strong> – CB, Apple Pay...</p>",
+            "item_4_text": "<p><strong>Paiement securise</strong> – CB, Apple Pay...</p>",
             "item_5_icon": "",
             "item_5_text": "",
-            "display_as_list": false,
             "text_color": "#003435",
             "autoplay_speed": 3000
           }
@@ -130,7 +130,6 @@
             "secondary_colour": "#f8f8f8",
             "preview_scenario": "customer_can_earn_points",
             "should_show_icon": true,
-            "custom_image_height": 40,
             "should_show_points_label": true,
             "points_text_logged_in": "<p>Gagnez <strong>[points_amount]</strong> <strong>points de fidélité</strong> en achetant cet article ! </p><p><em>Connectez-vous à « Mes Petits Points » en bas à gauche de l'écran pour transformer vos points en codes promos.</em></p>",
             "points_text_logged_out": "<p><a href=\"/account/login/\">Connectez-vous</a> ou <a href=\"/account/register/\">inscrivez-vous</a> pour commencer à cumuler des récompenses.</p>"

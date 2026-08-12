@@ -355,17 +355,17 @@
       "disabled": true,
       "name": "LPB scrolling banner",
       "settings": {
-        "text": "<p>DERNIERS JOURS : -20% sur TOUT dès 20€ d'achat</p>",
+        "text": "<p>BUG D’AFFICHAGE 💛 -  CLIQUEZ SUR UN PRODUIT POUR COMMANDER ✅</p>",
         "speed": 28,
         "color_background": "#fcecbf",
         "color_text": "#007e7f",
         "padding_mobile": 10,
         "padding": 10,
         "enable_schedule": true,
-        "start_date": "22/06/2026",
-        "start_time": "01:00",
-        "end_date": "28/07/2026",
-        "end_time": "00:00",
+        "start_date": "18/06/26",
+        "start_time": "06:00",
+        "end_date": "18/06/26",
+        "end_time": "19:00",
         "enable_sticky": true
       }
     }

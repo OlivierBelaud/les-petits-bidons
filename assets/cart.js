@@ -40,7 +40,9 @@ class CartDrawer extends DrawerElement {
     this.onPrepareBundledSectionsListener = this.onPrepareBundledSections.bind(this);
     this.onCartRefreshListener = this.onCartRefresh.bind(this);
     this.onCartIntentListener = this.onCartIntent.bind(this);
+    this.onAjaxProductAddedListener = this.onAjaxProductAdded.bind(this);
     this.lastCartIntentAt = 0;
+    this.statusTimeout = null;
   }
 
   get sectionId() {
@@ -66,6 +68,7 @@ class CartDrawer extends DrawerElement {
     document.addEventListener('cart:refresh', this.onCartRefreshListener);
     document.addEventListener('click', this.onCartIntentListener, true);
     document.addEventListener('submit', this.onCartIntentListener, true);
+    document.addEventListener('ajaxProduct:added', this.onAjaxProductAddedListener);
     if (this.recentlyViewed) {
       this.recentlyViewed.addEventListener('is-empty', this.onRecentlyViewedEmpty.bind(this));
     }
@@ -78,6 +81,8 @@ class CartDrawer extends DrawerElement {
     document.removeEventListener('cart:refresh', this.onCartRefreshListener);
     document.removeEventListener('click', this.onCartIntentListener, true);
     document.removeEventListener('submit', this.onCartIntentListener, true);
+    document.removeEventListener('ajaxProduct:added', this.onAjaxProductAddedListener);
+    clearTimeout(this.statusTimeout);
   }
 
   onPrepareBundledSections(event) {
@@ -141,6 +146,37 @@ class CartDrawer extends DrawerElement {
     return this.hasRecentCartIntent();
   }
 
+  onAjaxProductAdded(event) {
+    this.showStatus(event.detail?.product?.product_title || 'Produit');
+  }
+
+  getActiveScrollable() {
+    return this.querySelector(`#MiniCart-${this.sectionId} .drawer__scrollable:not(.hidden)`);
+  }
+
+  resetScrollPosition() {
+    const scrollable = this.getActiveScrollable();
+    if (!scrollable) return;
+
+    const previousScrollBehavior = scrollable.style.scrollBehavior;
+    scrollable.style.scrollBehavior = 'auto';
+    scrollable.scrollTop = 0;
+    scrollable.scrollLeft = 0;
+    scrollable.style.scrollBehavior = previousScrollBehavior;
+  }
+
+  showStatus(message) {
+    const status = this.querySelector('[data-cart-drawer-status]');
+    if (!status) return;
+
+    clearTimeout(this.statusTimeout);
+    status.textContent = `${message} ajout\u00e9 au panier`;
+    status.hidden = false;
+    this.statusTimeout = setTimeout(() => {
+      status.hidden = true;
+    }, 3500);
+  }
+
   async onCartRefresh(event) {
     const id = `MiniCart-${this.sectionId}`;
     if (document.getElementById(id) === null) return;
@@ -153,6 +189,11 @@ class CartDrawer extends DrawerElement {
     if (this.shouldOpenAfterCartRefresh(event)) {
       this.show();
     }
+  }
+
+  afterHide() {
+    super.afterHide();
+    this.resetScrollPosition();
   }
 
   show(focusElement = null, animate = true) {
@@ -209,6 +250,58 @@ class CartItems extends HTMLElement {
     this.validateQuantity(event);
   }
 
+  getCartRecommendationBlocks(container) {
+    return ['.complementary-products', '.icon-block__wrapper']
+      .map((selector) => {
+        const element = container.querySelector(selector);
+        return element ? { selector, element } : null;
+      })
+      .filter(Boolean);
+  }
+
+  restoreCartRecommendationBlocks(container, preservedBlocks) {
+    preservedBlocks.forEach(({ selector, element }) => {
+      const updatedElement = container.querySelector(selector);
+      if (updatedElement) {
+        updatedElement.replaceWith(element);
+      }
+    });
+  }
+
+  getPrimaryCartScrollContainer(container) {
+    return container?.querySelector(':scope > .flex > .drawer__scrollable:not(.hidden)')
+      || container?.querySelector('.drawer__scrollable:not(.hidden)');
+  }
+
+  getCartFooter(container) {
+    return container?.querySelector(':scope > .flex > .drawer__footer');
+  }
+
+  replaceCartDrawerContents(miniCart, updatedElement) {
+    const currentScrollable = this.getPrimaryCartScrollContainer(miniCart);
+    const updatedScrollable = this.getPrimaryCartScrollContainer(updatedElement);
+    if (!currentScrollable || !updatedScrollable) return false;
+    if (currentScrollable.classList.contains('cart-empty-state') || updatedScrollable.classList.contains('cart-empty-state')) return false;
+
+    const scrollTop = currentScrollable.scrollTop;
+    const scrollLeft = currentScrollable.scrollLeft;
+    const previousScrollBehavior = currentScrollable.style.scrollBehavior;
+
+    currentScrollable.style.scrollBehavior = 'auto';
+    currentScrollable.innerHTML = updatedScrollable.innerHTML;
+    currentScrollable.scrollTop = scrollTop;
+    currentScrollable.scrollLeft = scrollLeft;
+    currentScrollable.style.scrollBehavior = previousScrollBehavior;
+
+    const currentFooter = this.getCartFooter(miniCart);
+    const updatedFooter = this.getCartFooter(updatedElement);
+    if (currentFooter && updatedFooter) {
+      currentFooter.replaceWith(updatedFooter);
+    }
+
+    return true;
+  }
+
   onCartUpdate(event) {
     if (event.cart.errors) {
       this.onCartError(event.cart.errors, event.target);
@@ -219,9 +312,19 @@ class CartItems extends HTMLElement {
 
     const miniCart = document.querySelector(`#MiniCart-${this.sectionId}`);
     if (miniCart) {
+      const preservedRecommendationBlocks = event.cartRecommendation
+        ? this.getCartRecommendationBlocks(miniCart)
+        : [];
+
       const updatedElement = sectionToRender.querySelector(`#MiniCart-${this.sectionId}`);
       if (updatedElement) {
-        miniCart.innerHTML = updatedElement.innerHTML;
+        const replacedWithoutScrollJump = this.replaceCartDrawerContents(miniCart, updatedElement);
+
+        if (!replacedWithoutScrollJump) {
+          miniCart.innerHTML = updatedElement.innerHTML;
+        }
+
+        this.restoreCartRecommendationBlocks(miniCart, preservedRecommendationBlocks);
       }
     }
 
@@ -237,19 +340,10 @@ class CartItems extends HTMLElement {
       }
     }
 
-    const lineItem = document.getElementById(`CartItem-${event.line}`) || document.getElementById(`CartDrawer-Item-${event.line}`);
-    if (lineItem && lineItem.querySelector(`[name="${event.name}"]`)) {
-      theme.a11y.trapFocus(mainCart || miniCart, lineItem.querySelector(`[name="${event.name}"]`));
-    }
-    else if (event.cart.item_count === 0) {
+    if (event.cart.item_count === 0) {
       miniCart
-        ? theme.a11y.trapFocus(miniCart, miniCart.querySelector('a'))
-        : theme.a11y.trapFocus(document.querySelector('.empty-state'), document.querySelector('.empty-state__link'));
-    }
-    else {
-      miniCart
-        ? theme.a11y.trapFocus(miniCart, miniCart.querySelector('.horizontal-product__title'))
-        : theme.a11y.trapFocus(mainCart, mainCart.querySelector('.cart__item-title'));
+        ? theme.a11y.trapFocus(miniCart, miniCart.querySelector('a'), { preventScroll: true })
+        : theme.a11y.trapFocus(document.querySelector('.empty-state'), document.querySelector('.empty-state__link'), { preventScroll: true });
     }
 
     document.dispatchEvent(new CustomEvent('cart:updated', {
@@ -323,7 +417,7 @@ class CartItems extends HTMLElement {
     const index = target.getAttribute('data-index');
     let message = '';
 
-    if (inputValue < parseInt(target.getAttribute('data-min'))) {
+    if (inputValue !== 0 && inputValue < parseInt(target.getAttribute('data-min'))) {
       message = theme.quickOrderListStrings.minError.replace('[min]', target.getAttribute('data-min'));
     }
     else if (inputValue > parseInt(target.max)) {
