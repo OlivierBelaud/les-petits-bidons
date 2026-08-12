@@ -268,6 +268,29 @@ class CartItems extends HTMLElement {
     });
   }
 
+  removeAddedRecommendationProduct(container, productHandle) {
+    if (!container || !productHandle) return;
+
+    const addedCards = Array.from(container.querySelectorAll('[data-product-handle]'))
+      .filter((element) => element.dataset.productHandle === productHandle);
+
+    addedCards.forEach((card) => {
+      const slider = card.closest('product-complementary')?.carousel?.slider;
+
+      if (slider?.remove) {
+        slider.remove(card);
+      }
+      else {
+        card.remove();
+      }
+    });
+
+    const recommendations = container.querySelector('.complementary-products');
+    if (recommendations && !recommendations.querySelector('[data-product-handle]')) {
+      recommendations.hidden = true;
+    }
+  }
+
   getPrimaryCartScrollContainer(container) {
     return container?.querySelector(':scope > .flex > .drawer__scrollable:not(.hidden)')
       || container?.querySelector('.drawer__scrollable:not(.hidden)');
@@ -325,6 +348,9 @@ class CartItems extends HTMLElement {
         }
 
         this.restoreCartRecommendationBlocks(miniCart, preservedRecommendationBlocks);
+        if (event.cartRecommendation) {
+          this.removeAddedRecommendationProduct(miniCart, event.cartRecommendationProductHandle);
+        }
       }
     }
 
