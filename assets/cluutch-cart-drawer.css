@@ -462,7 +462,8 @@ body:has(.cluutch-cart-drawer .cart-drawer[active]) .needsclick[style*="position
     }
 
     .cluutch-cart-drawer [id^="CartDrawer-Item-"] .cart-item__price-row .cluutch-badge {
-        flex-basis: 100%;
+        flex: 0 1 auto;
+        width: fit-content;
         max-width: 100%;
         white-space: normal;
         line-height: 1.15;
