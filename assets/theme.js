@@ -6131,7 +6131,9 @@ class ProductForm extends HTMLFormElement {
             },
           })
         );
-        this.showCartSuccessMessage();
+        if (!isCartRecommendation) {
+          this.showCartSuccessMessage();
+        }
 
         const quickViewModal = this.closest("quick-view");
         if (quickViewModal) {

@@ -452,17 +452,7 @@
                                                     endfor
                                                   -%}
 
-                                                  {%- if has_shopify_sale -%}
-                                                    {%- assign shopify_diff = item.variant.compare_at_price | minus: item.variant.price -%}
-                                                    {%- assign shopify_pct = shopify_diff | times: 100.0 | divided_by: item.variant.compare_at_price -%}
-                                                    <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
-                                                      {%- if promo_title != blank -%}
-                                                        {{- promo_title | escape -}}
-                                                      {%- else -%}
-                                                        Promo : -{{ shopify_pct | round }}%
-                                                      {%- endif -%}
-                                                    </span>
-                                                  {%- elsif promo_title != blank or promo_pct > 0 -%}
+                                                  {%- if promo_title != blank or promo_pct > 0 -%}
                                                     <span class="cluutch-badge badge badge--highlight flex items-center gap-1d5 font-medium leading-none rounded-full">
                                                       {%- if promo_title != blank -%}
                                                         {{- promo_title | escape -}}
