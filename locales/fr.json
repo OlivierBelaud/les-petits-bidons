@@ -636,7 +636,8 @@
     "checkout": {
       "order_summary": {
         "cart_does_not_meet_discount_requirements_notice": "Oups, ce code est non valide : il peut être expiré, non valable sur certains produits/abonnements, non cumulable avec d’autres promos, ou un minimum de commande peut être requis, écrivez-nous si besoin",
-        "customer_does_not_meet_discount_requirements_notice": "Le code <strong style=\"text-transform:uppercase\">{{ code }}</strong> n'est pas valable pour votre commande."
+        "customer_does_not_meet_discount_requirements_notice": "Le code <strong style=\"text-transform:uppercase\">{{ code }}</strong> n'est pas valable pour votre commande.",
+        "customer_already_used_once_per_customer_discount_notice": "Vous avez déjà utilisé le code <strong style=\"text-transform:uppercase\">{{ code }}</strong>."
       },
       "stock": {
         "sold_out_label": "Victime de son succès"
