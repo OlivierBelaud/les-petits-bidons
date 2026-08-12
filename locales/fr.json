@@ -635,7 +635,8 @@
   "shopify": {
     "checkout": {
       "order_summary": {
-        "cart_does_not_meet_discount_requirements_notice": "Oups, ce code est non valide : il peut être expiré, non valable sur certains produits/abonnements, non cumulable avec d’autres promos, ou un minimum de commande peut être requis, écrivez-nous si besoin"
+        "cart_does_not_meet_discount_requirements_notice": "Oups, ce code est non valide : il peut être expiré, non valable sur certains produits/abonnements, non cumulable avec d’autres promos, ou un minimum de commande peut être requis, écrivez-nous si besoin",
+        "customer_does_not_meet_discount_requirements_notice": "Le code <strong style=\"text-transform:uppercase\">{{ code }}</strong> ne s'applique pas à votre commande."
       },
       "stock": {
         "sold_out_label": "Victime de son succès"
