@@ -355,17 +355,17 @@
       "disabled": true,
       "name": "LPB scrolling banner",
       "settings": {
-        "text": "<p>BUG D’AFFICHAGE 💛 -  CLIQUEZ SUR UN PRODUIT POUR COMMANDER ✅</p>",
+        "text": "<p>OFFRE RENTREE 🥳 -15% SUR TOUT LE SITE</p>",
         "speed": 28,
         "color_background": "#fcecbf",
         "color_text": "#007e7f",
         "padding_mobile": 10,
         "padding": 10,
         "enable_schedule": true,
-        "start_date": "18/06/26",
+        "start_date": "26/08/26",
         "start_time": "06:00",
-        "end_date": "18/06/26",
-        "end_time": "19:00",
+        "end_date": "02/09/26",
+        "end_time": "23:00",
         "enable_sticky": true
       }
     }
