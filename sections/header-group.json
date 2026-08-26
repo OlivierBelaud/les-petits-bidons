@@ -352,7 +352,6 @@
     },
     "lpb_scrolling_banner_giKLhH": {
       "type": "lpb-scrolling-banner",
-      "disabled": true,
       "name": "LPB scrolling banner",
       "settings": {
         "text": "<p>OFFRE RENTRÉE 🥳 -15% sur TOUT le site</p>",
