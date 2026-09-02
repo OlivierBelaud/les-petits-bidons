@@ -354,7 +354,7 @@
       "type": "lpb-scrolling-banner",
       "name": "LPB scrolling banner",
       "settings": {
-        "text": "<p>⚠️ DERNIÈRES 48H ⚠️ -15% sur tout le site</p>",
+        "text": "<p>DERNIER JOUR ⏳ -15% sur tout le site</p>",
         "speed": 28,
         "color_background": "#fcecbf",
         "color_text": "#007e7f",
