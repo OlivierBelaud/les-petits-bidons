@@ -9,7 +9,7 @@
  */
 {
   "sections": {
-    "lpb_scrolling_banner_pa49pK": {
+    "lpb_scrolling_banner_R9Tf93": {
       "type": "lpb-scrolling-banner",
       "disabled": true,
       "name": "LPB scrolling banner",
@@ -86,6 +86,12 @@
             "size_chart": ""
           }
         },
+        "price_3BwtzL": {
+          "type": "price",
+          "settings": {
+            "show_taxes_notice": false
+          }
+        },
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
@@ -97,8 +103,9 @@
             "show_back_in_stock_phone": false
           }
         },
-        "reassurance_Q3BEWB": {
+        "reassurance_rharcm": {
           "type": "reassurance",
+          "disabled": true,
           "settings": {
             "item_1_icon": "🚚",
             "item_1_text": "<p><strong>Livraison offerte</strong> dès 50€</p>",
@@ -110,12 +117,11 @@
             "item_4_text": "<p><strong>Paiement sécurisé</strong> – CB, Apple Pay...</p>",
             "item_5_icon": "",
             "item_5_text": "",
-            "display_as_list": true,
             "text_color": "#003435",
             "autoplay_speed": 3000
           }
         },
-        "essential_countdown_timer_app_block_tekEab": {
+        "essential_countdown_timer_app_block_hyzJAE": {
           "type": "shopify://apps/essential-countdown-timer/blocks/app-block/722378e8-5a70-4eae-aa89-9e44e8e9f6de",
           "settings": {
             "id": "cmkzr062500cithhrz8m6enf5"
@@ -129,9 +135,8 @@
             "secondary_colour": "#f8f8f8",
             "preview_scenario": "customer_can_earn_points",
             "should_show_icon": true,
-            "custom_image_height": 40,
             "should_show_points_label": true,
-            "points_text_logged_in": "<p>Gagnez <strong>[points_amount] de fidélité</strong> en achetant cet article ! </p><p><em>Connectez-vous à « Mes Petits Points » en bas à gauche de l'écran pour transformer vos points en codes promos.</em></p>",
+            "points_text_logged_in": "<p>Gagnez <strong>[points_amount]</strong> <strong>points de fidélité</strong> en achetant cet article ! </p><p><em>Connectez-vous à « Mes Petits Points » en bas à gauche de l'écran pour transformer vos points en codes promos.</em></p>",
             "points_text_logged_out": "<p><a href=\"/account/login/\" title=\"/account/login/\">Connectez-vous</a> ou <a href=\"/account/register/\" title=\"/account/register/\">inscrivez-vous</a> pour commencer à cumuler des récompenses.</p>"
           }
         },
@@ -146,10 +151,6 @@
             "size_chart": ""
           }
         },
-        "collapsible_tab_xNp9JX": {
-          "type": "collapsible_tab",
-          "settings": {}
-        },
         "icons_BXhQD4": {
           "type": "icons",
           "settings": {
@@ -163,11 +164,16 @@
             "text_4": "Emballage éco-responsable"
           }
         },
+        "collapsible_tab_xNp9JX": {
+          "type": "collapsible_tab",
+          "settings": {}
+        },
         "quantity_GgPj6j": {
           "type": "quantity-button",
+          "disabled": true,
           "settings": {
             "value": 1,
-            "price": "16.90",
+            "price": "14.90",
             "compare": "",
             "discount": "",
             "text": "x1",
@@ -177,10 +183,11 @@
         },
         "quantity_4VpdJX": {
           "type": "quantity-button",
+          "disabled": true,
           "settings": {
             "value": 2,
-            "price": "30.76",
-            "compare": "33.80",
+            "price": "27.12",
+            "compare": "29.80",
             "discount": "-9%",
             "text": "x2",
             "image": "shopify://shop_images/x2-bottle.svg",
@@ -189,10 +196,11 @@
         },
         "quantity_xRefgx": {
           "type": "quantity-button",
+          "disabled": true,
           "settings": {
             "value": 3,
-            "price": "45.12",
-            "compare": "50.70",
+            "price": "39.78",
+            "compare": "44.70",
             "discount": "-11%",
             "text": "x3",
             "image": "shopify://shop_images/x3-bottle.svg",
@@ -201,10 +209,11 @@
         },
         "quantity_fE7pE4": {
           "type": "quantity-button",
+          "disabled": true,
           "settings": {
             "value": 6,
-            "price": "89.23",
-            "compare": "101.40",
+            "price": "78.67",
+            "compare": "89.40",
             "discount": "-12%",
             "text": "x6",
             "image": "shopify://shop_images/x6-bottle.svg",
@@ -221,13 +230,14 @@
         "variants_TYUDEY",
         "cluutch_variant_picker_UwCP84",
         "variant_picker",
+        "price_3BwtzL",
         "buy_buttons",
-        "reassurance_Q3BEWB",
-        "essential_countdown_timer_app_block_tekEab",
+        "reassurance_rharcm",
+        "essential_countdown_timer_app_block_hyzJAE",
         "smile_io_smile_points_on_product_page_BKaK8T",
         "product_variations_BbLbWY",
-        "collapsible_tab_xNp9JX",
         "icons_BXhQD4",
+        "collapsible_tab_xNp9JX",
         "quantity_GgPj6j",
         "quantity_4VpdJX",
         "quantity_xRefgx",
@@ -261,11 +271,12 @@
         "collection_category": "",
         "collection": "best-sellers",
         "products": [
-          "lultime-doseur",
-          "le-super-detachant-les-petits-bidons",
-          "lessive-concentree-ecologique-10l-les-petits-bidons"
+          "gel-wc-naturel-les-petits-bidons",
+          "bicarbonate-de-soude-les-petits-bidons",
+          "tablettes-lave-vaisselle-les-petits-bidons",
+          "liquide-vaisselle-500ml-les-petits-bidons"
         ],
-        "product_limit": 12,
+        "product_limit": 6,
         "columns": 4,
         "carousel_on_desktop": true,
         "show_view_all": false,
@@ -297,10 +308,10 @@
         "rounded": false
       }
     },
-    "1748375601ec86104c": {
+    "1748352847a1c544d1": {
       "type": "apps",
       "blocks": {
-        "judge_me_reviews_review_widget_hhfVYT": {
+        "judge_me_reviews_review_widget_kDUR9M": {
           "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
           "settings": {
             "review_data": "sample_data",
@@ -311,7 +322,7 @@
         }
       },
       "block_order": [
-        "judge_me_reviews_review_widget_hhfVYT"
+        "judge_me_reviews_review_widget_kDUR9M"
       ],
       "settings": {
         "color_text": "",
@@ -339,7 +350,6 @@
             "secondary_colour": "#f8f8f8",
             "preview_scenario": "customer_can_earn_points",
             "should_show_icon": true,
-            "custom_image_height": 40,
             "should_show_points_label": true,
             "points_text_logged_in": "<p>Gagnez [points_amount] points en achetant cet article.</p>",
             "points_text_logged_out": "<p>Les membres gagnent [points_amount] points pour l'achat de cet article.</p>"
@@ -644,8 +654,8 @@
         "question_9krc4H": {
           "type": "question",
           "settings": {
-            "title": "Pourquoi choisir une lessive écologique?",
-            "text": "<p>Nous vous invitons à vous renseigner quant à la composition complète des produits que proposent les marques de produits ménagers ! La plupart du temps, les listes sont incomplètes et incompréhensibles sur les produits classiques… Et pour cause, elles cachent souvent des ingrédients nocifs. </p><p>Chez <strong>LES PETITS BIDONS</strong>, on a voulu repartir de zéro pour <strong>LAVER SANS TOUT SALIR</strong> !<br/><br/>Notre lessive concentrée lavande apporte des solutions <strong>naturelles</strong> et <strong>concrètes</strong> à vos besoins du quotidien : sains, naturels et efficaces, pour vous comme pour la planète. Des formules d'origine naturelle, efficaces et facilement biodégradables, sans huile de palme, sans dérivés de pétrole et autres substances controversées. Nous voulons vous donner le pouvoir de faire mieux et retrouver un peu de bon sens, chaque jour.</p><p><span style=\"text-decoration:underline\">Attention</span>: La lessive BIO n'existe pas. En effet, pour fabriquer une lessive BIO, il faudrait que celle-ci soit uniquement composée d'ingrédients d'origine végétale et issus de l'agriculture biologique. Cela n'est pas possible.. Cependant, 100% des ingrédients qui composent nos Lessives Poudre sont d'origine naturelle. </p>",
+            "title": "Peut-on utiliser le Nettoyant Multi-Surfaces sur du granit ?",
+            "text": "<p>Le <strong>Nettoyant Multi-surfaces </strong>est efficace sur toutes les surfaces de votre maison, y compris le granit. Il dégraisse, élimine le calcaire et fait briller votre salle de bain, votre cuisine, votre plan de travail, vos vitres… Et en plus, il est écologique avec sa pastille concentrée à diluer !</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -653,8 +663,8 @@
         "question_VWfyWi": {
           "type": "question",
           "settings": {
-            "title": "La lessive liquide Les Petits Bidons est-elle adaptée aux linge de bébé?",
-            "text": "<p>Toutes nos formules de <strong>lessive écologique</strong> (liquide ou en poudre) sont testées sous contrôle dermatologique, et validées pour une utilisation sur les peaux les plus sensibles, notamment celle de bébé.</p><p>Cela veut dire que notre lessive a été soumise à de nombreux tests poussés et longs sur peau sensible afin de valider que notre formule ne provoque aucune allergie. Nous avons d’ailleurs de supers retours de nos clients sur ces sujets !<br/><br/>Pour bébé, nous vous conseillons d'opter pour la <span style=\"text-decoration:underline\">lessive bébé sans parfum</span> Les Petits Bidons, 100% naturelle et spécifiquement conçue pour les peaux les plus sensibles.</p>",
+            "title": "Les Nettoyants Multi-Surfaces écologiques sont ils aussi efficaces que les nettoyants classiques ?",
+            "text": "<p>Comme tous nos produits Les Petits Bidons, notre <strong>Nettoyant multi-surfaces</strong> écologique, rechargeable et réutilisable a été soumis à des tests d’efficacité en conditions d’utilisation réelles, réalisés par un laboratoire extérieur. En ce sens, ce produit est tout aussi efficace qu'un nettoyant classique, que vous trouvez traditionnellement dans vos magasins de proximité.</p><p>Notre nettoyant multi-surfaces écologique n'est pas <strong>désinfectant</strong> car la réglementation pour ce type de produits est très spécifique et les ingrédients utilisés peuvent être assez dangereux dans leur utilisation, on laisse donc certaines marques spécialistes de la désinfection s'en charger.</p><p>Toutefois, notre Nettoyant Multi-Surfaces a toutes les fonctions classiques d'un nettoyant : il nettoie, dégraisse et fait briller ! ✨</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -662,8 +672,8 @@
         "question_QYJyaN": {
           "type": "question",
           "settings": {
-            "title": "La lessive liquide Les Petits Bidons est-elle adaptée aux culottes menstruelles et aux couches lavables?",
-            "text": "<p>Il n'est pas recommandé de laver ses <strong>culottes menstruelles ou ses couches lavables</strong> avec du savon de Marseille car la glycérine présente dans le savon peut endommager les qualités d'absorption de vos culottes. </p><p>Pour ce qui est de la glycérine, elle est présente en très faible quantité dans nos lessives liquides (moins de 0,6%), ce qui les rend toujours adaptées au lavage des couches lavables et des culottes menstruelles. Pour information, nous n’en avons pas dans nos lessives poudre.</p><p>Notre Lessive Poudre ne contient pas de glycérine, ni aucune substance déconseillée pour le lavage des culottes menstruelles ou des couches lavables, vous pouvez donc les laver en toute sécurité et sans risquer de les abimer!<br/><br/>Nos lessives ont été formulées après plus de 9 mois de recherche et développement et sont bien plus efficaces que du simple savon de Marseille ! Nous avons d'ailleurs rédigé un article pour vous donner quelques conseils pour <a href=\"https://lespetitsbidons.fr/blogs/news/comment-laver-entretenir-culotte-de-regles\" title=\"Laver culottes menstruelles \"><span style=\"text-decoration:underline\">laver et entretenir vos culottes menstruelles</span></a>.</p>",
+            "title": "Comment utiliser le spray Nettoyant Multi-usage écologique et rechargeable Les Petits Bidons ?",
+            "text": "<p><strong>Pour utiliser votre Nettoyant Multi-surfaces, rien de plus simple!</strong></p><p>D’abord, remplissez le flacon jusqu'au trait avec de l’eau tiède. Séchez-vous bien les mains avant de manipuler la pastille. Insérez ensuite la pastille dans le goulot. Attendez 10 minutes puis vissez le pulvérisateur sur le flacon.</p><p>Secouez légèrement le Nettoyant Multi-surfaces. A vos marques, spray, nettoyez!Une fois vide, rincez votre flacon puis rechargez le avec une nouvelle pastille afin de <a href=\"https://lespetitsbidons.fr/blogs/news/pourquoi-utiliser-spray-menager-ecologique-multiusages-nettoyer-maison\" title=\"Pourquoi utiliser un produit tout-en-un rechargeable pour nettoyer ma maison ?\">l’utiliser à l’infini</a>!</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -671,8 +681,8 @@
         "question_BjtiYt": {
           "type": "question",
           "settings": {
-            "title": "La lessive écologique est-elle adaptée aux matières délicates ?",
-            "text": "<p>Nos<strong> lessives écologiques</strong>, fabriquées à partir d'ingrédients naturels, conviennent à tout type de matières et rendent votre linge tout doux 😊.</p><p>Il suffit de bien faire attention aux consignes indiquées sur l’étiquette de votre vêtement, surtout s’il est délicat. Le tour est joué ! On a même fait un <a href=\"https://www.instagram.com/p/CGgl5KgIVEm/\"><span style=\"text-decoration:underline\">super post</span></a> à ce sujet pour mieux comprendre nos étiquettes d'entretien.</p>",
+            "title": "L'eau du robinet est dure, est-ce un problème pour l'utilisation du Spray multi-usage ?",
+            "text": "<p>Vous pouvez remplir votre bouteille de Nettoyant multi-surfaces Les Petits Bidons avec tous les types d'eau. Selon la dureté de votre eau, certains dépôts peuvent apparaître. <strong>Cela n'altère en rien l'efficacité du produit</strong>, il suffit de secouer le flacon avant utilisation.</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -680,8 +690,8 @@
         "question_eLEm7A": {
           "type": "question",
           "settings": {
-            "title": "Quelle est la meilleure lessive écologique ?",
-            "text": "<p>Entre la <span style=\"text-decoration:underline\">lessive concentrée liquide</span> et la <span style=\"text-decoration:underline\">lessive en poudre</span>, l'efficacité sur votre linge, et leur capacité à venir à bout des taches est la même. C'est donc plus une question de préférence d'usage ! La lessive liquide est réputé pour être la plus simple à utiliser et est souvent plébiscitée. Cependant, attention au sur-dosage ! Vous pouvez vous munir de notre Super Doseur pour ne plus jamais en mettre trop, faire des économies et ne pas gâcher. </p><p>Pour <a href=\"https://lespetitsbidons.fr/blogs/news/comment-laver-entretenir-culotte-de-regles\" title=\"Laver sa culotte menstruelle\">laver votre culotte menstruelle</a> ou les couches lavables de votre bébé, nous vous conseillons de privilégier la lessive en poudre Les Petits Bidons. En effet, celle-ci ne contient pas du tout de glycérine, qui peut endommager la qualité d'absorption de vos culottes. </p><p>Aujourd’hui, certaines marques affirment que le plus important pour préserver l’environnement, c’est de laver à froid. Elles ajoutent que pour cela, il faut opter pour des lessives en capsules, efficaces à froid. Mais ce que ces marques ne vous disent pas, c’est que ces <a href=\"https://lespetitsbidons.fr/blogs/news/lessives-capsules-sont-elles-ecologiques\">lessives en capsules sont polluantes.</a> Faites de composants issus de la pétrochimie, de colorants chimiques, mais surtout composées d’une membrane hydrosoluble en alcool polyvinylique (ou PVOH), autrement dit : des microplastiques dérivés du pétrole qui ne peuvent être traités et finissent donc dans l'eau... </p><p>Chez nous, pas de promesse d’un « produit miracle », simplement des <strong>lessives écologiques</strong> ET efficaces, tout en étant respectueuses de votre linge et de votre peau.</p>",
+            "title": "Le Nettoyant Multi-usages écologique Les Petits Bidons est-il aussi efficace qu'un spray classique ?",
+            "text": "<p>Nous garantissons une efficacité au moins équivalente à celle des nettoyants conventionnels, mais avec 100% d’ingrédients d’origine naturelle ! Notre <strong>Nettoyant Multi-surfaces </strong>dégraisse, élimine le calcaire et fait briller votre salle de bain, votre cuisine, votre plan de travail, vos vitres...Son efficacité a été testée et validée en conditions réelles par un laboratoire indépendant.</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -689,13 +699,22 @@
         "question_B3RrTQ": {
           "type": "question",
           "settings": {
-            "title": "La lessive Les Petits Bidons est-elle vegan et non testée sur les animaux ?",
-            "text": "<p>La lessive Fleurs Blanches, tout comme les autres lessives liquides écologiques Les Petits Bidons, est fabriquée à partir d'ingrédients naturels et est 100% vegan.<br/>Par ailleurs, notre lessive bébé n'a pas été testé sur le chat, le chien, le lapin ou tout autre animal. Ils n'ont rien demandé, on les laisse tranquille ! </p>",
+            "title": "En quoi le Nettoyant Multi-Surfaces Les Petits Bidons est-il plus écologique qu'un spray classique ?",
+            "text": "<p>Un nettoyant classique contient 90% d’eau, et c’est une bouteille plastique qu’on jette une fois qu’elle est vide. Avec notre Nettoyant Multi-surfaces, achetez la bouteille une seule fois et réutilisez-la à l'infini grace à nos <strong>recharges écologiques et efficaces</strong>! </p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
         },
-        "question_qgCUQf": {
+        "question_tRXxJf": {
+          "type": "question",
+          "settings": {
+            "title": "Comment utiliser le Spray Nettoyant Multi-Usage écologique et rechargeable Les Petits Bidons ?",
+            "text": "<p><strong>Pour utiliser votre Nettoyant Multi-surfaces, rien de plus simple !</strong><br/><br/>D’abord, remplissez le flacon jusqu'au trait avec de l’eau tiède. Séchez-vous bien les mains avant de manipuler la pastille. Insérez ensuite la pastille dans le goulot. Attendez 5 minutes puis vissez le pulvérisateur sur le flacon.</p><p>Secouez légèrement le Nettoyant Multi-surfaces. À vos marques, spray, nettoyez ! Une fois vide, rincez votre flacon puis rechargez-le avec une nouvelle pastille afin de l’utiliser à l’infini !</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_i78nnT": {
           "type": "question",
           "settings": {
             "title": "Puis-je cumuler un code promo avec mon abonnement ?",
@@ -712,7 +731,8 @@
         "question_BjtiYt",
         "question_eLEm7A",
         "question_B3RrTQ",
-        "question_qgCUQf"
+        "question_tRXxJf",
+        "question_i78nnT"
       ],
       "settings": {
         "style": "with-background",
@@ -748,7 +768,7 @@
         "faq_page_style": false
       }
     },
-    "cluutch_featured_collection_B336mG": {
+    "cluutch_featured_collection_RhwAbb": {
       "type": "cluutch-featured-collection",
       "settings": {
         "use_metafield_category": false,
@@ -812,7 +832,7 @@
         "text_7n6FHa": {
           "type": "text",
           "settings": {
-            "text": "<p>Passez à la lessive liquide écologique ! Un parfum délicat de brin de lavande pour un linge frais qui sent bon. Une alternative parfaite à la lessive maison. Ce produit est fabriqué en France près de Marseille.<br/></p><p>Avec sa formule au label ECOCERT (la meilleure labellisation en France car la lessive bio, n'existe pas !), sa composition est parfaite pour les peaux les plus sensibles, sans perturbateurs endocriniens ni ingrédients controversés. Elle est testée sous contrôle dermatologique. Vous aussi, lavez sans tout salir :)</p><p>Et pour le reste de la maison, nous ne sommes pas en reste avec nos solutions écologiques et naturelles pour la vaisselle et l’entretien de votre intérieur avec nos nettoyants, nos vinaigres et bicarbonate multi-usages !</p>",
+            "text": "<p>Passez à la lessive liquide écologique ! Un parfum délicat de brin de lavande pour un linge frais qui sent bon. Une alternative parfaite à la lessive maison. Ce produit est fabriqué en France près de Marseille.<br/></p><p>Avec sa formule au label ECOCERT (la meilleure labellisation en France car la lessive bio, n'existe pas !), sa composition est parfaite pour les peaux les plus sensibles, sans perturbateurs endocriniens ni ingrédients controversés. Elle est testée sous contrôle dermatologique. Vous aussi, lavez sans tout salir :)</p><p>Et pour le reste de la maison, nous ne sommes pas en reste avec nos solutions écologiques et naturelles pour la vaisselle et l’entretien de votre intérieur avec nos éponges et essuie-tout compostables et zéro déchet !</p>",
             "text_size": "subtext-custom",
             "text_max_size_mobile": 14,
             "text_max_size": 16,
@@ -967,8 +987,8 @@
         "title": "<h2>Déjà 130 000 clients nous font confiance 😊</h2>",
         "single_row": false,
         "columns_desktop": 3,
-        "space_bot": 0,
-        "space_bot_mobile": 0
+        "space_bot": 100,
+        "space_bot_mobile": 48
       }
     },
     "cluutch_image_with_text_6cRjDX": {
@@ -1015,6 +1035,7 @@
         "collaps_KRKCEm",
         "collaps_cBtVVn"
       ],
+      "disabled": true,
       "settings": {
         "height": "600px",
         "image": "shopify://shop_images/image-text.jpg",
@@ -1294,15 +1315,15 @@
     }
   },
   "order": [
-    "lpb_scrolling_banner_pa49pK",
+    "lpb_scrolling_banner_R9Tf93",
     "cluutch_main_product_7yzPKV",
     "cluutch_featured_collection_cte8Ef",
-    "1748375601ec86104c",
+    "1748352847a1c544d1",
     "1743757735d8c97bf1",
     "main-product",
     "help-drawer",
     "cluutch_faq_nzTDig",
-    "cluutch_featured_collection_B336mG",
+    "cluutch_featured_collection_RhwAbb",
     "cluutch_bg_img_bK34FE",
     "cluutch_image_with_text_n6bamt",
     "cluutch_reviews_XBzrmY",
