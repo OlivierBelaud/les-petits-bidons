@@ -110,6 +110,7 @@
             "item_4_text": "<p><strong>Paiement sécurisé</strong> – CB, Apple Pay...</p>",
             "item_5_icon": "",
             "item_5_text": "",
+            "display_as_list": false,
             "text_color": "#003435",
             "autoplay_speed": 3000
           }
@@ -128,6 +129,7 @@
             "secondary_colour": "#f8f8f8",
             "preview_scenario": "customer_can_earn_points",
             "should_show_icon": true,
+            "custom_image_height": 40,
             "should_show_points_label": true,
             "points_text_logged_in": "<p>Gagnez <strong>[points_amount]</strong> <strong>points de fidélité</strong> en achetant cet article ! </p><p><em>Connectez-vous à « Mes Petits Points » en bas à gauche de l'écran pour transformer vos points en codes promos.</em></p>",
             "points_text_logged_out": "<p><a href=\"/account/login/\" title=\"/account/login/\">Connectez-vous</a> ou <a href=\"/account/register/\" title=\"/account/register/\">inscrivez-vous</a> pour commencer à cumuler des récompenses.</p>"
@@ -259,11 +261,10 @@
         "collection_category": "",
         "collection": "best-sellers",
         "products": [
-          "kit-de-demarrage-nettoyant-multi-surfaces-les-petits-bidons",
           "gel-wc-naturel-les-petits-bidons",
           "tablettes-lave-vaisselle-les-petits-bidons",
           "bicarbonate-de-soude-les-petits-bidons",
-          "liquide-vaisselle-500ml-les-petits-bidons"
+          "vinaigre-menager-multi-usages-14-les-petits-bidons"
         ],
         "product_limit": 6,
         "columns": 4,
@@ -339,6 +340,7 @@
             "secondary_colour": "#f8f8f8",
             "preview_scenario": "customer_can_earn_points",
             "should_show_icon": true,
+            "custom_image_height": 40,
             "should_show_points_label": true,
             "points_text_logged_in": "<p>Gagnez [points_amount] points en achetant cet article.</p>",
             "points_text_logged_out": "<p>Les membres gagnent [points_amount] points pour l'achat de cet article.</p>"
@@ -643,8 +645,8 @@
         "question_9krc4H": {
           "type": "question",
           "settings": {
-            "title": "Peut-on utiliser le Nettoyant Multi-Surfaces sur du granit ?",
-            "text": "<p>Le <strong>Nettoyant Multi-surfaces </strong>est efficace sur toutes les surfaces de votre maison, y compris le granit. Il dégraisse, élimine le calcaire et fait briller votre salle de bain, votre cuisine, votre plan de travail, vos vitres… Et en plus, il est écologique avec sa pastille concentrée à diluer !</p>",
+            "title": "Pourquoi le <strong>Multi'Maison</strong> est un produit révolutionnaire ?",
+            "text": "<p><strong>Parce qu'il réinvente l'entretien de la maison.</strong> <br/>Après de nombreux mois de  développement, de tests en laboratoire et d'essais auprès d'un panel de consommateurs, nous avons créé une formule capable de remplacer plusieurs produits du quotidien avec un seul concentré à diluer.</p><p>Selon la recette choisie, Multi'Maison vous permet de préparer :</p><ul><li>votre lessive,</li><li>votre liquide vaisselle,</li><li>votre nettoyant sols,</li><li>votre spray multi-usages,</li><li>votre nettoyant vitres et miroirs.</li></ul><p>Cuisine, salle de bains, linge, vaisselle, sols, vitres... <strong>un seul produit pour toute la maison.</strong></p><p>Mais l'innovation ne s'arrête pas là : Multi'Maison est composé de <strong>100 % d'ingrédients d'origine naturelle</strong>, certifié <strong>ECOCERT </strong>et formulé <strong>sans ingrédients controversés</strong>.</p><p>Le résultat ? Un produit à la fois <strong>efficace, polyvalent, économique et plus responsable</strong>, qui permet de réduire le nombre de produits stockés à la maison tout en limitant les déchets.</p><p>✨ <strong>Moins de produits, moins de déchets, plus de bon sens.</strong></p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -652,8 +654,8 @@
         "question_VWfyWi": {
           "type": "question",
           "settings": {
-            "title": "Les Nettoyants Multi-Surfaces écologiques sont-ils aussi efficaces que les nettoyants classiques ?",
-            "text": "<p>Comme tous nos produits Les Petits Bidons, notre <strong>Nettoyant multi-surfaces</strong> écologique, rechargeable et réutilisable a été soumis à des tests d’efficacité en conditions d’utilisation réelles, réalisés par un laboratoire extérieur. En ce sens, ce produit est tout aussi efficace qu'un nettoyant classique, que vous trouvez traditionnellement dans vos magasins de proximité.</p><p>Notre nettoyant multi-surfaces écologique n'est pas <strong>désinfectant</strong> car la réglementation pour ce type de produits est très spécifique et les ingrédients utilisés peuvent être assez dangereux dans leur utilisation, on laisse donc certaines marques spécialistes de la désinfection s'en charger.</p><p>Toutefois, notre Nettoyant Multi-Surfaces a toutes les fonctions classiques d'un nettoyant : il nettoie, dégraisse et fait briller ! ✨</p>",
+            "title": "Quel est son parfum ?",
+            "text": "<p>Multi'Maison dévoile une délicate senteur de <strong>Menthe & Eucalyptus</strong> <strong>d'origine naturelle</strong> 🌿.<br/>Un parfum frais et léger qui laisse une agréable sensation de propreté, sans être envahissant.</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -661,8 +663,8 @@
         "question_QYJyaN": {
           "type": "question",
           "settings": {
-            "title": "Pourquoi opter pour un Spray Nettoyant multi-usage rechargeable ?",
-            "text": "<p>Un bidon de produit ménager, c’est généralement <strong>80% d’eau</strong> pour uniquement <strong>20% de produits actifs</strong>. Mais transporter de l'eau alors que nous en avons tous chez nous, pourquoi faire ? </p><p>Opter pour un spray multi-surfaces rechargeable et réutilisable, c'est utiliser moins de plastique, faire des économies, tout en utilisant un produit efficace ! </p>",
+            "title": "Comment préparer mes produits ?",
+            "text": "<p>Rien de plus simple :</p><ol><li>Réutilisez un contenant propre (spray, bouteille, flacon vide...)</li><li>Ajoutez la quantité d'eau indiquée dans la recette choisie</li><li>Versez la dose correspondante de Multi'Maison</li><li>Secouez quelques secondes</li></ol><p>Et voilà, votre produit est prêt à l'emploi ✨</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -670,8 +672,8 @@
         "question_HWjW6P": {
           "type": "question",
           "settings": {
-            "title": "Puis-je cumuler un code promo avec mon abonnement ?",
-            "text": "<p>L’abonnement vous donne déjà accès à -10% toute l’année, automatiquement appliqué à chaque commande. Les codes promo liés aux offres spéciales ou aux soldes ne sont donc pas cumulables avec l’abonnement.</p>",
+            "title": "Pourquoi s'appelle-t-il Multi'Maison ?",
+            "text": "<p>Parce qu'un seul produit permet de réaliser une multitude de tâches dans la maison !<br/>Pour trouver son nom, nous avons fait appel à notre communauté 😊. Après avoir soumis plusieurs propositions au vote, c'est Multi'Maison qui a remporté le plus de suffrages.<br/><br/>Un grand merci à toutes celles et ceux qui ont participé à cette belle création collective 💚<br/></p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
