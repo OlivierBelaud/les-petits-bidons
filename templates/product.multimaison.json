@@ -117,6 +117,7 @@
             "item_4_text": "<p><strong>Paiement sécurisé</strong> – CB, Apple Pay...</p>",
             "item_5_icon": "",
             "item_5_text": "",
+            "display_as_list": false,
             "text_color": "#003435",
             "autoplay_speed": 3000
           }
@@ -135,6 +136,7 @@
             "secondary_colour": "#f8f8f8",
             "preview_scenario": "customer_can_earn_points",
             "should_show_icon": true,
+            "custom_image_height": 40,
             "should_show_points_label": true,
             "points_text_logged_in": "<p>Gagnez <strong>[points_amount]</strong> <strong>points de fidélité</strong> en achetant cet article ! </p><p><em>Connectez-vous à « Mes Petits Points » en bas à gauche de l'écran pour transformer vos points en codes promos.</em></p>",
             "points_text_logged_out": "<p><a href=\"/account/login/\" title=\"/account/login/\">Connectez-vous</a> ou <a href=\"/account/register/\" title=\"/account/register/\">inscrivez-vous</a> pour commencer à cumuler des récompenses.</p>"
@@ -350,6 +352,7 @@
             "secondary_colour": "#f8f8f8",
             "preview_scenario": "customer_can_earn_points",
             "should_show_icon": true,
+            "custom_image_height": 40,
             "should_show_points_label": true,
             "points_text_logged_in": "<p>Gagnez [points_amount] points en achetant cet article.</p>",
             "points_text_logged_out": "<p>Les membres gagnent [points_amount] points pour l'achat de cet article.</p>"
@@ -654,8 +657,8 @@
         "question_9krc4H": {
           "type": "question",
           "settings": {
-            "title": "Peut-on utiliser le Nettoyant Multi-Surfaces sur du granit ?",
-            "text": "<p>Le <strong>Nettoyant Multi-surfaces </strong>est efficace sur toutes les surfaces de votre maison, y compris le granit. Il dégraisse, élimine le calcaire et fait briller votre salle de bain, votre cuisine, votre plan de travail, vos vitres… Et en plus, il est écologique avec sa pastille concentrée à diluer !</p>",
+            "title": "Pourquoi le Multi'Maison est un produit révolutionnaire ?",
+            "text": "<p>Parce qu<strong>'il réinvente l'entretien de la maison.</strong></p><p>Après de nombreux mois de développement, de tests en laboratoire et d'essais auprès d'un panel de consommateurs, nous avons créé une formule capable de remplacer plusieurs produits du quotidien avec un seul concentré à diluer.</p><p>Selon la recette choisie, Multi'Maison vous permet de préparer :<br/>•\tvotre lessive,<br/>•\tvotre liquide vaisselle,<br/>•\tvotre nettoyant sols,<br/>•\tvotre spray multi-usages,<br/>•\tvotre nettoyant vitres et miroirs.</p><p>Cuisine, salle de bains, linge, vaisselle, sols, vitres...<strong>Un seul produit pour toute la maison.</strong></p><p>Mais l'innovation ne s'arrête pas là : Multi'Maison est composé de <strong>100 % d'ingrédients d'origine naturelle</strong>, <strong>certifié ECOCERT</strong> et formulé <strong>sans ingrédients controversés</strong>.</p><p>Le résultat ? Un produit à la fois <strong>efficace, polyvalent, économique et plus responsable</strong>, qui permet de réduire le nombre de produits stockés à la maison tout en limitant les déchets.</p><p>✨ <strong>Moins de produits, moins de déchets, plus de bon sens.</strong><br/></p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -663,8 +666,8 @@
         "question_VWfyWi": {
           "type": "question",
           "settings": {
-            "title": "Les Nettoyants Multi-Surfaces écologiques sont ils aussi efficaces que les nettoyants classiques ?",
-            "text": "<p>Comme tous nos produits Les Petits Bidons, notre <strong>Nettoyant multi-surfaces</strong> écologique, rechargeable et réutilisable a été soumis à des tests d’efficacité en conditions d’utilisation réelles, réalisés par un laboratoire extérieur. En ce sens, ce produit est tout aussi efficace qu'un nettoyant classique, que vous trouvez traditionnellement dans vos magasins de proximité.</p><p>Notre nettoyant multi-surfaces écologique n'est pas <strong>désinfectant</strong> car la réglementation pour ce type de produits est très spécifique et les ingrédients utilisés peuvent être assez dangereux dans leur utilisation, on laisse donc certaines marques spécialistes de la désinfection s'en charger.</p><p>Toutefois, notre Nettoyant Multi-Surfaces a toutes les fonctions classiques d'un nettoyant : il nettoie, dégraisse et fait briller ! ✨</p>",
+            "title": "Comment préparer mes produits ?",
+            "text": "<p>Rien de plus simple :</p><p>1.\tRéutilisez un contenant propre (spray, bouteille, flacon vide...)<br/>2.\tAjoutez la quantité d'eau indiquée dans la recette choisie<br/>3.\tVersez la dose correspondante de Multi'Maison<br/>4.\tSecouez quelques secondes</p><p>Et voilà, votre produit est prêt à l'emploi ✨<br/></p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -681,8 +684,8 @@
         "question_BjtiYt": {
           "type": "question",
           "settings": {
-            "title": "L'eau du robinet est dure, est-ce un problème pour l'utilisation du Spray multi-usage ?",
-            "text": "<p>Vous pouvez remplir votre bouteille de Nettoyant multi-surfaces Les Petits Bidons avec tous les types d'eau. Selon la dureté de votre eau, certains dépôts peuvent apparaître. <strong>Cela n'altère en rien l'efficacité du produit</strong>, il suffit de secouer le flacon avant utilisation.</p>",
+            "title": "Quel est son parfum ?",
+            "text": "<p>Multi'Maison dévoile une délicate senteur de <strong>Menthe & Eucalyptus</strong> d'origine naturelle 🌿.</p><p>Un parfum frais et léger qui laisse une agréable sensation de propreté, sans être envahissant.<br/></p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -690,8 +693,8 @@
         "question_eLEm7A": {
           "type": "question",
           "settings": {
-            "title": "Le Nettoyant Multi-usages écologique Les Petits Bidons est-il aussi efficace qu'un spray classique ?",
-            "text": "<p>Nous garantissons une efficacité au moins équivalente à celle des nettoyants conventionnels, mais avec 100% d’ingrédients d’origine naturelle ! Notre <strong>Nettoyant Multi-surfaces </strong>dégraisse, élimine le calcaire et fait briller votre salle de bain, votre cuisine, votre plan de travail, vos vitres...Son efficacité a été testée et validée en conditions réelles par un laboratoire indépendant.</p>",
+            "title": "Pourquoi s'appelle-t-il Multi'Maison ?",
+            "text": "<p>Parce qu'un seul produit permet de réaliser une multitude de tâches dans la maison !</p><p>Pour trouver son nom, nous avons fait appel à notre communauté 😊. Après avoir soumis plusieurs propositions au vote, c'est Multi'Maison qui a remporté le plus de suffrages.</p><p>Un grand merci à toutes celles et ceux qui ont participé à cette belle création collective 💚<br/></p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
