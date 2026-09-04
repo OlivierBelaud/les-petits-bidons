@@ -352,10 +352,9 @@
     },
     "lpb_scrolling_banner_giKLhH": {
       "type": "lpb-scrolling-banner",
-      "disabled": true,
       "name": "LPB scrolling banner",
       "settings": {
-        "text": "<p>Prolongation exceptionnelle : -15% sur tout le site</p>",
+        "text": "<p>🔥 Prolongation exceptionnelle 🔥 -15% sur tout le site</p>",
         "speed": 28,
         "color_background": "#fcecbf",
         "color_text": "#007e7f",
