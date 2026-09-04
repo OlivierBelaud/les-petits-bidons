@@ -266,6 +266,82 @@
         "rounded": false
       }
     },
+    "video_with_text_LNyUbr": {
+      "type": "video-with-text",
+      "blocks": {
+        "heading_ndyhxw": {
+          "type": "heading",
+          "settings": {
+            "heading": "Comment ça marche ?",
+            "heading_size": "title-md",
+            "heading_tag": "h2",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "text_ME8FxQ": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Découvrez en vidéo comment réaliser facilement chacune des recettes : <strong>lessive</strong>, <strong>liquide vaisselle</strong>, <strong>nettoyant sols</strong>, <strong>spray multi-usages</strong> et <strong>vitres</strong>. En quelques minutes, votre produit est prêt à l'emploi ✨</p>",
+            "text_size": "subtext-md",
+            "text_max_size": 32,
+            "text_font": "body",
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "button_q4kVFz": {
+          "type": "button",
+          "disabled": true,
+          "settings": {
+            "button_label": "Button label",
+            "button_link": "",
+            "button_style": "primary",
+            "button_size": "md",
+            "button_external": false,
+            "button_icon": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_ndyhxw",
+        "text_ME8FxQ",
+        "button_q4kVFz"
+      ],
+      "name": "t:sections.video-with-text.presets.name",
+      "settings": {
+        "video": "shopify://files/videos/Vidéo Multi'Maison-1920x1080px.mp4",
+        "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+        "description": "Découvrez en vidéo comment réaliser chacune des recettes avec le Multi'Maison",
+        "enable_video_autoplay": false,
+        "enable_video_looping": false,
+        "image_height": "adapt",
+        "video_width": "medium",
+        "layout": "video_first",
+        "text_alignment": "left",
+        "content_position": "align-self-center",
+        "image_height_mobile": "auto",
+        "text_alignment_mobile": "left",
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_background_2": "",
+        "gradient_background_2": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false,
+        "enable_parallax": false,
+        "parallax_direction": "vertical"
+      }
+    },
     "cluutch_featured_collection_cte8Ef": {
       "type": "cluutch-featured-collection",
       "settings": {
@@ -1324,6 +1400,7 @@
   "order": [
     "lpb_scrolling_banner_R9Tf93",
     "cluutch_main_product_7yzPKV",
+    "video_with_text_LNyUbr",
     "cluutch_featured_collection_cte8Ef",
     "1748352847a1c544d1",
     "1743757735d8c97bf1",
