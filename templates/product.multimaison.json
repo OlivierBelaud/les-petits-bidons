@@ -311,7 +311,6 @@
       ],
       "name": "t:sections.video-with-text.presets.name",
       "settings": {
-        "video": "shopify://files/videos/Vidéo Multi'Maison-1920x1080px.mp4",
         "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
         "description": "Découvrez en vidéo comment réaliser chacune des recettes avec le Multi'Maison",
         "enable_video_autoplay": false,
