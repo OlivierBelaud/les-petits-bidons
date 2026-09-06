@@ -352,6 +352,7 @@
     },
     "lpb_scrolling_banner_giKLhH": {
       "type": "lpb-scrolling-banner",
+      "disabled": true,
       "name": "LPB scrolling banner",
       "settings": {
         "text": "<p>🔥 FIN À MINUIT 🔥 -15% sur tout le site</p>",
