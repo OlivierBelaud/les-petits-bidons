@@ -1391,7 +1391,9 @@
         "full_width": false,
         "rounded": false,
         "enable_parallax": false,
-        "parallax_direction": "vertical"
+        "parallax_direction": "vertical",
+        "video": "shopify://files/videos/Vidéo Multi'Maison-1920x1080px (1).mp4",
+        "video_url_mobile": ""
       }
     }
   },
