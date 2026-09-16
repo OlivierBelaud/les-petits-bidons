@@ -30,8 +30,8 @@
       "settings": {
         "show_badge": true,
         "badge_text": "DURÉE LIMITÉE",
-        "title": "Offre de bienvenue",
-        "subtitle": "-10% sur tout le site dès 30€ d'achat",
+        "title": "-10% sur TOUT le site",
+        "subtitle": "dès 30€ d'achat",
         "description": "Utilisez le code ci-dessous lors du paiement :",
         "show_coupon_code": true,
         "coupon_code": "WELCOME10",
