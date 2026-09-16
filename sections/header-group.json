@@ -366,7 +366,8 @@
         "end_date": "02/09/26",
         "end_time": "23:00",
         "enable_sticky": true
-      }
+      },
+      "disabled": true
     }
   },
   "order": [
