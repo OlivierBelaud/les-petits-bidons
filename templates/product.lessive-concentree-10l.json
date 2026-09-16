@@ -86,9 +86,19 @@
             "size_chart": ""
           }
         },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_quantity_selector": false,
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": false,
+            "enable_back_in_stock": false,
+            "show_back_in_stock_name": false,
+            "show_back_in_stock_phone": false
+          }
+        },
         "reassurance_jN6UC6": {
           "type": "reassurance",
-          "disabled": true,
           "settings": {
             "item_1_icon": "🚚",
             "item_1_text": "<p><strong>Livraison offerte</strong> dès 50€</p>",
@@ -100,19 +110,9 @@
             "item_4_text": "<p><strong>Paiement sécurisé</strong> – CB, Apple Pay...</p>",
             "item_5_icon": "",
             "item_5_text": "",
+            "display_as_list": false,
             "text_color": "#003435",
             "autoplay_speed": 3000
-          }
-        },
-        "buy_buttons": {
-          "type": "buy_buttons",
-          "settings": {
-            "show_quantity_selector": false,
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": false,
-            "enable_back_in_stock": false,
-            "show_back_in_stock_name": false,
-            "show_back_in_stock_phone": false
           }
         },
         "essential_countdown_timer_app_block_63NYXU": {
@@ -129,6 +129,7 @@
             "secondary_colour": "#f8f8f8",
             "preview_scenario": "customer_can_earn_points",
             "should_show_icon": true,
+            "custom_image_height": 40,
             "should_show_points_label": true,
             "points_text_logged_in": "<p>Gagnez <strong>[points_amount]</strong> <strong>points de fidélité</strong> en achetant cet article ! </p><p><em>Connectez-vous à « Mes Petits Points » en bas à gauche de l'écran pour transformer vos points en codes promos.</em></p>",
             "points_text_logged_out": "<p><a href=\"/account/login/\" title=\"/account/login/\">Connectez-vous</a> ou <a href=\"/account/register/\" title=\"/account/register/\">inscrivez-vous</a> pour commencer à cumuler des récompenses.</p>"
@@ -223,8 +224,8 @@
         "variants_TYUDEY",
         "cluutch_variant_picker_UwCP84",
         "variant_picker",
-        "reassurance_jN6UC6",
         "buy_buttons",
+        "reassurance_jN6UC6",
         "essential_countdown_timer_app_block_63NYXU",
         "smile_io_smile_points_on_product_page_dDmCUH",
         "product_variations_BbLbWY",

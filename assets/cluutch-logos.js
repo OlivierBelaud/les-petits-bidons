@@ -3,7 +3,8 @@ var swiperLogo = new Swiper(".logo-swiper", {
   centeredSlides: true,
   slidesPerView: 1,
   allowTouchMove: false,
-  loop: true,
+  loop: false,
+  rewind: true,
   autoplay: {
     delay: 2500,
     disableOnInteraction: false,
@@ -33,7 +34,8 @@ var swiperTextLogo = new Swiper(".logo-swiper-text", {
   centeredSlides: true,
   slidesPerView: 1,
   allowTouchMove: false,
-  loop: true,
+  loop: false,
+  rewind: true,
   autoplay: {
     delay: 2500,
     disableOnInteraction: false,
