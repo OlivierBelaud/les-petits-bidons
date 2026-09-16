@@ -81,13 +81,8 @@
     if (window.innerWidth > 768) {
       thumbsSwiper = new Swiper('.thumb-swiper', {
         slidesPerView: 2,
-        initialSlide: 3,
         spaceBetween: 12,
         direction: 'vertical',
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
       });
 
       mainSwiper = new Swiper('.imgswiper', {
@@ -98,8 +93,8 @@
           swiper: thumbsSwiper,
         },
         navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
+          nextEl: '.imgswiper .swiper-button-next',
+          prevEl: '.imgswiper .swiper-button-prev',
         },
       });
     } else {
@@ -108,8 +103,8 @@
         slidesPerView: 1,
         loop: true,
         navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
+          nextEl: '.imgswiper .swiper-button-next',
+          prevEl: '.imgswiper .swiper-button-prev',
         },
         pagination: {
           el: '.swiper-pagination',
@@ -264,4 +259,3 @@
     }
   })();
 </script>
-

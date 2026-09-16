@@ -187,6 +187,11 @@
                             {{ variant.metafields.custom.label_texte | escape }}
                           </p>
                         {% endif %}
+                        {% if variant.metafields.custom.label_text_2 != blank and variant.metafields.custom.label_color_2 != blank %}
+                          <p class="cluutch-badge" style="background: {{ variant.metafields.custom.label_color_2 }}; color: #ffffff;">
+                            {{ variant.metafields.custom.label_text_2 | escape }}
+                          </p>
+                        {% endif %}
                         {% if variant.metafields.custom.cluutch_meilleure != blank %}
                           <p class="cluutch-badge cluutch-badge--yellow">
                             {{ variant.metafields.custom.cluutch_meilleure }}

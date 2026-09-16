@@ -1030,11 +1030,24 @@
         "header__empty_cart": {
           "content": "Recommandations pour les paniers vides"
         },
+        "empty_cart_title": {
+          "label": "Titre panier vide"
+        },
         "empty_cart_message": {
-          "label": "Texte"
+          "label": "Texte d'introduction panier vide"
+        },
+        "empty_cart_collections_heading": {
+          "label": "Titre des gammes panier vide"
         },
         "empty_cart_collections": {
           "label": "Liste de collection"
+        },
+        "empty_cart_products_heading": {
+          "label": "Titre des produits recommandés panier vide"
+        },
+        "empty_cart_products": {
+          "label": "Produits recommandés panier vide",
+          "info": "Choisir les produits affichés dans l'état panier vide. Si vide, la collection best-sellers est utilisée."
         },
         "header__recent_products": {
           "content": "Derniers produits consultés"
@@ -4459,7 +4472,7 @@
           "label": "Message 1"
         },
         "tab_attention_message_2": {
-          "label": "Message 2",
+          "label": "Message 2"
         },
         "tab_attention_message_delay": {
           "label": "Retard des messages"

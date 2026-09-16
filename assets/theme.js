@@ -129,7 +129,7 @@ console.log(
       );
     },
 
-    trapFocus: (container, elementToFocus = container) => {
+    trapFocus: (container, elementToFocus = container, options = {}) => {
       const elements = theme.a11y.getFocusableElements(container);
       const first = elements[0];
       const last = elements[elements.length - 1];
@@ -184,7 +184,7 @@ console.log(
         theme.a11y.trapFocusHandlers.focusin
       );
 
-      elementToFocus.focus();
+      elementToFocus.focus(options);
 
       if (
         elementToFocus.tagName === "INPUT" &&
@@ -2834,6 +2834,7 @@ class QuantityInput extends HTMLElement {
   onButtonClick(event) {
     event.preventDefault();
     const previousValue = this.input.value;
+    const clickedButton = event.currentTarget;
 
     if (event.currentTarget.name === "plus") {
       if (
@@ -2849,8 +2850,15 @@ class QuantityInput extends HTMLElement {
       this.input.stepDown();
     }
 
-    if (previousValue !== this.input.value)
+    if (previousValue !== this.input.value) {
+      const btnContent = clickedButton.querySelector(".cart-qty-pill__btn-content");
+      const btnLoader = clickedButton.querySelector(".cart-qty-pill__loader");
+      if (btnContent && btnLoader) {
+        btnContent.classList.add("hidden");
+        btnLoader.classList.remove("hidden");
+      }
       this.input.dispatchEvent(this.changeEvent);
+    }
 
     if (
       this.input.getAttribute("data-min") === previousValue &&
@@ -3064,17 +3072,44 @@ class RecentlyViewed extends HTMLElement {
 customElements.define("recently-viewed", RecentlyViewed);
 
 class ProductRecommendations extends HTMLElement {
+  static responseCache = new Map();
+
   constructor() {
     super();
+    this.loaded = false;
+    this.loadingPromise = null;
 
     Motion.inView(this, this.init.bind(this), {
-      margin: "600px 0px 600px 0px",
+      margin: "1200px 0px 1200px 0px",
     });
+
+    if (!this.closest("cart-drawer")) {
+      const initWhenIdle = () => this.init();
+
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(initWhenIdle, { timeout: 1800 });
+      } else {
+        window.addEventListener(
+          "load",
+          () => window.setTimeout(initWhenIdle, 250),
+          { once: true }
+        );
+      }
+    }
   }
 
   init() {
-    fetch(this.getAttribute("data-url"))
-      .then((response) => response.text())
+    if (this.loaded || this.loadingPromise) return this.loadingPromise;
+
+    const url = this.getAttribute("data-url");
+    if (!url) return Promise.resolve();
+
+    const fetchPromise =
+      ProductRecommendations.responseCache.get(url) ||
+      fetch(url).then((response) => response.text());
+
+    ProductRecommendations.responseCache.set(url, fetchPromise);
+    this.loadingPromise = fetchPromise
       .then((responseText) => {
         const sectionInnerHTML = new DOMParser()
           .parseFromString(responseText, "text/html")
@@ -3087,15 +3122,21 @@ class ProductRecommendations extends HTMLElement {
         );
         if (recommendations && recommendations.innerHTML.trim().length) {
           this.innerHTML = recommendations.innerHTML;
+          this.loaded = true;
           this.dispatchEvent(new CustomEvent("recommendations:loaded"));
         } else {
           this.closest(".shopify-section").remove();
+          this.loaded = true;
           this.dispatchEvent(new CustomEvent("is-empty"));
         }
       })
       .catch((e) => {
+        ProductRecommendations.responseCache.delete(url);
+        this.loadingPromise = null;
         console.error(e);
       });
+
+    return this.loadingPromise;
   }
 }
 customElements.define("product-recommendations", ProductRecommendations);
@@ -5941,6 +5982,27 @@ class ProductInfo extends HTMLElement {
 }
 customElements.define("product-info", ProductInfo);
 
+function getCurrentCartItemCount() {
+  const cartCount = document.querySelector("cart-count");
+  const count = parseInt(cartCount?.textContent || "0", 10);
+
+  return Number.isFinite(count) ? count : 0;
+}
+
+function getFormAddedQuantity(formData) {
+  const quantity = parseInt(formData.get("quantity") || "1", 10);
+
+  return Number.isFinite(quantity) && quantity > 0 ? quantity : 1;
+}
+
+function getItemsAddedQuantity(items) {
+  return items.reduce((total, item) => {
+    const quantity = parseInt(item.quantity || "1", 10);
+
+    return total + (Number.isFinite(quantity) && quantity > 0 ? quantity : 1);
+  }, 0);
+}
+
 class ProductForm extends HTMLFormElement {
   constructor() {
     super();
@@ -5975,9 +6037,13 @@ class ProductForm extends HTMLFormElement {
   }
 
   onSubmitHandler(event) {
+    const isCartRecommendation = this.closest(
+      ".cluutch-wrapper, .complementary-products, .cart-empty-state"
+    );
     if (
-      document.body.classList.contains("template-cart") ||
-      theme.settings.cartType === "page"
+      (document.body.classList.contains("template-cart") ||
+        theme.settings.cartType === "page") &&
+      !isCartRecommendation
     )
       return;
 
@@ -6041,16 +6107,21 @@ class ProductForm extends HTMLFormElement {
           return;
         }
 
-        const cartJson = await (
-          await fetch(theme.routes.cart_url, {
-            ...theme.utils.fetchConfig("json", "GET"),
-          })
-        ).json();
-        cartJson["sections"] = parsedState["sections"];
+        const cartJson = {
+          ...parsedState,
+          item_count: getCurrentCartItemCount() + getFormAddedQuantity(formData),
+          sections: parsedState["sections"],
+        };
+        const recommendationCard = isCartRecommendation
+          ? this.closest("[data-product-handle]")
+          : null;
 
         theme.pubsub.publish(theme.pubsub.PUB_SUB_EVENTS.cartUpdate, {
           source: "product-form",
           productVariantId: formData.get("id"),
+          cartRecommendation: Boolean(isCartRecommendation),
+          cartRecommendationProductHandle:
+            recommendationCard?.dataset.productHandle || null,
           cart: cartJson,
         });
         document.dispatchEvent(
@@ -6060,6 +6131,7 @@ class ProductForm extends HTMLFormElement {
             },
           })
         );
+        this.showCartSuccessMessage();
 
         const quickViewModal = this.closest("quick-view");
         if (quickViewModal) {
@@ -6073,7 +6145,7 @@ class ProductForm extends HTMLFormElement {
             { once: true }
           );
           quickViewModal.hide(true);
-        } else {
+        } else if (!isCartRecommendation) {
           this.cartDrawer?.show(this.activeElement);
         }
       })
@@ -6104,6 +6176,25 @@ class ProductForm extends HTMLFormElement {
 
     this.errorMessage.toggleAttribute("hidden", !errorMessage);
     this.errorMessage.innerText = errorMessage;
+  }
+
+  showCartSuccessMessage() {
+    let message = document.querySelector("[data-cart-success-message]");
+    if (!message) {
+      message = document.createElement("div");
+      message.setAttribute("data-cart-success-message", "");
+      message.setAttribute("role", "status");
+      message.setAttribute("aria-live", "polite");
+      message.className = "cart-success-message";
+      document.body.appendChild(message);
+    }
+
+    message.textContent = "Ajouté à votre panier";
+    message.classList.add("is-visible");
+    clearTimeout(window.cartSuccessMessageTimeout);
+    window.cartSuccessMessageTimeout = setTimeout(() => {
+      message.classList.remove("is-visible");
+    }, 2500);
   }
 
   toggleSubmitButton(disable = true, text, unavailable = false) {
@@ -8292,12 +8383,11 @@ class ProductBundle extends HTMLElement {
           return;
         }
 
-        const cartJson = await (
-          await fetch(theme.routes.cart_url, {
-            ...theme.utils.fetchConfig("json", "GET"),
-          })
-        ).json();
-        cartJson["sections"] = parsedState["sections"];
+        const cartJson = {
+          ...parsedState,
+          item_count: getCurrentCartItemCount() + getItemsAddedQuantity(data.items),
+          sections: parsedState["sections"],
+        };
 
         theme.pubsub.publish(theme.pubsub.PUB_SUB_EVENTS.cartUpdate, {
           source: "product-bundle",

@@ -1,4 +1,19 @@
 if (!customElements.get('compact-product-bundle')) {
+  const getCurrentCartItemCount = () => {
+    const cartCount = document.querySelector('cart-count');
+    const count = parseInt(cartCount?.textContent || '0', 10);
+
+    return Number.isFinite(count) ? count : 0;
+  };
+
+  const getItemsAddedQuantity = (items) => {
+    return items.reduce((total, item) => {
+      const quantity = parseInt(item.quantity || '1', 10);
+
+      return total + (Number.isFinite(quantity) && quantity > 0 ? quantity : 1);
+    }, 0);
+  };
+
   customElements.define(
     'compact-product-bundle',
     class CompactProductBundle extends HTMLElement {
@@ -74,8 +89,11 @@ if (!customElements.get('compact-product-bundle')) {
               return;
             }
     
-            const cartJson = await (await fetch(theme.routes.cart_url, { ...theme.utils.fetchConfig('json', 'GET')})).json();
-            cartJson['sections'] = parsedState['sections'];
+            const cartJson = {
+              ...parsedState,
+              item_count: getCurrentCartItemCount() + getItemsAddedQuantity(data.items),
+              sections: parsedState['sections']
+            };
     
             theme.pubsub.publish(theme.pubsub.PUB_SUB_EVENTS.cartUpdate, { source: 'product-bundle', cart: cartJson });
             document.dispatchEvent(new CustomEvent('ajaxProduct:added', {

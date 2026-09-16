@@ -19,6 +19,12 @@
     </span>
   {%- endif -%}
 
+  {%- if current_variant.metafields.custom.label_text_2 != blank and current_variant.metafields.custom.label_color_2 != blank -%}
+    <span class="badge flex items-center gap-1d5 font-medium leading-none rounded-full" style="--badge-background: {{ current_variant.metafields.custom.label_color_2 }}; --badge-foreground: #ffffff;">
+      {{- current_variant.metafields.custom.label_text_2 | escape -}}
+    </span>
+  {%- endif -%}
+
   {%- if saved_amount != blank -%}
      <span class="badge badge--onsale flex items-center gap-1d5 font-medium leading-none rounded-full">
       {%- liquid

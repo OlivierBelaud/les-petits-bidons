@@ -385,6 +385,8 @@
     display: grid !important;
     grid-template-columns: 1fr;
     width: 100%;
+    -webkit-user-select: none;
+    user-select: none;
 
     @media (min-width:1260px) {
         height: auto;
@@ -422,6 +424,7 @@
     width: 100%;
     max-width: 100%;
     display: block;
+    -webkit-user-drag: none;
     object-fit: cover;
     height: auto;
     border-radius: 20px;
@@ -442,10 +445,6 @@
     /* max-height: 637px; */
     max-height: 600px;
     height: 100%;
-}
-
-.thumb-swiper .swiper-slide-thumb-active {
-    display: none;
 }
 
 /* 
