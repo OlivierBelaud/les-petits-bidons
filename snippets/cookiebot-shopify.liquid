@@ -1,0 +1,88 @@
+<script data-cookieconsent="ignore">
+  (() => {
+    let timer;
+    let attempts = 0;
+    let loading = false;
+    let writing = false;
+    let writeFailures = 0;
+
+    function retry() {
+      if (timer) return;
+      if (++attempts > 100) {
+        console.warn('[Cookiebot → Shopify] Consent synchronization unavailable.');
+        return;
+      }
+      timer = setTimeout(() => {
+        timer = undefined;
+        sync();
+      }, 100);
+    }
+
+    function sync() {
+      const cookiebot = window.Cookiebot;
+      // No choice is not a refusal. Initial permissions belong to Shopify's regional settings.
+      if (!cookiebot?.hasResponse || writing) return;
+
+      const shopify = window.Shopify;
+      const privacy = shopify?.customerPrivacy;
+      if (!privacy) {
+        if (!loading && shopify?.loadFeatures) {
+          loading = true;
+          try {
+            shopify.loadFeatures([{ name: 'consent-tracking-api', version: '0.1' }], (error) => {
+              loading = false;
+              if (error) retry();
+              else sync();
+            });
+          } catch (error) {
+            loading = false;
+          }
+        }
+        retry();
+        return;
+      }
+
+      const consent = {
+        analytics: cookiebot.consent.statistics === true,
+        marketing: cookiebot.consent.marketing === true,
+        preferences: cookiebot.consent.preferences === true,
+      };
+      // Data sale/sharing is a separate choice: never infer sale_of_data from marketing.
+      const current = privacy.currentVisitorConsent();
+      if (Object.keys(consent).every((key) => current[key] === (consent[key] ? 'yes' : 'no'))) return;
+
+      writing = true;
+      try {
+        privacy.setTrackingConsent(consent, (error) => {
+          writing = false;
+          if (error) {
+            onWriteError();
+            return;
+          }
+          writeFailures = 0;
+          // A newer choice may have arrived while this write was in flight.
+          sync();
+        });
+      } catch (error) {
+        writing = false;
+        onWriteError();
+      }
+    }
+
+    function onWriteError() {
+      if (++writeFailures <= 3) retry();
+      else console.warn('[Cookiebot → Shopify] Consent could not be saved.');
+    }
+
+    function onConsent() {
+      attempts = 0;
+      writeFailures = 0;
+      sync();
+    }
+
+    ['CookiebotOnConsentReady', 'CookiebotOnAccept', 'CookiebotOnDecline'].forEach((event) => {
+      window.addEventListener(event, onConsent);
+    });
+    sync();
+  })();
+</script>
