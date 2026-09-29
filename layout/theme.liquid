@@ -29,9 +29,14 @@
           {%- endfor -%}
         {%- endcapture -%}
         <link rel="preload" as="image" fetchpriority="high"
+          media="(min-width: 450px)"
           href="{{ hero_image | image_url: width: 1680 }}"
           imagesrcset="{{ hero_srcset | strip }}"
           imagesizes="(min-width: 1260px) 555px, (min-width: 1024px) 50vw, (min-width: 560px) 520px, calc(100vw - 40px)">
+        <link rel="preload" as="image" fetchpriority="high" media="(max-width: 449px)"
+          href="{{ hero_image | image_url: width: 720 }}"
+          imagesrcset="{{ hero_image | image_url: width: 360 }} 360w, {{ hero_image | image_url: width: 540 }} 540w, {{ hero_image | image_url: width: 720 }} 720w"
+          imagesizes="calc(100vw - 40px)">
       {%- endif -%}
     {%- endif -%}
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
