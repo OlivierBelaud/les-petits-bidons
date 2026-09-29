@@ -33,14 +33,7 @@
     <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="2a2737ed-8ce1-42ce-b4f6-9278690f1e79" data-blockingmode="auto" type="text/javascript"></script>
     
 
-    {% comment %} Font {% endcomment %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    >
-    {% comment %} Font {% endcomment %}
+    {% render 'cluutch-fonts' %}
     {%- if settings.favicon != blank -%}
       <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
     {%- endif -%}
@@ -86,7 +79,6 @@
     >
     <noscript><link rel="stylesheet" href="{{ 'swiper-bundle.min.css' | asset_url }}"></noscript>
     <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
-    <script type="text/javascript" src="https://klaviyo.com/media/js/public/klaviyo_subscribe.js" defer></script>
     {% comment %} swiper for some sections {% endcomment %}
 
     <link
