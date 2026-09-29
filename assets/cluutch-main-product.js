@@ -867,16 +867,10 @@ document.querySelectorAll(".plan-selector").forEach((planSelector) => {
 
   if (oneTimeBuy) {
     window.addEventListener("load", function () {
-      if (oneTimeBuy.checked) {
-        if (planSelectWrapper) planSelectWrapper.style.display = "none";
-        const sellingPlanInput = document.querySelector(
-          ".selected-selling-plan-id"
-        );
-        if (sellingPlanInput) {
-          sellingPlanInput.value = "";
-        }
-        console.log("Selling plan cleared for one-time buy 2");
+      if (oneTimeBuy.checked && planSelectWrapper) {
+        planSelectWrapper.style.display = "none";
       }
+      // Inactive variants must not clear the active variant's selling plan.
     });
   }
 

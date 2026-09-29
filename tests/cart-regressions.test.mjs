@@ -161,3 +161,35 @@ test('a stalled variant request reaches a recoverable error instead of blocking 
   assert.equal(form.dataset.variantError, 'true');
   assert.equal(status.hidden, false);
 });
+
+for (const subscribed of [true, false]) {
+  test(`page load preserves the active ${subscribed ? 'subscription' : 'one-time'} choice despite inactive variants`, () => {
+    const start = productScript.indexOf('function updateSellingPlan()');
+    const end = productScript.indexOf("onProductReady(() => {\n  const form", start);
+    const sellingPlan = { value: '' };
+    const loadListeners = [];
+    const makeSelector = (display, subscribe) => {
+      const nodes = {
+        '.button-one-time': { checked: !subscribe, addEventListener() {} },
+        '.button-subscribe': { checked: subscribe, addEventListener() {} },
+        '.plan-button-select': { selectedIndex: 0, options: [{ dataset: { planId: 'plan-42' } }], addEventListener() {} },
+        '.plan-button-select-wrapper': { style: {} },
+      };
+      return { style: { display }, querySelector: key => nodes[key] };
+    };
+    const selectors = [makeSelector('block', subscribed), makeSelector('none', false)];
+    Function('document', 'window', 'getComputedStyle', 'setTimeout', 'console', productScript.slice(start, end))({
+      querySelectorAll: () => selectors,
+      querySelector: () => sellingPlan,
+    }, { addEventListener: (event, callback) => { if (event === 'load') loadListeners.push(callback); } },
+    element => element.style, callback => callback(), { log() {} });
+    const expected = subscribed ? 'plan-42' : '';
+    assert.equal(sellingPlan.value, expected, 'active selection should initialize correctly');
+    loadListeners.forEach(callback => callback());
+    assert.equal(sellingPlan.value, expected, 'inactive one-time choices must not erase the active subscription at load');
+    assert.equal(selectors[1].querySelector('.plan-button-select-wrapper').style.display, 'none');
+    if (!subscribed) {
+      assert.equal(selectors[0].querySelector('.plan-button-select-wrapper').style.display, 'none');
+    }
+  });
+}
