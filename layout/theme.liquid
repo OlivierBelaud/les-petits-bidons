@@ -29,6 +29,7 @@
 
     <script data-cookieconsent="ignore">    window.dataLayer = window.dataLayer || [];    function gtag() {        dataLayer.push(arguments);    }    gtag("consent", "default", {        ad_personalization: "denied",        ad_storage: "denied",        ad_user_data: "denied",        analytics_storage: "denied",        functionality_storage: "denied",        personalization_storage: "denied",        security_storage: "granted",        wait_for_update: 500,    });    gtag("set", "ads_data_redaction", true);    gtag("set", "url_passthrough", false);</script>
     {% render 'cookiebot-shopify' %}
+    {% if request.page_type == 'product' %}{% render 'cluutch-purchase-guard' %}{% endif %}
     <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="2a2737ed-8ce1-42ce-b4f6-9278690f1e79" data-blockingmode="auto" type="text/javascript"></script>
     
 

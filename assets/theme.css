@@ -14248,6 +14248,7 @@ video-media:not([playing]) .deferred-poster .play-button .icon:last-child:not(:o
   content-visibility: auto;
 }
 
+.template-collection[data-page-rendering] #MainContent .shopify-section+.shopify-section~.shopify-section,
 .shopify-design-mode[data-page-rendering] #MainContent .shopify-section+.shopify-section~.shopify-section,
 .no-js [data-page-rendering] #MainContent .shopify-section+.shopify-section~.shopify-section,
 .no-touch [data-page-rendering] #MainContent .shopify-section+.shopify-section~.shopify-section {

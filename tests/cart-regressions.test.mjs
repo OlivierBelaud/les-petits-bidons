@@ -68,3 +68,96 @@ test('compare-at prices alone do not generate a promo percentage badge', () => {
   assert.doesNotMatch(badgeBlock, /shopify_pct/);
   assert.match(badgeBlock, /if promo_title != blank or promo_pct > 0/);
 });
+
+const productScript = await readFile(new URL('../assets/cluutch-main-product.js', import.meta.url), 'utf8');
+
+test('product initialization preserves quantity selected before business scripts arrive', () => {
+  const start = productScript.indexOf('  const hiddenQuantity =');
+  const end = productScript.indexOf('\n});', start);
+  const initialize = Function('document', 'window', productScript.slice(start, end));
+  const quantity = { value: '1' };
+  const radios = ['1', '2', '3'].map(value => ({ value, checked: value === '2', dataset: value === '2' ? { userSelected: 'true' } : {}, addEventListener() {} }));
+  initialize({
+    querySelector: selector => selector === '.hidden-quantity' ? quantity : radios.find(r => r.checked),
+    querySelectorAll: () => radios,
+  }, { location: { search: '' } });
+  assert.equal(quantity.value, '2');
+  assert.equal(radios[1].checked, true);
+});
+
+const purchaseGuard = await readFile(new URL('../snippets/cluutch-purchase-guard.liquid', import.meta.url), 'utf8');
+
+test('early purchase is blocked until both product and direct-buy handlers are ready', () => {
+  const handlers = {};
+  const status = { hidden: true, textContent: '', append() {} };
+  const form = { dataset: {}, matches: () => true, querySelector: () => status };
+  Function('document', 'customElements', 'window', purchaseGuard.match(/<script>([\s\S]*?)<\/script>/)[1])({
+    addEventListener: (name, fn) => { handlers[name] = fn; }, querySelector: () => null, createElement: () => ({}),
+  }, { get: () => true }, { location: { href: '/product' } });
+  for (const dataset of [{}, { productReady: 'true' }, { productReady: 'true', buyReady: 'true', variantPending: 'true' }, { productReady: 'true', buyReady: 'true', variantError: 'true' }]) {
+    form.dataset = dataset;
+    let prevented = false;
+    let stopped = false;
+    handlers.submit({ type: 'submit', target: form, preventDefault: () => { prevented = true; }, stopImmediatePropagation: () => { stopped = true; } });
+    assert.equal(prevented, true);
+    assert.equal(stopped, true);
+    prevented = stopped = false;
+    handlers.click({ type: 'click', target: { closest: () => ({ type: 'submit', form }) }, preventDefault: () => { prevented = true; }, stopImmediatePropagation: () => { stopped = true; } });
+    assert.equal(prevented, true, 'direct-buy click must be blocked before its listener');
+    assert.equal(stopped, true);
+  }
+});
+
+test('ready purchase reads selected variant, quantity and subscription synchronously', () => {
+  const handlers = {};
+  const id = { value: 'old' }, qty = { value: '1' }, selling = { value: '' };
+  const plan = { dataset: { variant: 'new' }, querySelector: s => s === '.button-subscribe' ? { checked: true } : { selectedOptions: [{ dataset: { planId: 'plan-2' } }] } };
+  const section = { querySelector: s => s.includes('variant-button') ? { dataset: { variant: 'new' } } : { value: '2' }, querySelectorAll: () => [plan] };
+  const form = { dataset: { productReady: 'true', buyReady: 'true' }, matches: () => true, closest: () => section,
+    querySelector: s => s === '[name="id"]' ? id : s === '[name="quantity"]' ? qty : selling };
+  Function('document', 'customElements', 'window', purchaseGuard.match(/<script>([\s\S]*?)<\/script>/)[1])({
+    addEventListener: (name, fn) => { handlers[name] = fn; }, querySelector: () => null, createElement: () => ({}),
+  }, { get: () => true }, { location: { href: '/product' } });
+  handlers.submit({ type: 'submit', target: form, preventDefault: () => assert.fail('ready purchase blocked') });
+  assert.deepEqual([id.value, qty.value, selling.value], ['new', '2', 'plan-2']);
+});
+
+
+test('quantity URL overrides an untouched server default', () => {
+  const start = productScript.indexOf('  const hiddenQuantity =');
+  const end = productScript.indexOf('\n});', start);
+  const initialize = Function('document', 'window', productScript.slice(start, end));
+  const quantity = { value: '1' };
+  const radios = ['1', '2'].map(value => ({ value, checked: value === '1', dataset: {}, addEventListener() {} }));
+  initialize({ querySelector: () => quantity, querySelectorAll: () => radios }, { location: { search: '?quantity=2' } });
+  assert.equal(quantity.value, '2');
+  assert.equal(radios[0].checked, false);
+});
+
+const variantSnippet = await readFile(new URL('../snippets/cluutch-product-variant.liquid', import.meta.url), 'utf8');
+
+test('a stalled variant request reaches a recoverable error instead of blocking purchases forever', async () => {
+  const start = variantSnippet.indexOf('  function loadProductVariant(');
+  const end = variantSnippet.indexOf("  document.querySelectorAll('.variant-button').forEach", start);
+  let deadline;
+  const status = { append() {}, hidden: true };
+  const form = { dataset: {}, querySelector: () => status };
+  const document = {
+    getElementById: () => form,
+    querySelector: () => ({ classList: { add() {}, remove() {} } }),
+    createElement: () => ({ addEventListener() {} }),
+  };
+  const fetch = (_, { signal }) => new Promise((resolve, reject) => {
+    signal.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' })));
+  });
+  const load = Function('document', 'fetch', 'window', 'AbortController', 'setTimeout', 'clearTimeout', 'console',
+    `let variantRequest; let variantRequestId=0; ${variantSnippet.slice(start,end)}; return loadProductVariant;`
+  )(document, fetch, {}, AbortController, fn => { deadline = fn; return 1; }, () => {}, { error() {} });
+  load({ dataset: { variant: '123' } });
+  assert.equal(typeof deadline, 'function', 'request needs a finite deadline');
+  deadline();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(form.dataset.variantPending, undefined);
+  assert.equal(form.dataset.variantError, 'true');
+  assert.equal(status.hidden, false);
+});
