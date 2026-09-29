@@ -154,11 +154,26 @@
               -%}
               <div class="swiper-wrapper ziz">
                 {% for image in product.selected_or_first_available_variant.metafields.custom.cluutch_media_list.value %}
+                  {%- liquid
+                    assign gallery_image_alt = image.alt | default: product.title
+                    assign gallery_image_loading = 'lazy'
+                    assign gallery_image_priority = 'auto'
+                    if forloop.first
+                      assign gallery_image_loading = 'eager'
+                      assign gallery_image_priority = 'high'
+                    endif
+                  -%}
                   <div class="swiper-slide">
                     {{-
                       image
-                      | image_url: width: master
-                      | image_tag: class: 'w-full cluutch-img cluutch-product-image-main', alt: 'Product Image'
+                      | image_url: width: 1680
+                      | image_tag:
+                        class: 'w-full cluutch-img cluutch-product-image-main',
+                        alt: gallery_image_alt,
+                        widths: '360,540,720,900,1080,1200,1440,1680',
+                        sizes: '(min-width: 1260px) 555px, (min-width: 1024px) 50vw, (min-width: 560px) 520px, calc(100vw - 40px)',
+                        loading: gallery_image_loading,
+                        fetchpriority: gallery_image_priority
                     -}}
                   </div>
                 {% endfor %}
@@ -175,11 +190,17 @@
               <div class="swiper thumb-swiper">
                 <div class="swiper-wrapper">
                   {% for image in product.selected_or_first_available_variant.metafields.custom.cluutch_media_list.value %}
+                    {%- assign gallery_image_alt = image.alt | default: product.title -%}
                     <div class="swiper-slide">
                       {{-
                         image
-                        | image_url: width: master
-                        | image_tag: class: 'w-full cluutch-img  cluutch-product-image-thumb', alt: 'Product Thumbnail'
+                        | image_url: width: 660
+                        | image_tag:
+                          class: 'w-full cluutch-img cluutch-product-image-thumb',
+                          alt: gallery_image_alt,
+                          widths: '110,220,330,440,660',
+                          sizes: 'auto, 220px',
+                          loading: 'lazy'
                       -}}
                     </div>
                   {% endfor %}
@@ -1084,6 +1105,7 @@
                   </span>
                 </button>
                 <input name="selling_plan" class="selected-selling-plan-id" type="hidden">
+                <p data-purchase-status role="status" aria-live="polite" hidden></p>
               {% endform %}
 
             {%- when 'pickup_availability' -%}
