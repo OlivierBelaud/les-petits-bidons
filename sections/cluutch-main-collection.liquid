@@ -504,13 +504,13 @@
                                   {{
                                     variant.image
                                     | image_url: width: master
-                                    | image_tag: loading: 'lazy', alt: variant.title, class: 'variant-image__img'
+                                    | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: variant.title, class: 'variant-image__img'
                                   }}
                                 {% else %}
                                   {{
                                     product.featured_image
                                     | image_url: width: master
-                                    | image_tag: loading: 'lazy', alt: product.title, class: 'variant-image__img'
+                                    | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: product.title, class: 'variant-image__img'
                                   }}
                                 {% endif %}
                               </a>
@@ -670,13 +670,13 @@
                                   {{
                                     variant.image
                                     | image_url: width: master
-                                    | image_tag: loading: 'lazy', alt: variant.title, class: 'variant-image__img'
+                                    | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: variant.title, class: 'variant-image__img'
                                   }}
                                 {% else %}
                                   {{
                                     product.featured_image
                                     | image_url: width: master
-                                    | image_tag: loading: 'lazy', alt: product.title, class: 'variant-image__img'
+                                    | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: product.title, class: 'variant-image__img'
                                   }}
                                 {% endif %}
                               </a>
@@ -833,13 +833,13 @@
                                 {{
                                   variant.image
                                   | image_url: width: master
-                                  | image_tag: loading: 'lazy', alt: variant.title, class: 'variant-image__img'
+                                  | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: variant.title, class: 'variant-image__img'
                                 }}
                               {% else %}
                                 {{
                                   product.featured_image
                                   | image_url: width: master
-                                  | image_tag: loading: 'lazy', alt: product.title, class: 'variant-image__img'
+                                  | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: product.title, class: 'variant-image__img'
                                 }}
                               {% endif %}
                             </a>
