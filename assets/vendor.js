@@ -4701,58 +4701,40 @@ LazyImage               1.0.0
 class LazyImage extends HTMLImageElement {
   constructor() {
     super();
-    this.onLazyChange = this.handleLazy.bind(this);
-    this.onLazyLoad = () => this.finishLoading(true);
-    this.onLazyError = () => this.finishLoading(false);
   }
   connectedCallback() {
-    if (this.lazyConnected) return;
-    this._media = this.closest(".media");
-    if (!this.media) return;
-    this.lazyConnected = true;
-    window.addEventListener("resize", this.onLazyChange);
-    this.addEventListener("load", this.onLazyLoad);
-    this.addEventListener("error", this.onLazyError);
-    this.lazyMutationObserver = new MutationObserver(this.onLazyChange);
-    this.lazyMutationObserver.observe(this, {
-      attributes: true,
-      attributeFilter: ["src", "srcset", "sizes"],
-    });
-    this.handleLazy();
-  }
-  disconnectedCallback() {
-    this.lazyConnected = false;
-    window.removeEventListener("resize", this.onLazyChange);
-    this.removeEventListener("load", this.onLazyLoad);
-    this.removeEventListener("error", this.onLazyError);
-    this.lazyMutationObserver?.disconnect();
-    this.lazyIntersectionObserver?.disconnect();
-    this.media?.classList.remove("loading", "loading-in-view");
-    this._media = null;
+    if (null !== this.media) {
+      window.addEventListener("resize", this.handleLazy.bind(this));
+      const a = new MutationObserver((a) => {
+        a.forEach((a) => {
+          (a.attributeName.includes("src") ||
+            a.attributeName.includes("srcset")) &&
+            this.handleLazy();
+        });
+      });
+      a.observe(this, { attributes: !0 }), this.handleLazy();
+    }
   }
   get media() {
-    return this._media;
-  }
-  finishLoading(success) {
-    if (!this.lazyConnected) return;
-    if (success) this.classList.add("loaded");
-    this.media.classList.remove("loading", "loading-in-view");
-    this.lazyIntersectionObserver?.disconnect();
+    return (this._media = this._media || this.closest(".media"));
   }
   handleLazy() {
-    if (!this.lazyConnected) return;
-    if (this.complete) {
-      this.finishLoading(this.naturalWidth > 0);
-    } else if (!this.classList.contains("loaded")) {
-      this.media.classList.add("loading");
-      if (typeof IntersectionObserver !== "undefined") {
-        this.lazyIntersectionObserver ||= new IntersectionObserver((entries) => {
-          if (!this.lazyConnected || !this.media.classList.contains("loading")) return;
-          this.media.classList.toggle("loading-in-view", entries.some((entry) => entry.isIntersecting));
-        });
-        this.lazyIntersectionObserver.observe(this.media);
-      }
-    }
+    this.complete ||
+      this.classList.contains("loaded") ||
+      (this.media.classList.add("loading"),
+      this.addEventListener(
+        "load",
+        () => {
+          const a = () => {
+            this.classList.add("loaded"),
+              this.media.classList.remove("loading");
+          };
+          window.requestIdleCallback
+            ? window.requestIdleCallback(a, { timeout: 150 })
+            : setTimeout(a);
+        },
+        !1
+      ));
   }
 }
 customElements.define("lazy-image", LazyImage, { extends: "img" });

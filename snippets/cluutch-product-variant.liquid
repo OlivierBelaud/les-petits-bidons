@@ -84,27 +84,6 @@
       return;
     }
 
-    function hydrateNearbySlides(swiper) {
-      const slides = swiper.slides;
-      const activeIndex = swiper.activeIndex || 0;
-      for (const offset of [-1, 0, 1]) {
-        const index = (activeIndex + offset + slides.length) % slides.length;
-        const template = slides[index]?.querySelector('template[data-gallery-image]');
-        if (!template) continue;
-        const content = template.content.cloneNode(true);
-        // Start neighbouring downloads now, before the customer swipes to them.
-        const image = content.querySelector('img');
-        if (image) image.loading = 'eager';
-        template.replaceWith(content);
-      }
-    }
-    hydrateNearbySlides({ slides: mediaList, activeIndex: 0 });
-    const galleryEvents = {
-      init: hydrateNearbySlides,
-      slideChange: hydrateNearbySlides,
-      beforeTransitionStart: hydrateNearbySlides,
-    };
-
     if (window.innerWidth > 768) {
       thumbsSwiper = new Swiper('.thumb-swiper', {
         slidesPerView: 2,
@@ -113,7 +92,6 @@
       });
 
       mainSwiper = new Swiper('.imgswiper', {
-        on: galleryEvents,
         spaceBetween: 12,
         slidesPerView: 1,
         loop: true,
@@ -127,7 +105,6 @@
       });
     } else {
       mainSwiper = new Swiper('.imgswiper', {
-        on: galleryEvents,
         spaceBetween: 12,
         slidesPerView: 1,
         loop: true,
@@ -313,9 +290,12 @@
     radio.addEventListener('change', () => loadProductVariant(radio));
   });
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeSliders, { once: true });
-  } else {
-    initializeSliders();
-  }
+  (function waitForSwiperThenInit(attempts) {
+    attempts = attempts || 0;
+    if (typeof Swiper !== 'undefined') {
+      initializeSliders();
+    } else if (attempts < 50) {
+      setTimeout(function () { waitForSwiperThenInit(attempts + 1); }, 100);
+    }
+  })();
 </script>
