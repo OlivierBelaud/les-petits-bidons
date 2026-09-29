@@ -1,4 +1,4 @@
-{{ 'cluutch-announcement-bar.css' | asset_url | stylesheet_tag }}
+<style>{{ 'cluutch-announcement-bar.css' | inline_asset_content }}</style>
 <script defer src="{{ 'cluutch-announcement-bar.js' | asset_url }}"></script>
 {%- liquid
   assign show_section = true
