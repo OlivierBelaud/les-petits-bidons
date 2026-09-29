@@ -174,8 +174,7 @@
                         widths: '360,540,720,900,1080,1200,1440,1680',
                         sizes: '(min-width: 1260px) 555px, (min-width: 1024px) 50vw, (min-width: 560px) 520px, calc(100vw - 40px)',
                         loading: gallery_image_loading,
-                        fetchpriority: gallery_image_priority,
-                        preload: forloop.first
+                        fetchpriority: gallery_image_priority
                     -}}
                     {%- endcapture -%}
                     {% if forloop.first %}
