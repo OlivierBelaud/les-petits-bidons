@@ -16,11 +16,13 @@
       echo header_font_bold | font_face: font_display: 'swap'
     endif
 
-    echo body_font | font_face: font_display: 'swap'
-    echo body_font_medium | font_face: font_display: 'swap'
-    echo body_font_bold | font_face: font_display: 'swap'
-    echo body_font_italic | font_face: font_display: 'swap'
-    echo body_font_bold_italic | font_face: font_display: 'swap'
+    unless body_font.family == 'DM Sans' or body_font.family == 'Raleway'
+      echo body_font | font_face: font_display: 'swap'
+      echo body_font_medium | font_face: font_display: 'swap'
+      echo body_font_bold | font_face: font_display: 'swap'
+      echo body_font_italic | font_face: font_display: 'swap'
+      echo body_font_bold_italic | font_face: font_display: 'swap'
+    endunless
 
     assign rounded_button = 0.75
     if settings.rounded_button == 'round'
@@ -227,7 +229,7 @@
   }
 </style>
 
-{%- unless settings.type_body_font.system? -%}
+{%- unless settings.type_body_font.system? or settings.type_body_font.family == 'DM Sans' or settings.type_body_font.family == 'Raleway' -%}
   {% # theme-check-disable AssetPreload %}
   <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
   {% # theme-check-enable AssetPreload %}

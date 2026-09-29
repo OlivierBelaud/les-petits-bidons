@@ -164,6 +164,7 @@
                     endif
                   -%}
                   <div class="swiper-slide">
+                    {%- capture gallery_image_markup -%}
                     {{-
                       image
                       | image_url: width: 1680
@@ -173,8 +174,16 @@
                         widths: '360,540,720,900,1080,1200,1440,1680',
                         sizes: '(min-width: 1260px) 555px, (min-width: 1024px) 50vw, (min-width: 560px) 520px, calc(100vw - 40px)',
                         loading: gallery_image_loading,
-                        fetchpriority: gallery_image_priority
+                        fetchpriority: gallery_image_priority,
+                        preload: forloop.first
                     -}}
+                    {%- endcapture -%}
+                    {% if forloop.first %}
+                      {{ gallery_image_markup }}
+                    {% else %}
+                      <template data-gallery-image>{{ gallery_image_markup }}</template>
+                      <noscript>{{ gallery_image_markup }}</noscript>
+                    {% endif %}
                   </div>
                 {% endfor %}
               </div>
