@@ -10876,11 +10876,6 @@ html.touch .logo-list--right .logo-bar.animate {
 
 [data-lazy-image] .media.loading::after {
   animation: preloading 1.2s infinite ease;
-  animation-play-state: paused;
-}
-
-[data-lazy-image] .media.loading.loading-in-view::after {
-  animation-play-state: running;
 }
 
 [data-lazy-image] .media.loading>img {

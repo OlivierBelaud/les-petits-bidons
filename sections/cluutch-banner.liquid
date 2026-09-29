@@ -1,4 +1,4 @@
-<style>{{ 'cluutch-banner.css' | inline_asset_content }}</style>
+{{ 'cluutch-banner.css' | asset_url | stylesheet_tag }}
 {% liquid
   assign desktop_image = section.settings.img
 
@@ -17,32 +17,17 @@
   if desktop_image == blank and collection.image.src != blank
     assign desktop_image = collection.image
   endif
-  assign mobile_image = section.settings.img_mobile
-  if mobile_image == blank and section.settings.img == blank
-    assign mobile_metafield = collection.metafields.custom.cluutch_mobile_banner
-    assign mobile_value = mobile_metafield.value
-    if mobile_value.preview_image != blank
-      assign mobile_image = mobile_value.preview_image
-    elsif mobile_value.image != blank
-      assign mobile_image = mobile_value.image
-    elsif mobile_value.src != blank
-      assign mobile_image = mobile_value
-    elsif mobile_metafield != blank
-      assign mobile_filename = mobile_value | default: mobile_metafield
-      assign mobile_image = images[mobile_filename]
-      if mobile_image == blank
-        assign mobile_filename = mobile_filename | split: '?' | first | split: '/' | last
-        assign mobile_image = images[mobile_filename]
-      endif
-      if mobile_image == blank
-        assign mobile_legacy_url = mobile_value | default: mobile_metafield | file_url
-      endif
-    endif
-  endif
-
-  assign banner_alt = desktop_image.alt | default: mobile_image.alt | default: collection.title | default: page.title
 %}
 
+{% if section.settings.img_mobile != blank %}
+  <style>
+    @media (max-width: 767px) {
+      .cluutch-banner__image {
+        display: none;
+      }
+    }
+  </style>
+{% endif %}
 {% if page.title == 'Сluutch-subscription' %}
   <style>
     @media (max-width: 767px) {
@@ -54,66 +39,76 @@
 {% endif %}
 <div class="cluutch-banner__wrapper">
   <div class="cluutch-banner__image-wrapper">
-    <picture class="cluutch-banner__picture">
-      {% if mobile_image != blank %}
-        <source media="(max-width: 449px)"
-          srcset="{{ mobile_image | image_url: width: 375 }} 375w, {{ mobile_image | image_url: width: 550 }} 550w, {{ mobile_image | image_url: width: 750 }} 750w"
-          sizes="100vw" width="{{ mobile_image.width }}" height="{{ mobile_image.height }}">
-        {%- capture mobile_srcset -%}
-          {%- assign mobile_max_width = mobile_image.width | at_most: 1500 -%}
-          {%- assign mobile_widths = '375,550,750,1100' | split: ',' -%}
-          {%- for candidate in mobile_widths -%}
-            {%- assign candidate_width = candidate | plus: 0 -%}
-            {%- if candidate_width < mobile_max_width -%}
-              {{ mobile_image | image_url: width: candidate_width }} {{ candidate_width }}w,
-            {%- endif -%}
-          {%- endfor -%}
-          {{ mobile_image | image_url: width: mobile_max_width }} {{ mobile_max_width }}w
-        {%- endcapture -%}
-        <source
-          media="(max-width: 767px)"
-          srcset="{{ mobile_srcset | strip }}"
-          sizes="100vw"
-          width="{{ mobile_image.width }}"
-          height="{{ mobile_image.height }}"
-        >
-      {% elsif mobile_legacy_url != blank %}
-        <source media="(max-width: 767px)" srcset="{{ mobile_legacy_url | escape }}">
-      {% endif %}
+    {% if section.settings.img == blank %}
       {% if desktop_image != blank %}
-        {{-
-          desktop_image
-          | image_url: width: 2880
-          | image_tag:
-            loading: 'eager',
-            fetchpriority: 'high',
-            sizes: '100vw',
-            widths: '768,1100,1500,1920,2400,2880',
-            alt: banner_alt,
-            class: 'cluutch-banner__image'
-        -}}
-      {% elsif mobile_image != blank %}
-        {{-
-          mobile_image
-          | image_url: width: 1500
-          | image_tag:
-            loading: 'eager',
-            fetchpriority: 'high',
-            sizes: '100vw',
-            widths: '375,550,750,1100,1500',
-            alt: banner_alt,
-            class: 'cluutch-banner__image cluutch-banner__image--mobile'
-        -}}
-      {% elsif mobile_legacy_url != blank %}
-        <img
-          src="{{ mobile_legacy_url | escape }}"
-          alt="{{ banner_alt | escape }}"
-          class="cluutch-banner__image cluutch-banner__image--mobile"
-          loading="eager"
-          fetchpriority="high"
-        >
+        {{- desktop_image | image_url: width: master | image_tag: loading: eager, class: 'cluutch-banner__image' -}}
       {% endif %}
-    </picture>
+
+      {% if section.settings.img_mobile == blank %}
+        {% if collection.metafields.custom.cluutch_mobile_banner != blank %}
+          <img
+            src="{{ collection.metafields.custom.cluutch_mobile_banner | file_url }}"
+            alt="Banner"
+            class="cluutch-banner__image cluutch-banner__image--mobile"
+            loading="eager"
+          >
+
+          <style>
+            @media (max-width: 767px) {
+              .cluutch-banner__image {
+                display: none;
+              }
+              .cluutch-banner__image--mobile {
+                display: block;
+              }
+            }
+            @media (min-width: 768px) {
+              .cluutch-banner__image {
+                display: block;
+              }
+              .cluutch-banner__image--mobile {
+                display: none;
+              }
+            }
+          </style>
+        {% endif %}
+      {% else %}
+        {{-
+          section.settings.img_mobile
+          | image_url: width: master
+          | image_tag: loading: eager, class: 'cluutch-banner__image cluutch-banner__image--mobile'
+        -}}
+      {%- endif %}
+
+    {% else %}
+      {% if section.settings.img != blank %}
+        {{
+          section.settings.img
+          | image_url: width: master
+          | image_tag: loading: eager, class: 'cluutch-banner__image'
+        -}}
+        {% if section.settings.img_mobile != blank %}
+          {% if section.settings.img_mobile == blank %}
+            <img
+              src="{{ collection.metafields.custom.cluutch_banner | file_url }}"
+              alt="Banner"
+              class="cluutch-banner__image cluutch-banner__image--mobile"
+              loading="eager"
+            >
+          {% else %}
+            {{-
+              section.settings.img_mobile
+              | image_url: width: master
+              | image_tag: loading: eager, class: 'cluutch-banner__image cluutch-banner__image--mobile'
+            -}}
+          {%- endif %}
+        {% endif %}
+      {% else %}
+        {% if collection.image != blank %}
+          {{ collection.image | image_url: width: master | image_tag: loading: eager, class: 'cluutch-banner__image' -}}
+        {% endif %}
+      {% endif %}
+    {% endif %}
     <div
       class="cluutch-banner__text-wrapper"
       {% if page.title == 'Cluutch-our engagements' %}
