@@ -1,6 +1,8 @@
-{{ 'cluutch-featured-collections.css' | asset_url | stylesheet_tag }}
-{{ 'cluutch-featured-collection.css' | asset_url | stylesheet_tag }}
-{{ 'cluutch-main-collection.css' | asset_url | stylesheet_tag }}
+<style>
+  {{ 'cluutch-featured-collections.css' | inline_asset_content }}
+  {{ 'cluutch-featured-collection.css' | inline_asset_content }}
+  {{ 'cluutch-main-collection.css' | inline_asset_content }}
+</style>
 <style>
   #shopify-section-{{ section.id }} {
     --section-padding-top: {{ section.settings.padding_top_mobile }}px;
@@ -504,13 +506,13 @@
                                   {{
                                     variant.image
                                     | image_url: width: master
-                                    | image_tag: loading: 'lazy', alt: variant.title, class: 'variant-image__img'
+                                    | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: variant.title, class: 'variant-image__img'
                                   }}
                                 {% else %}
                                   {{
                                     product.featured_image
                                     | image_url: width: master
-                                    | image_tag: loading: 'lazy', alt: product.title, class: 'variant-image__img'
+                                    | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: product.title, class: 'variant-image__img'
                                   }}
                                 {% endif %}
                               </a>
@@ -670,13 +672,13 @@
                                   {{
                                     variant.image
                                     | image_url: width: master
-                                    | image_tag: loading: 'lazy', alt: variant.title, class: 'variant-image__img'
+                                    | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: variant.title, class: 'variant-image__img'
                                   }}
                                 {% else %}
                                   {{
                                     product.featured_image
                                     | image_url: width: master
-                                    | image_tag: loading: 'lazy', alt: product.title, class: 'variant-image__img'
+                                    | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: product.title, class: 'variant-image__img'
                                   }}
                                 {% endif %}
                               </a>
@@ -833,13 +835,13 @@
                                 {{
                                   variant.image
                                   | image_url: width: master
-                                  | image_tag: loading: 'lazy', alt: variant.title, class: 'variant-image__img'
+                                  | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: variant.title, class: 'variant-image__img'
                                 }}
                               {% else %}
                                 {{
                                   product.featured_image
                                   | image_url: width: master
-                                  | image_tag: loading: 'lazy', alt: product.title, class: 'variant-image__img'
+                                  | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', alt: product.title, class: 'variant-image__img'
                                 }}
                               {% endif %}
                             </a>
@@ -1708,4 +1710,3 @@
   ]
 }
 {% endschema %}
-

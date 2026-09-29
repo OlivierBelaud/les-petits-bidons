@@ -1,4 +1,4 @@
-{{ 'cluutch-banner.css' | asset_url | stylesheet_tag }}
+<style>{{ 'cluutch-banner.css' | inline_asset_content }}</style>
 {% liquid
   assign desktop_image = section.settings.img
 
@@ -56,6 +56,9 @@
   <div class="cluutch-banner__image-wrapper">
     <picture class="cluutch-banner__picture">
       {% if mobile_image != blank %}
+        <source media="(max-width: 449px)"
+          srcset="{{ mobile_image | image_url: width: 375 }} 375w, {{ mobile_image | image_url: width: 550 }} 550w, {{ mobile_image | image_url: width: 750 }} 750w"
+          sizes="100vw" width="{{ mobile_image.width }}" height="{{ mobile_image.height }}">
         {%- capture mobile_srcset -%}
           {%- assign mobile_max_width = mobile_image.width | at_most: 1500 -%}
           {%- assign mobile_widths = '375,550,750,1100' | split: ',' -%}
