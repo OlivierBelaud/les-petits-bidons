@@ -57,11 +57,12 @@
       "name": "t:sections.image-with-text.presets.name",
       "settings": {
         "image": "shopify://shop_images/CB-24_1_bd02f5e2-218c-4a04-a2ab-cdb9617ed7a6.jpg",
-        "image_height": "650px",
+        "image_height": "adapt",
         "image_width": "medium",
         "layout": "image_first",
         "text_alignment": "left",
         "content_position": "align-self-center",
+        "image_mobile": "shopify://shop_images/CB-24_1_bd02f5e2-218c-4a04-a2ab-cdb9617ed7a6.jpg",
         "image_height_mobile": "auto",
         "text_alignment_mobile": "left",
         "color_text": "",
