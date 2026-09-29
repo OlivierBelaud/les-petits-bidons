@@ -10,7 +10,7 @@
           data-variant="{{ variant.id }}"
           id="variant-radio-{{ variant.id }}"
           name="variant-radio"
-          {% if forloop.index == 1 %}
+          {% if variant.id == product.selected_or_first_available_variant.id %}
             checked
           {% endif %}
         >
@@ -69,14 +69,41 @@
 
 <script>
   let thumbsSwiper, mainSwiper;
+  let variantRequest;
+  let variantRequestId = 0;
 
     function initializeSliders() {
+    mainSwiper?.destroy(true, true);
+    thumbsSwiper?.destroy(true, true);
+    mainSwiper = thumbsSwiper = null;
+    if (typeof Swiper === 'undefined') return;
     const mediaList = document.querySelectorAll('.imgswiper .swiper-slide');
 
     if (mediaList.length <= 1) {
       console.log('Only 1 image, Swiper disabled');
       return;
     }
+
+    function hydrateNearbySlides(swiper) {
+      const slides = swiper.slides;
+      const activeIndex = swiper.activeIndex || 0;
+      for (const offset of [-1, 0, 1]) {
+        const index = (activeIndex + offset + slides.length) % slides.length;
+        const template = slides[index]?.querySelector('template[data-gallery-image]');
+        if (!template) continue;
+        const content = template.content.cloneNode(true);
+        // Start neighbouring downloads now, before the customer swipes to them.
+        const image = content.querySelector('img');
+        if (image) image.loading = 'eager';
+        template.replaceWith(content);
+      }
+    }
+    hydrateNearbySlides({ slides: mediaList, activeIndex: 0 });
+    const galleryEvents = {
+      init: hydrateNearbySlides,
+      slideChange: hydrateNearbySlides,
+      beforeTransitionStart: hydrateNearbySlides,
+    };
 
     if (window.innerWidth > 768) {
       thumbsSwiper = new Swiper('.thumb-swiper', {
@@ -86,6 +113,7 @@
       });
 
       mainSwiper = new Swiper('.imgswiper', {
+        on: galleryEvents,
         spaceBetween: 12,
         slidesPerView: 1,
         loop: true,
@@ -99,6 +127,7 @@
       });
     } else {
       mainSwiper = new Swiper('.imgswiper', {
+        on: galleryEvents,
         spaceBetween: 12,
         slidesPerView: 1,
         loop: true,
@@ -114,8 +143,17 @@
     }
   }
   
-  document.querySelectorAll('.variant-button').forEach((radio) => {
-    radio.addEventListener('change', () => {
+  function loadProductVariant(radio) {
+      variantRequest?.abort();
+      const controller = new AbortController();
+      variantRequest = controller;
+      let timedOut = false;
+      const deadline = setTimeout(() => { timedOut = true; controller.abort(); }, 20000);
+      const requestId = ++variantRequestId;
+      const form = document.getElementById('product-form');
+      const status = form?.querySelector('[data-purchase-status]');
+      if (form) { form.dataset.variantPending = 'true'; delete form.dataset.variantError; }
+      if (status) { status.hidden = false; status.textContent = 'Chargement de votre sélection…'; }
       const variantId = radio.dataset.variant;
       const sliderWrapper = document.querySelector('.main-product-section');
 
@@ -124,16 +162,20 @@
       }
 
       const handle = '{{ product.handle }}';
-      const url = `/products/${handle}?variant=${variantId}`;
+      const url = `${window.Shopify?.routes?.root || '/'}products/${handle}?variant=${variantId}&section_id={{ section.id }}`;
 
-      fetch(url)
-        .then((res) => res.text())
+      fetch(url, { signal: controller.signal })
+        .then((res) => { if (!res.ok) throw new Error('Variant section unavailable'); return res.text(); })
         .then((html) => {
+          if (requestId !== variantRequestId) return;
           const temp = document.createElement('div');
           temp.innerHTML = html;
 
           const newGallery = temp.querySelector('#media-gallery');
           const existingGallery = document.getElementById('media-gallery');
+          if (!newGallery || !temp.querySelector('.main-product-title') || !temp.querySelector('#product-variant-id')) {
+            throw new Error('Incomplete variant section');
+          }
           if (newGallery && existingGallery) {
             existingGallery.innerHTML = newGallery.innerHTML;
             initializeSliders();
@@ -242,20 +284,38 @@
             }
           }
 
+          const checkedQuantity = document.querySelector('input[type="radio"][name="quantity"]:checked');
+          if (checkedQuantity && typeof updatePriceFromQuantity === 'function') updatePriceFromQuantity(checkedQuantity);
+          if (typeof updatePlanPricing === 'function') updatePlanPricing();
+          if (typeof updateSellingPlan === 'function') updateSellingPlan();
+          if (form) delete form.dataset.variantPending;
+          if (status) status.hidden = true;
+          if (sliderWrapper) sliderWrapper.classList.remove('reloading');
         })
         .catch((err) => {
-          console.error(err);
+          if (requestId !== variantRequestId || (err.name === 'AbortError' && !timedOut)) return;
+          if (form) { delete form.dataset.variantPending; form.dataset.variantError = 'true'; }
           if (sliderWrapper) sliderWrapper.classList.remove('reloading');
-        });
-    });
+          if (status) {
+            status.hidden = false;
+            status.textContent = 'Votre sélection n’a pas pu être chargée. ';
+            const retry = document.createElement('button');
+            retry.type = 'button';
+            retry.textContent = 'Réessayer';
+            retry.addEventListener('click', () => loadProductVariant(radio));
+            status.append(retry);
+          }
+          console.error(err);
+        })
+        .finally(() => clearTimeout(deadline));
+  }
+  document.querySelectorAll('.variant-button').forEach((radio) => {
+    radio.addEventListener('change', () => loadProductVariant(radio));
   });
 
-  (function waitForSwiperThenInit(attempts) {
-    attempts = attempts || 0;
-    if (typeof Swiper !== 'undefined') {
-      initializeSliders();
-    } else if (attempts < 50) {
-      setTimeout(function () { waitForSwiperThenInit(attempts + 1); }, 100);
-    }
-  })();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeSliders, { once: true });
+  } else {
+    initializeSliders();
+  }
 </script>

@@ -125,7 +125,7 @@
                     {{-
                       media
                       | image_url: width: media.width
-                      | image_tag: loading: 'lazy', widths: '180,360,540,720,900,1080', is: 'lazy-image'
+                      | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', is: 'lazy-image'
                     -}}
                   </div>
                 {%- endfor -%}
@@ -138,7 +138,7 @@
             {{-
               featured_media
               | image_url: width: featured_media.width
-              | image_tag: loading: 'lazy', widths: '180,360,540,720,900,1080', is: 'lazy-image'
+              | image_tag: loading: 'lazy', sizes: 'auto, 100vw', widths: '180,360,540,720,900,1080', is: 'lazy-image'
             -}}
           {%- else -%}
             {%- render 'product-video',

@@ -508,9 +508,14 @@
 // //   }
 // });
 
-//old logic
+function onProductReady(callback) {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", callback, { once: true });
+  else callback();
+}
 
-document.addEventListener("DOMContentLoaded", function () {
+// Initialize after parsing without waiting for unrelated deferred scripts.
+
+onProductReady(function () {
   const hiddenQuantity = document.querySelector(".hidden-quantity");
   const quantityRadios = document.querySelectorAll(
     'input[type="radio"][name="quantity"]'
@@ -519,17 +524,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
   const quantityParam = urlParams.get("quantity");
 
-  let matchedRadio = null;
+  let matchedRadio = Array.from(quantityRadios).find((radio) => radio.checked) || null;
 
-  if (quantityParam) {
-    quantityRadios.forEach((radio) => {
-      if (radio.value === quantityParam) {
-        radio.checked = true;
-        matchedRadio = radio;
-      } else {
-        radio.checked = false;
-      }
-    });
+  if (quantityParam && !matchedRadio?.dataset.userSelected) {
+    const fromUrl = Array.from(quantityRadios).find((radio) => radio.value === quantityParam);
+    if (fromUrl) {
+      matchedRadio = fromUrl;
+      quantityRadios.forEach((radio) => { radio.checked = radio === fromUrl; });
+    }
   }
 
   if (!matchedRadio) {
@@ -600,7 +602,7 @@ document.querySelectorAll('input[type="radio"][name="quantity"]').forEach((radio
     });
   });
 
-document.addEventListener("DOMContentLoaded", function () {
+onProductReady(function () {
   const radios = document.querySelectorAll(
     'input[type="radio"][name="quantity"]'
   );
@@ -696,7 +698,7 @@ function updatePlanPricing() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+onProductReady(() => {
   updatePlanPricing();
 
   document
@@ -719,7 +721,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+onProductReady(function () {
   const buttons = document.querySelectorAll(".variant-button");
   const selectors = document.querySelectorAll(".plan-selector");
   const hiddenInput = document.getElementById("product-variant-id");
@@ -769,10 +771,11 @@ document.addEventListener("DOMContentLoaded", function () {
     return valid;
   }
 
-  const isValidFromUrl = variantFromUrl && activateVariant(variantFromUrl);
+  const selectedVariant = Array.from(buttons).find((button) => button.checked);
+  const isValidFromUrl = activateVariant(selectedVariant?.dataset.variant || variantFromUrl);
 
   if (!isValidFromUrl && buttons.length > 0) {
-    const firstVariantId = buttons[0].dataset.variant;
+    const firstVariantId = Array.from(buttons).find((button) => button.checked)?.dataset.variant || buttons[0].dataset.variant;
     activateVariant(firstVariantId);
     if (hiddenInput) hiddenInput.value = firstVariantId;
   }
@@ -864,16 +867,10 @@ document.querySelectorAll(".plan-selector").forEach((planSelector) => {
 
   if (oneTimeBuy) {
     window.addEventListener("load", function () {
-      if (oneTimeBuy.checked) {
-        if (planSelectWrapper) planSelectWrapper.style.display = "none";
-        const sellingPlanInput = document.querySelector(
-          ".selected-selling-plan-id"
-        );
-        if (sellingPlanInput) {
-          sellingPlanInput.value = "";
-        }
-        console.log("Selling plan cleared for one-time buy 2");
+      if (oneTimeBuy.checked && planSelectWrapper) {
+        planSelectWrapper.style.display = "none";
       }
+      // Inactive variants must not clear the active variant's selling plan.
     });
   }
 
@@ -925,29 +922,11 @@ document.querySelectorAll(".plan-selector").forEach((planSelector) => {
   updateSellingPlan();
 });
 
-const observePriceChanges = () => {
-  const quantityButtons = document.querySelectorAll('.product-quantity__button');
-
-  quantityButtons.forEach((button) => {
-    const dataInput = button.querySelector('.data-main-price');
-
-    if (!dataInput) return;
-
-    const observer = new MutationObserver(() => {
-      const checkedRadio = document.querySelector('input[name="quantity"]:checked');
-      if (checkedRadio) {
-        updatePriceFromQuantity(checkedRadio);
-        updatePlanPricing(); 
-        updateSellingPlan();
-      }
-    });
-    
-    
-    observer.observe(dataInput, {
-      attributes: true,
-      attributeFilter: ['data-price', 'data-compare'],
-    });
-  });
-};
-
-document.addEventListener('DOMContentLoaded', observePriceChanges);
+onProductReady(() => {
+  const form = document.querySelector('#product-form');
+  if (form) {
+    form.dataset.productReady = 'true';
+    const status = form.querySelector('[data-purchase-status]');
+    if (status && !form.dataset.variantError && !form.dataset.variantPending) status.hidden = true;
+  }
+});

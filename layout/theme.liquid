@@ -19,6 +19,26 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="{{ settings.color_button_background }}">
     <link rel="canonical" href="{{ canonical_url }}">
+    {%- if request.page_type == 'product' -%}
+      {%- assign hero_image = product.selected_or_first_available_variant.metafields.custom.cluutch_media_list.value | first -%}
+      {%- if hero_image != blank -%}
+        {%- capture hero_srcset -%}
+          {%- assign hero_widths = '360,540,720,900,1080,1200,1440,1680' | split: ',' -%}
+          {%- for hero_width in hero_widths -%}
+            {{ hero_image | image_url: width: hero_width }} {{ hero_width }}w{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        {%- endcapture -%}
+        <link rel="preload" as="image" fetchpriority="high"
+          media="(min-width: 450px)"
+          href="{{ hero_image | image_url: width: 1680 }}"
+          imagesrcset="{{ hero_srcset | strip }}"
+          imagesizes="(min-width: 1260px) 555px, (min-width: 1024px) 50vw, (min-width: 560px) 520px, calc(100vw - 40px)">
+        <link rel="preload" as="image" fetchpriority="high" media="(max-width: 449px)"
+          href="{{ hero_image | image_url: width: 720 }}"
+          imagesrcset="{{ hero_image | image_url: width: 360 }} 360w, {{ hero_image | image_url: width: 540 }} 540w, {{ hero_image | image_url: width: 720 }} 720w"
+          imagesizes="calc(100vw - 40px)">
+      {%- endif -%}
+    {%- endif -%}
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
     <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {% # theme-check-disable RemoteAsset %}
@@ -29,17 +49,11 @@
 
     <script data-cookieconsent="ignore">    window.dataLayer = window.dataLayer || [];    function gtag() {        dataLayer.push(arguments);    }    gtag("consent", "default", {        ad_personalization: "denied",        ad_storage: "denied",        ad_user_data: "denied",        analytics_storage: "denied",        functionality_storage: "denied",        personalization_storage: "denied",        security_storage: "granted",        wait_for_update: 500,    });    gtag("set", "ads_data_redaction", true);    gtag("set", "url_passthrough", false);</script>
     {% render 'cookiebot-shopify' %}
+    {% if request.page_type == 'product' %}{% render 'cluutch-purchase-guard' %}{% endif %}
     <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="2a2737ed-8ce1-42ce-b4f6-9278690f1e79" data-blockingmode="auto" type="text/javascript"></script>
     
 
-    {% comment %} Font {% endcomment %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    >
-    {% comment %} Font {% endcomment %}
+    {% render 'cluutch-fonts' %}
     {%- if settings.favicon != blank -%}
       <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
     {%- endif -%}
@@ -85,7 +99,6 @@
     >
     <noscript><link rel="stylesheet" href="{{ 'swiper-bundle.min.css' | asset_url }}"></noscript>
     <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
-    <script type="text/javascript" src="https://klaviyo.com/media/js/public/klaviyo_subscribe.js" defer></script>
     {% comment %} swiper for some sections {% endcomment %}
 
     <link
