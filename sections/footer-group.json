@@ -314,7 +314,7 @@
         "show_payment_icons": false,
         "monochrome_payment_icons": false,
         "show_copyright": true,
-        "copyright_text": "*Détergent certifié par ECOCERT greenlife selon le référentiel ECOCERT « ecodétergent » disponible sur : http://detergents.ecocert.com",
+        "copyright_text": "* Détergent certifié par Ecocert Greenlife SAS selon le référentiel« Ecodétergent » disponible sur detergents.ecocert.com",
         "color_text": "#003435",
         "color_background": "#fffffa",
         "gradient_background": "",
