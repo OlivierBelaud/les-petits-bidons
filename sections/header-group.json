@@ -352,7 +352,6 @@
     },
     "lpb_scrolling_banner_giKLhH": {
       "type": "lpb-scrolling-banner",
-      "disabled": true,
       "name": "LPB scrolling banner",
       "settings": {
         "text": "<p>-20% sur tout le site 🎉 CODE : ANNIV-20 🎉</p>",
