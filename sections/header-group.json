@@ -354,7 +354,7 @@
       "type": "lpb-scrolling-banner",
       "name": "LPB scrolling banner",
       "settings": {
-        "text": "<p>-20% sur tout le site 🎉 CODE : ANNIV-20 🎉</p>",
+        "text": "<p>FIN À MINUIT -20% sur tout le site 🎉 CODE : ANNIV-20 🎉</p>",
         "speed": 28,
         "color_background": "#fcecbf",
         "color_text": "#007e7f",
