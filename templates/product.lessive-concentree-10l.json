@@ -636,8 +636,9 @@
         },
         "question_BjtiYt": {
           "type": "question",
+          "disabled": true,
           "settings": {
-            "title": "Vos bouteilles sont en plastique?",
+            "title": "Vos bouteilles sont en plastique ?",
             "text": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
