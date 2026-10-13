@@ -607,20 +607,20 @@
     "cluutch_faq_nzTDig": {
       "type": "cluutch-faq",
       "blocks": {
-        "question_qEyrNK": {
-          "type": "question",
-          "settings": {
-            "title": "Quelle est la meilleure lessive écologique ?",
-            "text": "<p>Entre la&nbsp;<a href=\"/products/lessive-concentree-ecologique-1l-les-petits-bidons\" title=\"Lessive Concentrée 1L (33 lavages)\">lessive&nbsp;concentrée&nbsp;liquide</a>&nbsp;et la&nbsp;<a href=\"/products/lessive-poudre-ecologique-les-petits-bidons\" title=\"Lessive Poudre Ecologique (25 lavages)\">lessive en poudre</a>, l'efficacité sur votre linge, et leur capacité à venir à bout des taches est la même. C'est donc plus une question de préférence&nbsp;d'usage ! La lessive liquide est réputé pour être la plus simple à utiliser et est souvent plébiscitée. Cependant, attention au sur-dosage ! Vous pouvez vous munir de notre&nbsp;Super Doseur&nbsp;pour ne plus jamais en mettre trop, faire des économies et ne pas gâcher.&nbsp;</p><p>Pour&nbsp;<a href=\"https://lespetitsbidons.fr/blogs/news/comment-laver-entretenir-culotte-de-regles\" title=\"Laver sa culotte menstruelle\">laver votre culotte menstruelle</a>&nbsp;ou les couches lavables de votre bébé, nous vous conseillons de privilégier la lessive en poudre Les Petits Bidons. En effet, celle-ci ne contient pas du tout de glycérine, qui peut endommager la qualité d'absorption de vos culottes.&nbsp;</p><p>Aujourd’hui, certaines marques affirment&nbsp;que le plus important pour préserver l’environnement, c’est de laver à froid. Elles ajoutent que pour cela, il faut opter pour des lessives en capsules, efficaces à froid. Mais ce que ces marques ne vous disent pas, c’est que ces&nbsp;<a href=\"https://lespetitsbidons.fr/blogs/news/lessives-capsules-sont-elles-ecologiques\">lessives en capsules sont polluantes.</a>&nbsp;Faites de composants issus de la pétrochimie, de colorants chimiques, mais surtout composées d’une membrane hydrosoluble en alcool polyvinylique (ou PVOH), autrement dit : des microplastiques dérivés du pétrole qui ne peuvent être traités et finissent donc dans l'eau...&nbsp;</p><p>Chez nous, pas de promesse d’un « produit miracle », simplement des&nbsp;<strong>lessives écologiques</strong>&nbsp;ET efficaces, tout en étant respectueuses de votre linge et de votre peau.</p>",
-            "highlighted_text": "none",
-            "highlighted_scribble": "circle"
-          }
-        },
         "question_9krc4H": {
           "type": "question",
           "settings": {
             "title": "Pourquoi choisir une lessive écologique ?",
             "text": "<p>Nous vous invitons à vous renseigner quant à la composition complète des produits que proposent les marques de produits ménagers ! La plupart du temps, les listes sont incomplètes et incompréhensibles sur les produits classiques… Et pour cause, elles cachent souvent des ingrédients nocifs.&nbsp;</p><p>Chez&nbsp;<strong>LES PETITS BIDONS</strong>, on a voulu repartir de zéro pour&nbsp;<strong>LAVER SANS TOUT SALIR</strong>&nbsp;!<br/><br/>Notre lessive concentrée lavande apporte&nbsp;des solutions&nbsp;<strong>naturelles</strong>&nbsp;et&nbsp;<strong>concrètes</strong>&nbsp;à vos besoins du quotidien : sains, naturels et efficaces, pour vous comme pour la planète. Des formules d'origine naturelle, efficaces et facilement biodégradables, sans huile de palme, sans dérivés de pétrole et autres substances controversées. Nous voulons vous donner le pouvoir de faire mieux et retrouver un peu de bon sens, chaque jour.</p><p><span style=\"text-decoration:underline\">Attention</span>: La lessive BIO n'existe pas. En effet, pour fabriquer une&nbsp;lessive BIO, il faudrait que celle-ci soit uniquement composée d'ingrédients d'origine végétale&nbsp;et issus de l'agriculture biologique. Cela n'est pas possible.. Cependant, 100% des ingrédients qui composent nos Lessives Poudre&nbsp;sont d'origine naturelle.&nbsp;</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_qEyrNK": {
+          "type": "question",
+          "settings": {
+            "title": "Quelle est la meilleure lessive écologique ?",
+            "text": "<p>Entre la&nbsp;<a href=\"/products/lessive-concentree-ecologique-1l-les-petits-bidons\" title=\"Lessive Concentrée 1L (33 lavages)\">lessive&nbsp;concentrée&nbsp;liquide</a>&nbsp;et la&nbsp;<a href=\"/products/lessive-poudre-ecologique-les-petits-bidons\" title=\"Lessive Poudre Ecologique (25 lavages)\">lessive en poudre</a>, l'efficacité sur votre linge, et leur capacité à venir à bout des taches est la même. C'est donc plus une question de préférence&nbsp;d'usage ! La lessive liquide est réputé pour être la plus simple à utiliser et est souvent plébiscitée. Cependant, attention au sur-dosage ! Vous pouvez vous munir de notre&nbsp;Super Doseur&nbsp;pour ne plus jamais en mettre trop, faire des économies et ne pas gâcher.&nbsp;</p><p>Pour&nbsp;<a href=\"https://lespetitsbidons.fr/blogs/news/comment-laver-entretenir-culotte-de-regles\" title=\"Laver sa culotte menstruelle\">laver votre culotte menstruelle</a>&nbsp;ou les couches lavables de votre bébé, nous vous conseillons de privilégier la lessive en poudre Les Petits Bidons. En effet, celle-ci ne contient pas du tout de glycérine, qui peut endommager la qualité d'absorption de vos culottes.&nbsp;</p><p>Aujourd’hui, certaines marques affirment&nbsp;que le plus important pour préserver l’environnement, c’est de laver à froid. Elles ajoutent que pour cela, il faut opter pour des lessives en capsules, efficaces à froid. Mais ce que ces marques ne vous disent pas, c’est que ces&nbsp;<a href=\"https://lespetitsbidons.fr/blogs/news/lessives-capsules-sont-elles-ecologiques\">lessives en capsules sont polluantes.</a>&nbsp;Faites de composants issus de la pétrochimie, de colorants chimiques, mais surtout composées d’une membrane hydrosoluble en alcool polyvinylique (ou PVOH), autrement dit : des microplastiques dérivés du pétrole qui ne peuvent être traités et finissent donc dans l'eau...&nbsp;</p><p>Chez nous, pas de promesse d’un « produit miracle », simplement des&nbsp;<strong>lessives écologiques</strong>&nbsp;ET efficaces, tout en étant respectueuses de votre linge et de votre peau.</p>",
             "highlighted_text": "none",
             "highlighted_scribble": "circle"
           }
@@ -664,8 +664,8 @@
         }
       },
       "block_order": [
-        "question_qEyrNK",
         "question_9krc4H",
+        "question_qEyrNK",
         "question_VWfyWi",
         "question_QYJyaN",
         "question_BjtiYt",
