@@ -743,7 +743,11 @@
                         {%- if quantity_value == default_quantity -%}
                           {%- assign quantity_checked = true -%}
                         {%- endif -%}
-                        <label for="{{ quantity_input_id }}" class="les56-quantity" {{ quantity_block.shopify_attributes }}>
+                        <label
+                          for="{{ quantity_input_id }}"
+                          class="les56-quantity{% unless quantity_discounts %} les56-quantity--wrap{% endunless %}"
+                          {{ quantity_block.shopify_attributes }}
+                        >
                           <span class="les56-quantity__radio" aria-hidden="true"></span>
                           <span
                             class="les56-quantity__icon"
