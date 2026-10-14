@@ -1,8 +1,8 @@
 {%- comment -%}
   LES-56 product area (Figma HWwTV6etAdgQb7AfZ82I8l, Mobile 1:289 / Desktop 2:1090), through the accordions.
-  Uses the merchant blocks and settings of cluutch-main-product. Every variant's gallery, title, short
-  description and accordions are rendered once in <template> elements; assets/les56-product.js swaps
-  them in and keeps the purchase state. The theme ProductForm (assets/theme.js) adds to the cart.
+  Uses the merchant blocks and settings of cluutch-main-product. Every variant's gallery, title and
+  accordions (short description included) are rendered once in <template> elements; assets/les56-product.js
+  swaps them in and keeps the purchase state. The theme ProductForm (assets/theme.js) adds to the cart.
 {%- endcomment -%}
 {{ 'les56-product.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'les56-product.js' | asset_url }}" defer="defer"></script>
@@ -37,11 +37,31 @@
   endfor
   assign default_discount_bp = 0
 
+  # Quantity discounts are only displayed for products the shop's discount applies to (tagged product).
+  assign quantity_discounts = false
+  assign discount_tag = section.settings.quantity_discount_tag | strip
+  if discount_tag != blank and product.tags contains discount_tag
+    assign quantity_discounts = true
+  endif
+
+  # The family headline and badges are claims about one product family (product type).
+  assign in_family = false
+  assign product_type_key = product.type | strip | downcase
+  assign family_types = section.settings.family_product_types | split: ','
+  for family_type in family_types
+    assign family_type_key = family_type | strip | downcase
+    if family_type_key != blank and family_type_key == product_type_key
+      assign in_family = true
+      break
+    endif
+  endfor
+
   assign accordion_keys = 'description,ingredients,usage,planet' | split: ','
   assign accordion_titles = 'Descriptif 🙌|Ingrédients naturels 🌱|Utilisation 💧|Et pour la planète ? 🌍' | split: '|'
   assign accordion_fields = 'cluutch_content_text,cluutch_content_text_second,cluutch_content_text_third,cluutch_content_text_fourth' | split: ','
 
   assign variant_templates = ''
+  assign variants_json = ''
 -%}
 
 {%- for variant in product.variants -%}
@@ -172,27 +192,99 @@
     {%- endif -%}
   {%- endcapture -%}
 
+  {%- comment -%} The variant's short description opens the Descriptif accordion. {%- endcomment -%}
   {%- capture variant_accordions -%}
     {%- for field in accordion_fields -%}
-      {%- assign accordion_content = variant.metafields.custom[field] -%}
-      {%- if accordion_content != blank -%}
+      {%- liquid
+        assign accordion_content = variant.metafields.custom[field]
+        assign accordion_intro = ''
+        if forloop.first
+          assign accordion_intro = variant_description | strip
+        endif
+      -%}
+      {%- if accordion_content != blank or accordion_intro != blank -%}
         <details class="les56-accordion" data-les56-accordion="{{ accordion_keys[forloop.index0] }}">
           <summary class="les56-accordion__summary">
             <span class="les56-accordion__title">{{ accordion_titles[forloop.index0] }}</span>
             <span class="les56-accordion__icon" aria-hidden="true"></span>
           </summary>
-          <div class="les56-accordion__content rte">{{ accordion_content | metafield_tag }}</div>
+          <div class="les56-accordion__content rte">
+            {%- if accordion_intro != blank -%}
+              <div class="les56-accordion__intro">{{ accordion_intro }}</div>
+            {%- endif -%}
+            {%- if accordion_content != blank -%}
+              {{ accordion_content | metafield_tag }}
+            {%- endif -%}
+          </div>
         </details>
       {%- endif -%}
     {%- endfor -%}
   {%- endcapture -%}
+
+  {%- liquid
+    # Price per litre: Shopify's unit price when configured, otherwise the litre volume written in a
+    # variant option value such as "1L = 33 lavages". No volume, no unit (e.g. a gift box).
+    assign variant_unit_price = variant.price
+    assign variant_unit_label = ''
+    if variant.unit_price_measurement
+      assign variant_unit_price = variant.unit_price
+      if variant.unit_price_measurement.reference_value != 1
+        assign variant_unit_label = variant.unit_price_measurement.reference_value
+      endif
+      assign variant_unit_label = variant_unit_label | append: variant.unit_price_measurement.reference_unit
+    else
+      for option_value in variant.options
+        assign volume_text = option_value | split: '=' | first | strip | downcase
+        assign volume_last = volume_text | slice: -1
+        if volume_last != 'l'
+          continue
+        endif
+        assign volume_number = volume_text | remove_last: 'l' | replace: ',', '.' | strip
+        assign volume_rest = volume_number | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9' | remove: '.'
+        assign volume_litres = volume_number | times: 1.0
+        if volume_number != blank and volume_rest == blank and volume_litres > 0
+          assign variant_unit_price = variant.price | divided_by: volume_litres | round
+          assign variant_unit_label = 'L'
+          break
+        endif
+      endfor
+    endif
+  -%}
+
+  {%- capture variant_json -%}
+    {
+      "id": {{ variant.id | json }},
+      "title": {{ variant_title | json }},
+      "available": {{ variant.available | json }},
+      "price": {{ variant.price | json }},
+      "compareAtPrice": {{ variant.compare_at_price | json }},
+      "unitPrice": {% if variant_unit_label != blank %}{{ variant_unit_price | json }}{% else %}null{% endif %},
+      "unitLabel": {{ variant_unit_label | json }},
+      "requiresSellingPlan": {{ variant.requires_selling_plan | json }},
+      "plans": [
+        {%- for allocation in variant.selling_plan_allocations -%}
+          {
+            "id": {{ allocation.selling_plan.id | json }},
+            "name": {{ allocation.selling_plan.name | json }},
+            "price": {{ allocation.price | json }}
+          }
+          {%- unless forloop.last %},{% endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  {%- endcapture -%}
+  {%- liquid
+    unless forloop.first
+      assign variants_json = variants_json | append: ','
+    endunless
+    assign variants_json = variants_json | append: variant_json
+  -%}
 
   {%- if multiple_variants -%}
     {%- capture variant_template -%}
       <template data-les56-variant-template="{{ variant.id }}">
         <div data-les56-slot="gallery">{{ variant_gallery }}</div>
         <div data-les56-slot="title">{{ variant_title | escape }}</div>
-        <div data-les56-slot="description">{{ variant_description }}</div>
         <div data-les56-slot="accordions">{{ variant_accordions }}</div>
       </template>
     {%- endcapture -%}
@@ -203,15 +295,16 @@
     {%- liquid
       assign live_title = variant_title
       assign live_gallery = variant_gallery
-      assign live_description = variant_description
       assign live_accordions = variant_accordions
+      assign unit_price = variant_unit_price
+      assign unit_label = variant_unit_label
     -%}
   {%- endif -%}
 {%- endfor -%}
 
 {%- liquid
   for quantity_block in quantity_blocks
-    if quantity_block.settings.value == default_quantity
+    if quantity_discounts and quantity_block.settings.value == default_quantity
       assign default_discount_bp = quantity_block.settings.discount | remove: '%' | remove: '-' | replace: ',', '.' | strip | times: 100 | round
       break
     endif
@@ -225,16 +318,6 @@
   assign default_unit = current_variant.price | times: remaining_bp | plus: 9999 | divided_by: 10000
   assign default_total = default_unit | times: default_quantity
   assign default_compare = compare_unit | times: default_quantity
-
-  assign unit_price = current_variant.price
-  assign unit_label = ''
-  if current_variant.unit_price_measurement
-    assign unit_price = current_variant.unit_price
-    if current_variant.unit_price_measurement.reference_value != 1
-      assign unit_label = current_variant.unit_price_measurement.reference_value
-    endif
-    assign unit_label = unit_label | append: current_variant.unit_price_measurement.reference_unit
-  endif
 -%}
 
 {%- capture submit_content -%}
@@ -279,40 +362,7 @@
     {
       "formId": {{ form_id | json }},
       "moneyFormat": {{ shop.money_format | json }},
-      "variants": [
-        {%- for variant in product.variants -%}
-          {%- liquid
-            assign variant_unit_label = ''
-            if variant.unit_price_measurement
-              if variant.unit_price_measurement.reference_value != 1
-                assign variant_unit_label = variant.unit_price_measurement.reference_value
-              endif
-              assign variant_unit_label = variant_unit_label | append: variant.unit_price_measurement.reference_unit
-            endif
-          -%}
-          {
-            "id": {{ variant.id | json }},
-            "title": {{ variant.metafields.custom.cluutch_variant_title.value | default: product.title | json }},
-            "available": {{ variant.available | json }},
-            "price": {{ variant.price | json }},
-            "compareAtPrice": {{ variant.compare_at_price | json }},
-            "unitPrice": {% if variant.unit_price_measurement %}{{ variant.unit_price | json }}{% else %}null{% endif %},
-            "unitLabel": {{ variant_unit_label | json }},
-            "requiresSellingPlan": {{ variant.requires_selling_plan | json }},
-            "plans": [
-              {%- for allocation in variant.selling_plan_allocations -%}
-                {
-                  "id": {{ allocation.selling_plan.id | json }},
-                  "name": {{ allocation.selling_plan.name | json }},
-                  "price": {{ allocation.price | json }}
-                }
-                {%- unless forloop.last %},{% endunless -%}
-              {%- endfor -%}
-            ]
-          }
-          {%- unless forloop.last %},{% endunless -%}
-        {%- endfor -%}
-      ]
+      "variants": [{{ variants_json }}]
     }
   </script>
 
@@ -440,20 +490,35 @@
               {%- endif -%}
 
             {%- when 'variants' -%}
-              <div class="les56-tagline rte" data-les56-region="description" {{ block.shopify_attributes }}>
-                {{- live_description -}}
+              {%- comment -%}
+                Family headline and badges only describe products of the configured family; the variant
+                short description is shown in the Descriptif accordion.
+              {%- endcomment -%}
+              <div class="les56-family" {{ block.shopify_attributes }}>
+                {%- if in_family -%}
+                  {%- if section.settings.family_headline != blank -%}
+                    <p class="les56-tagline">{{ section.settings.family_headline }}</p>
+                  {%- endif -%}
+                  {%- liquid
+                    assign badge_items = ''
+                    assign badge_count = 0
+                    assign badges = section.settings.badges | newline_to_br | split: '<br />'
+                    for badge in badges
+                      assign badge_text = badge | strip
+                      if badge_text != blank
+                        assign badge_text = badge_text | escape
+                        assign badge_items = badge_items | append: '<li class="les56-badge">' | append: badge_text | append: '</li>'
+                        assign badge_count = badge_count | plus: 1
+                      endif
+                    endfor
+                  -%}
+                  {%- if badge_count > 0 -%}
+                    <ul class="les56-badges{% if badge_count > 3 %} les56-badges--rows{% endif %}" role="list">
+                      {{- badge_items -}}
+                    </ul>
+                  {%- endif -%}
+                {%- endif -%}
               </div>
-              {%- assign badges = section.settings.badges | newline_to_br | split: '<br />' -%}
-              {%- if section.settings.badges != blank -%}
-                <ul class="les56-badges" role="list">
-                  {%- for badge in badges -%}
-                    {%- assign badge_text = badge | strip -%}
-                    {%- if badge_text != blank -%}
-                      <li class="les56-badge">{{ badge_text | escape }}</li>
-                    {%- endif -%}
-                  {%- endfor -%}
-                </ul>
-              {%- endif -%}
 
             {%- when 'cluutch-variant_picker' -%}
               <div class="les56-purchase" {{ block.shopify_attributes }}>
@@ -531,12 +596,20 @@
                       >
                         <span class="les56-fragrance__art" aria-hidden="true">
                           {%- if fragrance_image != blank -%}
+                            {%- comment -%}
+                              The theme asset is the unedited Figma original (2048px); Shopify serves resized copies.
+                            {%- endcomment -%}
                             <img
                               class="les56-fragrance__image"
-                              src="{{ fragrance_image | asset_url }}"
+                              src="{{ fragrance_image | asset_img_url: '128x' }}"
+                              srcset="
+                                {{ fragrance_image | asset_img_url: '64x' }} 1x,
+                                {{ fragrance_image | asset_img_url: '128x' }} 2x,
+                                {{ fragrance_image | asset_img_url: '192x' }} 3x
+                              "
                               alt=""
-                              width="256"
-                              height="256"
+                              width="128"
+                              height="128"
                               loading="lazy"
                             >
                           {%- elsif variant.featured_image -%}
@@ -598,7 +671,10 @@
                       {%- for quantity_block in quantity_blocks -%}
                         {%- liquid
                           assign quantity_value = quantity_block.settings.value | default: 1
-                          assign discount_text = quantity_block.settings.discount | strip
+                          assign discount_text = ''
+                          if quantity_discounts
+                            assign discount_text = quantity_block.settings.discount | strip
+                          endif
                           assign discount_bp = discount_text | remove: '%' | remove: '-' | replace: ',', '.' | strip | times: 100 | round
                           assign quantity_remaining_bp = 10000 | minus: discount_bp
                           assign quantity_unit = current_variant.price | times: quantity_remaining_bp | plus: 9999 | divided_by: 10000
@@ -659,7 +735,7 @@
                           </span>
                           {%- liquid
                             assign quantity_popular = false
-                            if quantity_value == section.settings.popular_quantity and section.settings.popular_label != blank
+                            if quantity_discounts and quantity_value == section.settings.popular_quantity and section.settings.popular_label != blank
                               assign quantity_popular = true
                             endif
                           -%}
@@ -863,6 +939,7 @@
             </ul>
         {%- endcase -%}
       {%- endfor -%}
+      <div class="les56-relocated-apps" data-les56-app-slot></div>
     </div>
   </div>
 
@@ -1158,10 +1235,30 @@
       "content": "LES-56"
     },
     {
+      "type": "text",
+      "id": "family_product_types",
+      "label": "Types de produit de la gamme",
+      "info": "Séparés par des virgules. L’accroche et les badges ne s’affichent que pour ces types de produit.",
+      "default": "Lessive liquide"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "family_headline",
+      "label": "Accroche de la gamme",
+      "default": "La lessive naturelle <em>vraiment</em> efficace"
+    },
+    {
       "type": "textarea",
       "id": "badges",
       "label": "Badges (un par ligne)",
       "default": "🌿 100% d’origine naturelle\n🌱 Certifiée Ecocert\nFabriquée en 🇫🇷\n✅ Sans huile de palme\n✅ Sans dérivés de pétrole\n🙌 Testée sur peaux sensibles"
+    },
+    {
+      "type": "text",
+      "id": "quantity_discount_tag",
+      "label": "Tag des produits remisés par quantité",
+      "info": "Les remises et la mention « populaire » des cartes de quantité ne s’affichent que pour les produits portant ce tag.",
+      "default": "data-discount"
     },
     {
       "type": "number",

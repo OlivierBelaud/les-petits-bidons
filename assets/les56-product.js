@@ -209,6 +209,7 @@
       this.update();
       this.observeSticky();
       this.mirrorFormErrors();
+      this.relocateAppWidgets();
     }
 
     disconnectedCallback() {
@@ -216,6 +217,7 @@
       this.removeEventListener('submit', this.onSubmit, true);
       this.stickyObserver?.disconnect();
       this.errorObserver?.disconnect();
+      this.appObserver?.disconnect();
     }
 
     variantById(id) {
@@ -449,7 +451,39 @@
       });
       this.errorObserver.observe(source, { attributes: true, childList: true, characterData: true, subtree: true });
     }
+
+    /*
+     * App embeds (the BOGOS "Fréquemment achetés ensemble" widget) insert their markup into the
+     * purchase form, above the button. The design keeps the button right after the subscription, so
+     * such widgets are moved, not copied, below the accordions: their own listeners and state move
+     * with them, and named fields still belong to the form through their form attribute.
+     */
+    relocateAppWidgets() {
+      const slot = this.querySelector('[data-les56-app-slot]');
+      const form = this.productForm;
+      const buy = form?.closest('.les56-buy');
+      if (!slot || !form?.id || !buy || !('MutationObserver' in window)) return;
+
+      const relocate = () => {
+        for (const container of [buy, form]) {
+          for (const node of Array.from(container.children)) {
+            if (FORM_PARTS.has(node.tagName) || node.matches('.product-form__error-message')) continue;
+            slot.append(node);
+            for (const field of node.querySelectorAll('input[name], select[name], textarea[name]')) {
+              if (!field.hasAttribute('form') && !field.closest('form')) field.setAttribute('form', form.id);
+            }
+          }
+        }
+      };
+      relocate();
+      this.appObserver = new MutationObserver(relocate);
+      this.appObserver.observe(buy, { childList: true });
+      this.appObserver.observe(form, { childList: true });
+    }
   }
+
+  // Elements an app may add next to the purchase button that must stay where they are.
+  const FORM_PARTS = new Set(['FORM', 'INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'SCRIPT', 'STYLE', 'TEMPLATE', 'LINK', 'META', 'NOSCRIPT']);
 
   const define = (name, constructor) => {
     if (!customElements.get(name)) customElements.define(name, constructor);

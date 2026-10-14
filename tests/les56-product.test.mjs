@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
@@ -129,7 +130,7 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
 
   function notifyMutation(node) {
     for (const observer of mutationObservers) {
-      if (observer.target === node || (observer.subtree && observer.target.contains(node))) observer.schedule();
+      if (observer.watches(node)) observer.schedule();
     }
   }
 
@@ -419,9 +420,10 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
   Object.defineProperty(document, 'isConnected', { get: () => true });
 
   class FakeMutationObserver {
-    constructor(callback) { this.callback = callback; this.scheduled = false; }
-    observe(target, options = {}) { this.target = target; this.subtree = Boolean(options.subtree); mutationObservers.add(this); }
-    disconnect() { mutationObservers.delete(this); }
+    constructor(callback) { this.callback = callback; this.scheduled = false; this.targets = []; }
+    observe(target, options = {}) { this.targets.push({ target, subtree: Boolean(options.subtree) }); mutationObservers.add(this); }
+    disconnect() { this.targets = []; mutationObservers.delete(this); }
+    watches(node) { return this.targets.some(({ target, subtree }) => target === node || (subtree && target.contains(node))); }
     schedule() {
       if (this.scheduled) return;
       this.scheduled = true;
@@ -566,8 +568,11 @@ function setup(options = {}) {
 const monthly = { id: 711482605946, name: 'Livraison tous les mois', price: 1521 };
 const bimonthly = { id: 711482573178, name: 'Livraison tous les 2 mois', price: 1521 };
 
+// Real catalogue facts: the detergent is tagged for the shop's quantity discount, the gift box is not.
 const lessive = {
   sectionId: 'template--1__main',
+  type: 'Lessive liquide',
+  tags: ['data-discount', 'new'],
   selected: 56810523722106,
   quantities: [
     { value: 1, discount: '', bp: 0 },
@@ -576,16 +581,18 @@ const lessive = {
     { value: 6, discount: '-12%', bp: 1200 },
   ],
   variants: [
-    { id: 56810523722106, name: 'Amande douce', color: '#b7c68f', title: 'Lessive Concentrée 1L Amande Douce', available: true, price: 1690, compareAtPrice: null, plans: [monthly, bimonthly], images: ['amande-1', 'amande-2', 'amande-3'] },
-    { id: 55185604149626, name: 'Fleurs Blanches', color: '#f0813c', title: 'Lessive Concentrée 1L Fleurs Blanches', available: true, price: 1690, compareAtPrice: null, plans: [monthly, bimonthly], images: ['fleurs-1', 'fleurs-2'] },
-    { id: 55185604215162, name: 'Eucalyptus', color: '#37b6ad', title: 'Lessive Concentrée 1L Eucalyptus', available: true, price: 1790, compareAtPrice: null, plans: [{ ...monthly, price: 1611 }, { ...bimonthly, price: 1611 }], images: ['eucalyptus-1'] },
-    { id: 55185598251386, name: 'Lavande', color: '#966fd7', title: 'Lessive Concentrée 1L Lavande', available: false, price: 1690, compareAtPrice: null, plans: [monthly], images: ['lavande-1', 'lavande-2'] },
-    { id: 55185604182394, name: 'Bébé Sans Parfum', color: '#5893f2', title: 'Lessive Concentrée 1L Bébé', available: true, price: 1690, compareAtPrice: null, plans: [{ id: 999, name: 'Livraison toutes les 6 semaines', price: 1500 }], images: ['bebe-1', 'bebe-2', 'bebe-3', 'bebe-4'] },
+    { id: 56810523722106, name: 'Amande douce', unitLabel: 'L', color: '#b7c68f', title: 'Lessive Concentrée 1L Amande Douce', available: true, price: 1690, compareAtPrice: null, plans: [monthly, bimonthly], images: ['amande-1', 'amande-2', 'amande-3'] },
+    { id: 55185604149626, name: 'Fleurs Blanches', unitLabel: 'L', color: '#f0813c', title: 'Lessive Concentrée 1L Fleurs Blanches', available: true, price: 1690, compareAtPrice: null, plans: [monthly, bimonthly], images: ['fleurs-1', 'fleurs-2'] },
+    { id: 55185604215162, name: 'Eucalyptus', unitLabel: 'L', color: '#37b6ad', title: 'Lessive Concentrée 1L Eucalyptus', available: true, price: 1790, compareAtPrice: null, plans: [{ ...monthly, price: 1611 }, { ...bimonthly, price: 1611 }], images: ['eucalyptus-1'] },
+    { id: 55185598251386, name: 'Lavande', unitLabel: 'L', color: '#966fd7', title: 'Lessive Concentrée 1L Lavande', available: false, price: 1690, compareAtPrice: null, plans: [monthly], images: ['lavande-1', 'lavande-2'] },
+    { id: 55185604182394, name: 'Bébé Sans Parfum', unitLabel: 'L', color: '#5893f2', title: 'Lessive Concentrée 1L Bébé', available: true, price: 1690, compareAtPrice: null, plans: [{ id: 999, name: 'Livraison toutes les 6 semaines', price: 1500 }], images: ['bebe-1', 'bebe-2', 'bebe-3', 'bebe-4'] },
   ],
 };
 
 const coffret = {
   sectionId: 'template--1__main',
+  type: 'Coffret',
+  tags: ['new'],
   selected: 55432686272890,
   quantities: lessive.quantities,
   variants: [
@@ -622,20 +629,28 @@ function renderGallery(variant) {
 }
 
 const renderAccordions = (variant) => `
-  <details class="les56-accordion" data-les56-accordion="description"><summary>Descriptif 🙌</summary><div>${variant.title} description</div></details>
+  <details class="les56-accordion" data-les56-accordion="description"><summary>Descriptif 🙌</summary><div><div class="les56-accordion__intro">${variant.name} short description</div>${variant.title} description</div></details>
   <details class="les56-accordion" data-les56-accordion="usage"><summary>Utilisation 💧</summary><div>${variant.title} usage</div></details>`;
 
 function renderSection(product) {
   const { sectionId, quantities, variants } = product;
   const formId = `les56-form-${sectionId}`;
   const current = variants.find((variant) => variant.id === product.selected);
+  // Section contract: quantity discounts only for the discount tag, headline and badges only for the family type.
+  const discounted = product.tags.includes('data-discount');
+  const inFamily = product.type === 'Lessive liquide';
   const data = {
     formId,
     moneyFormat: '{{amount}}€',
-    variants: variants.map(({ id, title, available, price, compareAtPrice, plans }) => ({
-      id, title, available, price, compareAtPrice, unitPrice: null, unitLabel: '', requiresSellingPlan: false, plans,
+    variants: variants.map(({ id, title, available, price, compareAtPrice, plans, unitLabel = '' }) => ({
+      id, title, available, price, compareAtPrice, unitPrice: unitLabel ? price : null, unitLabel, requiresSellingPlan: false, plans,
     })),
   };
+  const family = inFamily ? `
+    <div class="les56-family">
+      <p class="les56-tagline">La lessive naturelle <em>vraiment</em> efficace</p>
+      <ul class="les56-badges les56-badges--rows" role="list"><li class="les56-badge">🌿 100% d’origine naturelle</li><li class="les56-badge">🌱 Certifiée Ecocert</li></ul>
+    </div>` : '<div class="les56-family"></div>';
   const fragrances = variants.length > 1 ? `
     <div class="les56-fragrances">
       <p class="les56-label">Parfum : <span data-les56-fragrance-name>${current.name}</span></p>
@@ -644,10 +659,11 @@ function renderSection(product) {
         <label for="les56-variant-${sectionId}-${variant.id}" class="les56-fragrance">${variant.name}</label>`).join('')}
     </div>` : '';
   const quantityCards = quantities.map((quantity) => `
-    <input type="radio" class="les56-sr-only" id="les56-quantity-${sectionId}-${quantity.value}" name="quantity" form="${formId}" value="${quantity.value}" data-les56-quantity data-discount-bp="${quantity.bp}"${quantity.value === 1 ? ' checked' : ''}>
+    <input type="radio" class="les56-sr-only" id="les56-quantity-${sectionId}-${quantity.value}" name="quantity" form="${formId}" value="${quantity.value}" data-les56-quantity data-discount-bp="${discounted ? quantity.bp : 0}"${quantity.value === 1 ? ' checked' : ''}>
     <label for="les56-quantity-${sectionId}-${quantity.value}" class="les56-quantity">
       <span class="les56-quantity__label">x${quantity.value}</span>
       <span class="les56-quantity__price"><span data-les56-quantity-total>?</span><s data-les56-quantity-compare hidden>?</s></span>
+      ${discounted && quantity.discount ? `<span class="les56-pill les56-pill--discount">${quantity.discount}</span>` : ''}
     </label>`).join('');
   const hasPlans = current.plans.length > 0;
   const subscription = variants.some((variant) => variant.plans.length) ? `
@@ -670,7 +686,6 @@ function renderSection(product) {
     <template data-les56-variant-template="${variant.id}">
       <div data-les56-slot="gallery">${renderGallery(variant)}</div>
       <div data-les56-slot="title">${variant.title}</div>
-      <div data-les56-slot="description"><p>${variant.name} tagline</p></div>
       <div data-les56-slot="accordions">${renderAccordions(variant)}</div>
     </template>`).join('') : '';
 
@@ -682,18 +697,24 @@ function renderSection(product) {
         <div class="les56__info">
           <h1 class="les56-title" data-les56-region="title">${current.title}</h1>
           <p class="les56-price"><span data-les56-unit-price>?</span><span data-les56-unit-label hidden></span></p>
-          <div class="les56-tagline" data-les56-region="description"><p>${current.name} tagline</p></div>
+          ${family}
           ${fragrances}
           <fieldset class="les56-quantities"><legend>Quantité :</legend>${quantityCards}</fieldset>
           ${subscription}
-          <form id="${formId}" is="product-form" data-les56-form method="post" action="/cart/add">
-            <input type="hidden" name="id" value="${current.id}" data-les56-variant-id>
-            <button type="submit" name="add" class="les56-cta" data-les56-submit="main">${submitContent}</button>
-            <div class="product-form__error-message les56-error" role="alert" hidden></div>
-          </form>
+          <div class="les56-buy">
+            <form id="${formId}" is="product-form" data-les56-form method="post" action="/cart/add">
+              <input type="hidden" name="id" value="${current.id}" data-les56-variant-id>
+              ${product.injectedWidget || ''}
+              <button type="submit" name="add" class="les56-cta" data-les56-submit="main">${submitContent}</button>
+              <div class="product-form__error-message les56-error" role="alert" hidden></div>
+            </form>
+          </div>
         </div>
       </div>
-      <div class="les56__details"><div class="les56-accordions" data-les56-region="accordions">${renderAccordions(current)}</div></div>
+      <div class="les56__details">
+        <div class="les56-accordions" data-les56-region="accordions">${renderAccordions(current)}</div>
+        <div class="les56-relocated-apps" data-les56-app-slot></div>
+      </div>
       <div class="les56-sticky" data-les56-sticky hidden>
         <p class="les56-sticky__title" data-les56-sticky-title>${current.title}</p>
         <button type="submit" name="add" form="${formId}" class="les56-cta" data-les56-submit="sticky">${submitContent}</button>
@@ -725,6 +746,8 @@ test('displayed totals match the observed /cart.js totals for every quantity and
     [6, euro(8928), euro(10140)],
   ]);
   assert.equal(t.$('[data-les56-unit-price]').textContent, '16,90€');
+  assert.equal(t.$('[data-les56-unit-label]').textContent, '/L');
+  assert.equal(t.$('[data-les56-unit-label]').hidden, false);
 
   t.choose(t.$('[data-les56-subscribe]'));
   assert.deepEqual(quantityPrices(t).map(([quantity, total]) => [quantity, total]), [
@@ -758,17 +781,44 @@ test('non-round prices round each discounted unit up once, using the real alloca
   ]);
 });
 
-test('a product without selling plans offers no subscription and prices against its compare-at price', () => {
+test('the gift box has no quantity discount: totals match its observed cart (3500/7000/10500/21000)', () => {
   const t = setup({ product: coffret, url: 'https://shop.test/products/coffret' });
   assert.equal(t.$('[data-les56-subscription]'), null);
   assert.equal(t.$('[data-les56-variant-input]'), null);
+  // Characterized on the preview cart for variant 55432686272890: no discount at any quantity.
   assert.deepEqual(quantityPrices(t), [
     [1, euro(3500), euro(4475)],
-    [2, euro(6370), euro(8950)],
-    [3, euro(9345), euro(13425)],
-    [6, euro(18480), euro(26850)],
+    [2, euro(7000), euro(8950)],
+    [3, euro(10500), euro(13425)],
+    [6, euro(21000), euro(26850)],
   ]);
-  assert.deepEqual(t.payload(), { id: '55432686272890', quantity: '1' });
+  assert.deepEqual(t.$$('.les56-pill--discount'), []);
+
+  t.choose(quantityInput(t, 6));
+  assert.equal(t.$('[data-les56-submit="main"] [data-les56-cta-total]').textContent, euro(21000));
+  assert.equal(t.$('[data-les56-submit="sticky"] [data-les56-cta-total]').textContent, euro(21000));
+  assert.deepEqual(t.payload(), { id: '55432686272890', quantity: '6' });
+});
+
+test('the gift box shows no detergent headline, badges or per-litre unit', () => {
+  const t = setup({ product: coffret, url: 'https://shop.test/products/coffret' });
+  assert.equal(t.$('.les56-tagline'), null);
+  assert.equal(t.$('.les56-badges'), null);
+  assert.equal(t.$('[data-les56-unit-price]').textContent, '35,00€');
+  assert.equal(t.$('[data-les56-unit-label]').hidden, true);
+  assert.equal(t.$('[data-les56-unit-label]').textContent, '');
+});
+
+test('the detergent keeps its quantity discounts and the plan allocation is discounted per unit, rounded up', () => {
+  const t = setup();
+  assert.deepEqual(t.$$('.les56-pill--discount').map((pill) => pill.textContent), ['-9%', '-11%', '-12%']);
+  t.choose(t.$('[data-les56-subscribe]'));
+  // ceil(1521 × (100 − discount) / 100) × quantity, as in /cart.js.
+  const expected = [[1, 0], [2, 9], [3, 11], [6, 12]].map(([quantity, discount]) => [
+    quantity,
+    euro(Math.ceil((1521 * (100 - discount)) / 100) * quantity),
+  ]);
+  assert.deepEqual(quantityPrices(t).map(([quantity, total]) => [quantity, total]), expected);
 });
 
 test('the cart payload carries the selected fragrance, quantity and frequency exactly once', () => {
@@ -849,7 +899,8 @@ test('rapid fragrance changes always leave the latest choice in content, payload
 
   assert.equal(t.payload().id, '55185604149626');
   assert.equal(t.$('[data-les56-region="title"]').textContent, 'Lessive Concentrée 1L Fleurs Blanches');
-  assert.equal(t.$('[data-les56-region="description"]').textContent, 'Fleurs Blanches tagline');
+  assert.equal(t.$('.les56-tagline').textContent, 'La lessive naturelle vraiment efficace', 'family headline is not per variant');
+  assert.equal(t.$('[data-les56-accordion="description"] .les56-accordion__intro').textContent, 'Fleurs Blanches short description');
   assert.equal(t.$('[data-les56-fragrance-name]').textContent, 'Fleurs Blanches');
   assert.equal(t.$('[data-les56-sticky-title]').textContent, 'Lessive Concentrée 1L Fleurs Blanches');
   assert.deepEqual(t.$$('[data-les56-slide]').map((slide) => slide.dataset.zoomAlt), ['fleurs-1', 'fleurs-2']);
@@ -956,6 +1007,38 @@ test('the quantity in the URL preselects a configured quantity card', () => {
   assert.equal(t.payload().quantity, '3');
 });
 
+const bundleWidget = `
+  <div class="bogos-fbt-widget">
+    <h2>Fréquemment achetés ensemble</h2>
+    <label><input type="checkbox" name="bundle_item" value="42" checked> L'Ultime Doseur</label>
+    <button type="button" aria-label="Increase quantity">+</button>
+  </div>`;
+
+test('an app widget injected above the button is moved below the accordions and keeps its fields in the form', () => {
+  const t = setup({ product: { ...lessive, injectedWidget: bundleWidget } });
+  const widget = t.$('.bogos-fbt-widget');
+  assert.equal(widget.parentNode, t.$('[data-les56-app-slot]'));
+  assert.equal(t.form.contains(widget), false);
+  assert.equal(t.form.querySelector('[data-les56-variant-id]').parentNode, t.form, 'own hidden fields stay');
+  assert.equal(widget.querySelector('[name="bundle_item"]').getAttribute('form'), t.form.id);
+  assert.equal(widget.querySelector('button').hasAttribute('form'), false, 'widget buttons never become submitters');
+
+  t.click(t.$('[data-les56-submit="main"]'));
+  assert.equal(t.fetchCalls.length, 1, 'the theme ProductForm stays the only add-to-cart request');
+  assert.deepEqual(t.fetchCalls[0].body.getAll('bundle_item'), ['42']);
+  assert.deepEqual(t.fetchCalls[0].body.getAll('id'), ['56810523722106']);
+});
+
+test('a widget the app injects after load is relocated too', async () => {
+  const t = setup();
+  const widget = t.document.createElement('div');
+  widget.setAttribute('class', 'late-app-widget');
+  t.form.appendChild(widget);
+  await flush();
+  assert.equal(widget.parentNode, t.$('[data-les56-app-slot]'));
+  assert.equal(t.form.querySelector('[data-les56-submit="main"]').parentNode, t.form);
+});
+
 // ---------------------------------------------------------------------------
 // Template and markup contracts
 // ---------------------------------------------------------------------------
@@ -988,4 +1071,44 @@ test('the section does not load legacy product scripts or the legacy variant sni
 test('every DOM hook used by the script is rendered by the section', () => {
   const hooks = new Set(productScript.match(/data-les56-[a-z-]+/g));
   for (const hook of hooks) assert.ok(sectionSource.includes(hook), `${hook} rendered`);
+});
+
+test('quantity discounts and the popular mention depend on the product discount tag, not on block settings alone', () => {
+  const eligibility = sectionSource.match(/assign quantity_discounts = false[\s\S]*?endif/)[0];
+  assert.match(eligibility, /product\.tags contains discount_tag/);
+  assert.equal(schema.settings.find((setting) => setting.id === 'quantity_discount_tag').default, 'data-discount');
+  assert.match(sectionSource, /if quantity_discounts\s+assign discount_text = quantity_block\.settings\.discount/);
+  assert.match(sectionSource, /if quantity_discounts and quantity_block\.settings\.value == default_quantity/);
+  assert.match(sectionSource, /if quantity_discounts and quantity_value == section\.settings\.popular_quantity/);
+});
+
+test('the family headline and badges are limited to the configured product type', () => {
+  const settings = Object.fromEntries(schema.settings.map((setting) => [setting.id, setting.default]));
+  assert.equal(settings.family_product_types, 'Lessive liquide');
+  assert.equal(settings.family_headline, 'La lessive naturelle <em>vraiment</em> efficace');
+  assert.match(sectionSource, /assign product_type_key = product\.type \| strip \| downcase/);
+  const familyBlock = sectionSource.match(/<div class="les56-family"[\s\S]*?<\/div>/)[0];
+  assert.match(familyBlock, /^<div class="les56-family" {{ block\.shopify_attributes }}>\s*{%- if in_family -%}/);
+  assert.match(familyBlock, /section\.settings\.badges/);
+  assert.doesNotMatch(sectionSource, /data-les56-region="description"/, 'no per-variant tagline region');
+});
+
+test('the per-litre unit comes from Shopify unit pricing or a litre option value, never from a product id', () => {
+  assert.match(sectionSource, /for option_value in variant\.options/);
+  assert.match(sectionSource, /assign variant_unit_label = 'L'/);
+  assert.doesNotMatch(sectionSource.replace(/{%\s*schema\s*%}[\s\S]*$/, ''), /\b\d{10,}\b/, 'no hard-coded product or variant id');
+});
+
+test('the fragrance illustrations are the unedited Figma originals (Rectangle 1651–1655)', () => {
+  const originals = {
+    lavande: '1b1670051c6c85f09c2c3f4e7f209d8c5f899c35981f63abb430159c075f2a6b',
+    'fleurs-blanches': 'cafda79bc2d1fac000ba4f65396c47424856d2f6010c817b3aaf8361ddab7d03',
+    eucalyptus: '287efc5b5b0a57e21e04fd81394014064465d8b0593bc5ae65fab3da0a13e00a',
+    'amande-douce': '9ed4b7c5fd71daab1933bce200158092ae3f335eb41eef26bb2a9c919f6e6488',
+    bebe: 'f1bafe00ea21b02d8c6b13b1f38892044ea2e1ffcc07d804a092b1078a891427',
+  };
+  for (const [name, sha256] of Object.entries(originals)) {
+    const bytes = readFileSync(new URL(`../assets/les56-fragrance-${name}.jpg`, import.meta.url));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), sha256, name);
+  }
 });
