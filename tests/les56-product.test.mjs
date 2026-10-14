@@ -121,6 +121,8 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
       this.detail = init.detail;
       this.key = init.key;
       this.submitter = init.submitter || null;
+      // Only the user agent sets it: true for pointer and keyboard activation, false for element.click().
+      this.isTrusted = Boolean(init.isTrusted);
       this.defaultPrevented = false;
       this.stopped = false;
     }
@@ -381,6 +383,14 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
       return !event.defaultPrevented;
     }
 
+    // A disabled control gets no click; an enabled submit button submits its form unless the click is cancelled.
+    click({ isTrusted = false } = {}) {
+      if (this.disabled) return;
+      const event = new FakeEvent('click', { bubbles: true, cancelable: true, isTrusted });
+      this.dispatchEvent(event);
+      if (event.defaultPrevented || this.type !== 'submit') return;
+      this.form?.requestSubmit(this);
+    }
     focus() { document.activeElement = this; }
     blur() { if (document.activeElement === this) document.activeElement = document.body; }
     getBoundingClientRect() { return { top: 0, bottom: 0, left: 0, right: 0, width: 0, height: 0 }; }
@@ -565,12 +575,8 @@ function setup(options = {}) {
   const $ = (selector) => root.querySelector(selector);
   const $$ = (selector) => root.querySelectorAll(selector);
   const form = $('[data-les56-form]');
-  const click = (element) => {
-    const event = new browser.window.Event('click', { bubbles: true, cancelable: true });
-    element.dispatchEvent(event);
-    if (event.defaultPrevented || element.disabled || element.type !== 'submit') return;
-    element.form?.requestSubmit(element);
-  };
+  // A pointer or keyboard activation by the shopper.
+  const click = (element) => element.click({ isTrusted: true });
   const choose = (input) => {
     input.checked = true;
     input.dispatchEvent(new browser.window.Event('change', { bubbles: true }));
@@ -1087,6 +1093,125 @@ test('relocated app fields name the real form ID although the variant field shad
   assert.deepEqual(t.fetchCalls[0].body.getAll('id'), ['56810523722106']);
   assert.deepEqual(t.fetchCalls[0].body.getAll('bundle_item'), ['42']);
   assert.deepEqual(t.fetchCalls[0].body.getAll('properties[_bundle]'), ['doseur']);
+});
+
+// The "Fréquemment achetés ensemble" accessory checkbox has no name: FormData never sends it.
+const accessoryWidget = `
+  <div class="bogos-fbt-widget">
+    <label><input type="checkbox" class="bogos-fbt-checkbox" value="doseur" checked> L'Ultime Doseur</label>
+  </div>`;
+
+/*
+ * Mirrors the observed BOGOS behaviour: it binds a click hook on the CTA inside the form only (it
+ * looks for external buttons through `form.id`, which is the variant input), cancels that click,
+ * adds the checked accessories with its own request, then clicks the CTA again a few seconds later.
+ */
+function installAccessoryApp(t) {
+  const cta = t.form.querySelector('[type="submit"]');
+  const adds = [];
+  let pendingAdd = null;
+  let reclicking = false;
+  cta.addEventListener('click', (event) => {
+    if (reclicking) return;
+    const accessories = t.root.querySelectorAll('.bogos-fbt-checkbox').filter((box) => box.checked).map((box) => box.value);
+    if (!accessories.length) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (pendingAdd) return;
+    adds.push(accessories);
+    pendingAdd = () => {
+      pendingAdd = null;
+      reclicking = true;
+      cta.click();
+      reclicking = false;
+    };
+  });
+  // The accessory request resolves and the delayed forced click fires.
+  return { adds, finishAdd: () => pendingAdd?.() };
+}
+
+function installCartDrawer(t) {
+  const openers = [];
+  const drawer = t.document.createElement('cart-drawer');
+  // ProductForm passes the button whose focus the drawer restores on close.
+  drawer.show = (opener) => openers.push(opener.dataset.les56Submit);
+  t.document.body.appendChild(drawer);
+  return openers;
+}
+
+test('the sticky button adds the checked accessory and the selected product once, like the main button', async () => {
+  const t = setup({ product: { ...lessive, injectedWidget: accessoryWidget } });
+  const app = installAccessoryApp(t);
+  const openers = installCartDrawer(t);
+  const sticky = t.$('[data-les56-submit="sticky"]');
+  t.choose(variantInput(t, 55185604149626));
+  t.choose(quantityInput(t, 2));
+  t.choose(t.$('[data-les56-subscribe]'));
+
+  t.click(sticky);
+  assert.deepEqual(app.adds, [['doseur']], 'the app click hook ran for the sticky button');
+  assert.equal(t.fetchCalls.length, 0, 'the product waits for the app, as with the main button');
+
+  app.finishAdd();
+  assert.equal(t.fetchCalls.length, 1);
+  assert.deepEqual(t.fetchCalls[0].body.getAll('id'), ['55185604149626']);
+  assert.deepEqual(t.fetchCalls[0].body.getAll('quantity'), ['2']);
+  assert.deepEqual(t.fetchCalls[0].body.getAll('selling_plan'), [String(monthly.id)]);
+  assert.deepEqual(app.adds, [['doseur']], 'the accessory is added once');
+  assert.equal(t.document.nativeSubmissions.length, 0, 'no page-reloading submission');
+
+  t.click(sticky);
+  assert.deepEqual(app.adds, [['doseur']], 'no accessory while the product request is pending');
+  assert.equal(t.fetchCalls.length, 1);
+
+  t.fetchCalls[0].respond({ id: 1, quantity: 2, sections: {} });
+  await flush();
+  assert.deepEqual(openers, ['sticky'], 'closing the cart returns focus to the sticky button');
+  assert.equal(t.$('[data-les56-submit="main"]').hasAttribute('aria-disabled'), false);
+  assert.equal(sticky.hasAttribute('aria-disabled'), false);
+});
+
+test('without an app hook the sticky button submits the form once and keeps the focus', async () => {
+  const t = setup();
+  const openers = installCartDrawer(t);
+  const sticky = t.$('[data-les56-submit="sticky"]');
+  t.click(sticky);
+  assert.equal(t.fetchCalls.length, 1);
+  assert.equal(t.document.nativeSubmissions.length, 0);
+  t.fetchCalls[0].respond({ id: 1, quantity: 1, sections: {} });
+  await flush();
+  assert.deepEqual(openers, ['sticky']);
+
+  const main = t.$('[data-les56-submit="main"]');
+  t.click(main);
+  t.fetchCalls[1].respond({ id: 1, quantity: 1, sections: {} });
+  await flush();
+  assert.deepEqual(openers, ['sticky', 'main'], 'the main button keeps its own focus return');
+});
+
+test('a sold-out fragrance adds nothing from the sticky button, not even the accessory', () => {
+  const t = setup({ product: { ...lessive, injectedWidget: accessoryWidget } });
+  const app = installAccessoryApp(t);
+  t.choose(variantInput(t, 55185598251386));
+  t.click(t.$('[data-les56-submit="sticky"]'));
+  assert.deepEqual(app.adds, []);
+  assert.equal(t.fetchCalls.length, 0);
+  assert.equal(t.document.nativeSubmissions.length, 0);
+});
+
+test('a main button click after an unfinished sticky add keeps the main focus return', async () => {
+  const t = setup({ product: { ...lessive, injectedWidget: accessoryWidget } });
+  const app = installAccessoryApp(t);
+  const openers = installCartDrawer(t);
+  const main = t.$('[data-les56-submit="main"]');
+  t.click(t.$('[data-les56-submit="sticky"]'));
+  // The app never re-clicks (its request failed); the shopper uses the main button instead.
+  t.click(main);
+  app.finishAdd();
+  assert.equal(t.fetchCalls.length, 1);
+  t.fetchCalls[0].respond({ id: 1, quantity: 1, sections: {} });
+  await flush();
+  assert.deepEqual(openers, ['main']);
 });
 
 test('an app block adds its spacing only while its output takes up room', () => {

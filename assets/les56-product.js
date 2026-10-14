@@ -4,7 +4,7 @@
  * Every variant's content and commerce data is rendered by Liquid, so a fragrance
  * change is applied synchronously and no response can arrive out of order.
  * The theme ProductForm (assets/theme.js) remains the only add-to-cart request:
- * the sticky button is a native `form=` submitter of the same form.
+ * the sticky button activates the main button, so app click hooks run for both.
  */
 (() => {
   if (!window.customElements) return;
@@ -192,6 +192,8 @@
       this.variantIdInput = this.querySelector('[data-les56-variant-id]');
       this.subscribeInput = this.querySelector('[data-les56-subscribe]');
       this.planSelect = this.querySelector('[data-les56-plan]');
+      this.mainButton = this.querySelector('[data-les56-submit="main"]');
+      this.stickyButton = this.querySelector('[data-les56-submit="sticky"]');
 
       const initialId = Number(this.variantIdInput?.value);
       this.state = {
@@ -202,8 +204,14 @@
 
       this.onChange = this.onChange.bind(this);
       this.onSubmit = this.onSubmit.bind(this);
+      this.onClick = this.onClick.bind(this);
+      this.onClickCapture = this.onClickCapture.bind(this);
+      this.onSubmitted = this.onSubmitted.bind(this);
       this.addEventListener('change', this.onChange);
       this.addEventListener('submit', this.onSubmit, true);
+      this.addEventListener('click', this.onClick);
+      this.addEventListener('click', this.onClickCapture, true);
+      this.addEventListener('submit', this.onSubmitted);
 
       this.selectQuantityFromUrl();
       this.update();
@@ -216,6 +224,9 @@
     disconnectedCallback() {
       this.removeEventListener('change', this.onChange);
       this.removeEventListener('submit', this.onSubmit, true);
+      this.removeEventListener('click', this.onClick);
+      this.removeEventListener('click', this.onClickCapture, true);
+      this.removeEventListener('submit', this.onSubmitted);
       this.stickyObserver?.disconnect();
       this.errorObserver?.disconnect();
       this.appObserver?.disconnect();
@@ -272,6 +283,34 @@
       if (this.variant.available) return;
       event.preventDefault();
       event.stopPropagation();
+    }
+
+    /*
+     * Apps such as BOGOS hook the click of the button inside the form (they cannot find external
+     * `form=` buttons, `form.id` being the variant input): an accessory they add on that click would be
+     * missed by a native sticky submission. The sticky click is therefore replayed on the main button,
+     * whose app hooks may delay or repeat it before the form is submitted once.
+     */
+    onClick(event) {
+      if (event.defaultPrevented || !this.mainButton || !event.target.closest('[data-les56-submit="sticky"]')) return;
+      // While ProductForm is busy it ignores submissions: leave the sticky one to that guard, no app hook.
+      if (this.mainButton.hasAttribute('aria-disabled')) return;
+      event.preventDefault();
+      this.stickyPending = true;
+      this.mainButton.click();
+    }
+
+    // Capture phase, before app hooks that may cancel it: a shopper's own main click supersedes a
+    // sticky click an app never completed.
+    onClickCapture(event) {
+      if (event.isTrusted && event.target.closest('[data-les56-submit="main"]')) this.stickyPending = false;
+    }
+
+    // Bubble phase: ProductForm has recorded the button whose focus the cart drawer restores on close.
+    onSubmitted(event) {
+      if (event.target !== this.productForm || event.submitter !== this.mainButton || !this.stickyPending) return;
+      this.stickyPending = false;
+      if (this.productForm.activeElement === this.mainButton) this.productForm.activeElement = this.stickyButton;
     }
 
     selectVariant(id) {
