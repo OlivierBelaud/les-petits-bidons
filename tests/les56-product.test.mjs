@@ -1293,6 +1293,29 @@ test('the default product template uses the LES-56 section without losing mercha
   );
 });
 
+test('legacy layout settings the fixed design ignores are hidden but keep their stored data', () => {
+  const ignored = ['gallery_layout', 'image_zoom', 'mobile_layout', 'padding_top', 'padding_bottom', 'padding_top_mobile', 'padding_bottom_mobile'];
+  const markup = sectionSource.replace(/{%\s*schema\s*%}[\s\S]*$/, '');
+  const stored = productTemplate.sections.cluutch_main_product_7yzPKV.settings;
+  const hidden = schema.settings.filter((setting) => 'visible_if' in setting).map((setting) => setting.id);
+  assert.deepEqual(hidden.sort(), [...ignored].sort(), 'only the ignored settings are hidden');
+  for (const id of ignored) {
+    const setting = schema.settings.find((candidate) => candidate.id === id);
+    assert.equal(setting.visible_if, '{{ false }}', id);
+    assert.doesNotMatch(markup, new RegExp(`section\\.settings\\.${id}\\b`), `${id} is not read by the section`);
+    // The stored value stays valid against the declared setting, so it can be restored as is.
+    assert.ok(id in stored, `${id} is stored`);
+    if (setting.type === 'select') {
+      const values = setting.options.map((option) => option.value);
+      assert.ok(values.includes(setting.default) && values.includes(stored[id]), id);
+    } else {
+      for (const value of [setting.default, stored[id]]) {
+        assert.ok(value >= setting.min && value <= setting.max && (value - setting.min) % setting.step === 0, `${id}: ${value}`);
+      }
+    }
+  }
+});
+
 test('the section does not load legacy product scripts or the legacy variant snippet', () => {
   for (const legacy of ['cluutch-main-product.js', 'cluutch-buy-product.js', 'cluutch-main-product.css', "'cluutch-product-variant'"]) {
     assert.equal(sectionSource.includes(legacy), false, legacy);
