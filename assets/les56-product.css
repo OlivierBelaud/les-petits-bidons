@@ -623,12 +623,22 @@
   border-color: #000;
 }
 
+/* Figma centres the radio half a pixel below the card's flex centre. */
 .les56-quantity__radio {
+  position: relative;
+  top: 0.5px;
   flex: none;
   width: 20px;
   height: 20px;
   border: 2px solid var(--les56-border);
   border-radius: 12px;
+}
+
+/* The first mobile card's radio sits 1px further right in the Figma frame. */
+@media screen and (max-width: 1023px) {
+  .les56-quantities__grid > .les56-quantity:first-of-type .les56-quantity__radio {
+    left: 1px;
+  }
 }
 
 .les56-sr-only:checked + .les56-quantity .les56-quantity__radio {
@@ -828,7 +838,7 @@
 
 .les56-subscription__bubble {
   align-self: flex-start;
-  margin-top: 3px;
+  margin-top: 2px;
   margin-left: 7px;
   padding: 0 6px;
   border: 0.968px solid var(--les56-orange);
