@@ -1,0 +1,2464 @@
+{%- comment -%}
+  LES-56 product area (Figma HWwTV6etAdgQb7AfZ82I8l, Mobile 1:289 / Desktop 2:1090), through the accordions.
+  Uses the merchant blocks and settings of cluutch-main-product. Every variant's gallery, title, short
+  description and accordions are rendered once in <template> elements; assets/les56-product.js swaps
+  them in and keeps the purchase state. The theme ProductForm (assets/theme.js) adds to the cart.
+{%- endcomment -%}
+{{ 'les56-product.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'les56-product.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign form_id = 'les56-form-' | append: section.id
+  assign quantity_blocks = section.blocks | where: 'type', 'quantity-button'
+  assign rating_block = section.blocks | where: 'type', 'rating' | first
+  assign buy_block = section.blocks | where: 'type', 'buy_buttons' | first
+
+  assign multiple_variants = false
+  if product.variants.size > 1
+    assign multiple_variants = true
+  endif
+
+  assign has_plans = false
+  for variant in product.variants
+    if variant.selling_plan_allocations.size > 0
+      assign has_plans = true
+      break
+    endif
+  endfor
+
+  # The first quantity card worth one unit is selected by default, otherwise the first card.
+  assign default_quantity = quantity_blocks.first.settings.value | default: 1
+  for quantity_block in quantity_blocks
+    if quantity_block.settings.value == 1
+      assign default_quantity = 1
+      break
+    endif
+  endfor
+  assign default_discount_bp = 0
+
+  assign accordion_keys = 'description,ingredients,usage,planet' | split: ','
+  assign accordion_titles = 'Descriptif 🙌|Ingrédients naturels 🌱|Utilisation 💧|Et pour la planète ? 🌍' | split: '|'
+  assign accordion_fields = 'cluutch_content_text,cluutch_content_text_second,cluutch_content_text_third,cluutch_content_text_fourth' | split: ','
+
+  assign variant_templates = ''
+-%}
+
+{%- for variant in product.variants -%}
+  {%- liquid
+    assign variant_title = variant.metafields.custom.cluutch_variant_title.value | default: product.title
+    assign gallery_images = variant.metafields.custom.cluutch_media_list.value
+    if gallery_images == blank
+      assign gallery_images = product.media | where: 'media_type', 'image'
+    endif
+    assign image_count = gallery_images.size
+  -%}
+
+  {%- capture variant_gallery -%}
+    {%- if image_count > 0 -%}
+      <les56-gallery class="les56-gallery">
+        <div class="les56-gallery__frame">
+          <div class="les56-gallery__viewport" data-les56-viewport>
+            {%- for image in gallery_images -%}
+              {%- liquid
+                assign image_alt = image.alt | default: variant_title
+                assign image_loading = 'lazy'
+                assign image_priority = 'auto'
+                if forloop.first and variant.id == current_variant.id
+                  assign image_loading = 'eager'
+                  assign image_priority = 'high'
+                endif
+              -%}
+              <button
+                type="button"
+                class="les56-gallery__slide"
+                data-les56-slide
+                data-index="{{ forloop.index0 }}"
+                data-zoom-src="{{ image | image_url: width: 2048 }}"
+                data-zoom-alt="{{ image_alt | escape }}"
+                aria-label="Agrandir l’image {{ forloop.index }} sur {{ image_count }}"
+                {% unless forloop.first %}
+                  tabindex="-1" aria-hidden="true"
+                {% endunless %}
+              >
+                {{
+                  image
+                  | image_url: width: 1540
+                  | image_tag:
+                    class: 'les56-gallery__image',
+                    alt: image_alt,
+                    loading: image_loading,
+                    fetchpriority: image_priority,
+                    widths: '380, 570, 760, 1140, 1540',
+                    sizes: '(min-width: 1024px) 770px, (min-width: 600px) 640px, 100vw'
+                }}
+              </button>
+            {%- endfor -%}
+          </div>
+          {%- if image_count > 1 -%}
+            <button
+              type="button"
+              class="les56-gallery__arrow les56-gallery__arrow--prev"
+              data-les56-prev
+              aria-label="Image précédente"
+            >
+              <img src="{{ 'les56-arrow.svg' | asset_url }}" alt="" width="22" height="17" loading="lazy">
+            </button>
+            <button
+              type="button"
+              class="les56-gallery__arrow les56-gallery__arrow--next"
+              data-les56-next
+              aria-label="Image suivante"
+            >
+              <img src="{{ 'les56-arrow.svg' | asset_url }}" alt="" width="22" height="17" loading="lazy">
+            </button>
+            <div class="les56-gallery__dots" aria-hidden="true">
+              {%- for image in gallery_images -%}
+                <span class="les56-gallery__dot{% if forloop.first %} is-active{% endif %}" data-les56-dot></span>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+        {%- if image_count > 1 -%}
+          <div class="les56-gallery__thumbs">
+            {%- for image in gallery_images -%}
+              <button
+                type="button"
+                class="les56-gallery__thumb"
+                data-les56-thumb
+                data-index="{{ forloop.index0 }}"
+                aria-label="Afficher l’image {{ forloop.index }}"
+                {% if forloop.first %}
+                  hidden
+                {% endif %}
+              >
+                {{
+                  image
+                  | image_url: width: 240
+                  | image_tag:
+                    class: 'les56-gallery__thumb-image',
+                    alt: '',
+                    loading: 'lazy',
+                    widths: '90, 135, 240',
+                    sizes: '(min-width: 1024px) 115px, 45px'
+                }}
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+        <dialog class="les56-zoom" data-les56-zoom aria-label="Zoom sur l’image">
+          <button type="button" class="les56-zoom__close" data-les56-zoom-close aria-label="Fermer le zoom">
+            {%- render 'icon', icon: 'close', class: 'les56-zoom__close-icon' -%}
+          </button>
+          <img
+            class="les56-zoom__image"
+            data-les56-zoom-image
+            src="{{ gallery_images.first | image_url: width: 2048 }}"
+            alt=""
+            width="2048"
+            height="2048"
+            loading="lazy"
+          >
+        </dialog>
+      </les56-gallery>
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- capture variant_description -%}
+    {%- if variant.metafields.custom.cluutch_short_description != blank -%}
+      {{ variant.metafields.custom.cluutch_short_description | metafield_tag }}
+    {%- elsif product.metafields.my_fields.paragraphe_seo != blank -%}
+      {{ product.metafields.my_fields.paragraphe_seo | metafield_tag }}
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- capture variant_accordions -%}
+    {%- for field in accordion_fields -%}
+      {%- assign accordion_content = variant.metafields.custom[field] -%}
+      {%- if accordion_content != blank -%}
+        <details class="les56-accordion" data-les56-accordion="{{ accordion_keys[forloop.index0] }}">
+          <summary class="les56-accordion__summary">
+            <span class="les56-accordion__title">{{ accordion_titles[forloop.index0] }}</span>
+            <span class="les56-accordion__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="les56-accordion__content rte">{{ accordion_content | metafield_tag }}</div>
+        </details>
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- if multiple_variants -%}
+    {%- capture variant_template -%}
+      <template data-les56-variant-template="{{ variant.id }}">
+        <div data-les56-slot="gallery">{{ variant_gallery }}</div>
+        <div data-les56-slot="title">{{ variant_title | escape }}</div>
+        <div data-les56-slot="description">{{ variant_description }}</div>
+        <div data-les56-slot="accordions">{{ variant_accordions }}</div>
+      </template>
+    {%- endcapture -%}
+    {%- assign variant_templates = variant_templates | append: variant_template -%}
+  {%- endif -%}
+
+  {%- if variant.id == current_variant.id -%}
+    {%- liquid
+      assign live_title = variant_title
+      assign live_gallery = variant_gallery
+      assign live_description = variant_description
+      assign live_accordions = variant_accordions
+    -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- liquid
+  for quantity_block in quantity_blocks
+    if quantity_block.settings.value == default_quantity
+      assign default_discount_bp = quantity_block.settings.discount | remove: '%' | remove: '-' | replace: ',', '.' | strip | times: 100 | round
+      break
+    endif
+  endfor
+
+  assign compare_unit = current_variant.price
+  if current_variant.compare_at_price > current_variant.price
+    assign compare_unit = current_variant.compare_at_price
+  endif
+  assign remaining_bp = 10000 | minus: default_discount_bp
+  assign default_unit = current_variant.price | times: remaining_bp | plus: 9999 | divided_by: 10000
+  assign default_total = default_unit | times: default_quantity
+  assign default_compare = compare_unit | times: default_quantity
+
+  assign unit_price = current_variant.price
+  assign unit_label = ''
+  if current_variant.unit_price_measurement
+    assign unit_price = current_variant.unit_price
+    if current_variant.unit_price_measurement.reference_value != 1
+      assign unit_label = current_variant.unit_price_measurement.reference_value
+    endif
+    assign unit_label = unit_label | append: current_variant.unit_price_measurement.reference_unit
+  endif
+-%}
+
+{%- capture submit_content -%}
+  <span class="les56-cta__label" data-les56-submit-label>
+    {%- if current_variant.available -%}
+      {{ 'products.product.add_to_cart' | t }}
+    {%- else -%}
+      {{ 'products.product.sold_out' | t }}
+    {%- endif -%}
+  </span>
+  <span class="les56-cta__price">
+    <span class="les56-cta__total" data-les56-cta-total>{{ default_total | money | replace: '.', ',' }}</span>
+    <s
+      class="les56-compare"
+      data-les56-cta-compare
+      {% unless default_compare > default_total %}
+        hidden
+      {% endunless %}
+    >
+      {{- default_compare | money | replace: '.', ',' -}}
+    </s>
+  </span>
+{%- endcapture -%}
+
+<les56-product
+  id="Les56Product-{{ section.id }}"
+  class="les56"
+  data-section-id="{{ section.id }}"
+  data-add-label="{{ 'products.product.add_to_cart' | t | escape }}"
+  data-sold-out-label="{{ 'products.product.sold_out' | t | escape }}"
+  style="
+    --les56-strike-image: url('{{ 'les56-strike.svg' | asset_url }}');
+    --les56-plus-image: url('{{ 'les56-plus.svg' | asset_url }}');
+    --les56-radio-checked-image: url('{{ 'les56-radio-checked.svg' | asset_url }}');
+    --les56-radio-subscription-image: url('{{ 'les56-radio-subscription.svg' | asset_url }}');
+    --les56-bottle-body-image: url('{{ 'les56-bottle-body.svg' | asset_url }}');
+    --les56-bottle-label-image: url('{{ 'les56-bottle-label.svg' | asset_url }}');
+    --les56-bottle-cap-image: url('{{ 'les56-bottle-cap.svg' | asset_url }}');
+  "
+>
+  <script type="application/json" data-les56-json>
+    {
+      "formId": {{ form_id | json }},
+      "moneyFormat": {{ shop.money_format | json }},
+      "variants": [
+        {%- for variant in product.variants -%}
+          {%- liquid
+            assign variant_unit_label = ''
+            if variant.unit_price_measurement
+              if variant.unit_price_measurement.reference_value != 1
+                assign variant_unit_label = variant.unit_price_measurement.reference_value
+              endif
+              assign variant_unit_label = variant_unit_label | append: variant.unit_price_measurement.reference_unit
+            endif
+          -%}
+          {
+            "id": {{ variant.id | json }},
+            "title": {{ variant.metafields.custom.cluutch_variant_title.value | default: product.title | json }},
+            "available": {{ variant.available | json }},
+            "price": {{ variant.price | json }},
+            "compareAtPrice": {{ variant.compare_at_price | json }},
+            "unitPrice": {% if variant.unit_price_measurement %}{{ variant.unit_price | json }}{% else %}null{% endif %},
+            "unitLabel": {{ variant_unit_label | json }},
+            "requiresSellingPlan": {{ variant.requires_selling_plan | json }},
+            "plans": [
+              {%- for allocation in variant.selling_plan_allocations -%}
+                {
+                  "id": {{ allocation.selling_plan.id | json }},
+                  "name": {{ allocation.selling_plan.name | json }},
+                  "price": {{ allocation.price | json }}
+                }
+                {%- unless forloop.last %},{% endunless -%}
+              {%- endfor -%}
+            ]
+          }
+          {%- unless forloop.last %},{% endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+
+  <div class="les56__inner">
+    <div class="les56__layout">
+      <div class="les56__media" data-les56-region="gallery">{{ live_gallery }}</div>
+
+      <div class="les56__info">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              <div class="les56-app">{% render block %}</div>
+
+            {%- when 'text' -%}
+              {%- if block.settings.text != blank -%}
+                <p class="les56-text {{ block.settings.text_size }}" {{ block.shopify_attributes }}>
+                  {{- block.settings.text -}}
+                </p>
+              {%- endif -%}
+
+            {%- when 'description' -%}
+              <div class="les56-text rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
+
+            {%- when 'liquid' -%}
+              {%- if block.settings.liquid != blank -%}
+                <div class="les56-text rte" {{ block.shopify_attributes }}>{{ block.settings.liquid }}</div>
+              {%- endif -%}
+
+            {%- when 'title' -%}
+              <div class="les56-heading" {{ block.shopify_attributes }}>
+                <h1 class="les56-title" data-les56-region="title">{{ live_title | escape }}</h1>
+                <p class="les56-price">
+                  <span class="les56-price__value" data-les56-unit-price>
+                    {{- unit_price | money | replace: '.', ',' -}}
+                  </span>
+                  <span
+                    class="les56-price__unit"
+                    data-les56-unit-label
+                    {% if unit_label == blank %}
+                      hidden
+                    {% endif %}
+                  >
+                    {%- if unit_label != blank %}/{{ unit_label }}{% endif -%}
+                  </span>
+                </p>
+                {%- liquid
+                  assign rating = product.metafields.reviews.rating.value
+                  assign rating_count = product.metafields.reviews.rating_count.value | default: 0
+                -%}
+                {%- if rating_block and rating != blank and rating_count > 0 -%}
+                  {%- assign rating_stars = rating.rating | round -%}
+                  <div class="les56-rating" {{ rating_block.shopify_attributes }}>
+                    <span class="les56-rating__value">{{ rating.rating | round: 1 }}/5</span>
+                    <span class="les56-rating__stars" aria-hidden="true">
+                      {%- for star in (1..5) -%}
+                        <img
+                          class="les56-rating__star{% if star > rating_stars %} is-empty{% endif %}"
+                          src="{{ 'les56-star.svg' | asset_url }}"
+                          alt=""
+                          width="15"
+                          height="15"
+                        >
+                      {%- endfor -%}
+                    </span>
+                    <span class="les56-rating__count">{{ rating_count }} avis</span>
+                  </div>
+                {%- endif -%}
+              </div>
+
+            {%- when 'countdown' -%}
+              {%- if product.metafields.theme.countdown.value != blank -%}
+                {%- liquid
+                  assign now_time = 'now' | date: '%s' | times: 1
+                  assign countdown_time = product.metafields.theme.countdown.value | date: '%s' | times: 1
+                -%}
+                {%- if countdown_time > now_time -%}
+                  <div
+                    class="les56-countdown product-countdown grid sm:flex items-center justify-between gap-2d5"
+                    id="shopify-block-{{ block.id }}"
+                    {{ block.shopify_attributes }}
+                  >
+                    <div class="flex items-center gap-3">
+                      {%- render 'icon', icon: 'countdown', size: 'xl', class: 'flex-auto block lg:hidden xl:block' -%}
+                      <div class="grid">
+                        {%- if block.settings.heading != blank -%}
+                          <p class="heading text-base lg:text-lg xl:text-xl leading-tight">
+                            {{ block.settings.heading | escape }}
+                          </p>
+                        {%- endif -%}
+                        {%- if block.settings.subheading != blank -%}
+                          <p class="uppercase text-3xs font-medium leading-none tracking-widest">
+                            {{ block.settings.subheading | escape }}
+                          </p>
+                        {%- endif -%}
+                      </div>
+                    </div>
+                    <countdown-timer
+                      class="countdown__timer flex text-center"
+                      data-expires="{{ product.metafields.theme.countdown.value | date: '%FT%T%:z' | escape }}"
+                    >
+                      <div class="countdown__item">
+                        <p>--</p>
+                        <span>{{ 'general.date.days' | t }}</span>
+                      </div>
+                      <div class="countdown__item">
+                        <p>--</p>
+                        <span>{{ 'general.date.hours' | t }}</span>
+                      </div>
+                      <div class="countdown__item">
+                        <p>--</p>
+                        <span>{{ 'general.date.minutes' | t }}</span>
+                      </div>
+                      <div class="countdown__item">
+                        <p>--</p>
+                        <span>{{ 'general.date.seconds' | t }}</span>
+                      </div>
+                    </countdown-timer>
+                    <style>
+                      #shopify-block-{{ block.id }} {
+                        {%- render 'section-variables', section: block -%}
+                      }
+                    </style>
+                  </div>
+                {%- endif -%}
+              {%- endif -%}
+
+            {%- when 'variants' -%}
+              <div class="les56-tagline rte" data-les56-region="description" {{ block.shopify_attributes }}>
+                {{- live_description -}}
+              </div>
+              {%- assign badges = section.settings.badges | newline_to_br | split: '<br />' -%}
+              {%- if section.settings.badges != blank -%}
+                <ul class="les56-badges" role="list">
+                  {%- for badge in badges -%}
+                    {%- assign badge_text = badge | strip -%}
+                    {%- if badge_text != blank -%}
+                      <li class="les56-badge">{{ badge_text | escape }}</li>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+
+            {%- when 'cluutch-variant_picker' -%}
+              <div class="les56-purchase" {{ block.shopify_attributes }}>
+                {%- if multiple_variants -%}
+                  {%- liquid
+                    assign fragrance_cards_1 = ''
+                    assign fragrance_cards_2 = ''
+                    assign fragrance_cards_3 = ''
+                    assign fragrance_cards_4 = ''
+                    assign fragrance_cards_5 = ''
+                    assign fragrance_cards_other = ''
+                    assign current_fragrance_name = current_variant.option1
+                    assign current_fragrance_color = '#37b6ad'
+                  -%}
+                  {%- for variant in product.variants -%}
+                    {%- liquid
+                      assign fragrance_key = variant.option1 | handleize
+                      assign fragrance_image = ''
+                      assign fragrance_position = 0
+                      assign fragrance_text_color = '#ffffff'
+                      case fragrance_key
+                        when 'fleurs-blanches'
+                          assign fragrance_name = 'Fleurs Blanches'
+                          assign fragrance_color = '#f0813c'
+                          assign fragrance_position = 1
+                        when 'bebe', 'bebe-sans-parfum'
+                          assign fragrance_key = 'bebe'
+                          assign fragrance_name = 'Bébé Sans Parfum'
+                          assign fragrance_color = '#5893f2'
+                          assign fragrance_position = 2
+                        when 'lavande'
+                          assign fragrance_name = 'Lavande'
+                          assign fragrance_color = '#966fd7'
+                          assign fragrance_position = 3
+                        when 'amande-douce'
+                          assign fragrance_name = 'Amande douce'
+                          assign fragrance_color = '#b7c68f'
+                          assign fragrance_text_color = '#fffffa'
+                          assign fragrance_position = 4
+                        when 'eucalyptus'
+                          assign fragrance_name = 'Eucalyptus'
+                          assign fragrance_color = '#37b6ad'
+                          assign fragrance_position = 5
+                        else
+                          assign fragrance_name = variant.option1
+                          assign fragrance_color = variant.metafields.custom.variant_text_color.value | default: '#37b6ad'
+                      endcase
+                      if fragrance_position > 0
+                        assign fragrance_image = 'les56-fragrance-' | append: fragrance_key | append: '.jpg'
+                      endif
+                      if variant.id == current_variant.id
+                        assign current_fragrance_name = fragrance_name
+                        assign current_fragrance_color = fragrance_color
+                      endif
+                      assign fragrance_input_id = 'les56-variant-' | append: section.id | append: '-' | append: variant.id
+                    -%}
+                    {%- capture fragrance_card -%}
+                      <input
+                        type="radio"
+                        class="les56-sr-only"
+                        id="{{ fragrance_input_id }}"
+                        name="les56-variant-{{ section.id }}"
+                        value="{{ variant.id }}"
+                        data-les56-variant-input
+                        data-fragrance-name="{{ fragrance_name | escape }}"
+                        data-fragrance-color="{{ fragrance_color | escape }}"
+                        {% if variant.id == current_variant.id %}
+                          checked
+                        {% endif %}
+                      >
+                      <label
+                        for="{{ fragrance_input_id }}"
+                        class="les56-fragrance les56-fragrance--{{ fragrance_key }}{% unless variant.available %} is-unavailable{% endunless %}"
+                        style="--les56-fragrance-color: {{ fragrance_color | escape }}; --les56-fragrance-text: {{ fragrance_text_color }};"
+                      >
+                        <span class="les56-fragrance__art" aria-hidden="true">
+                          {%- if fragrance_image != blank -%}
+                            <img
+                              class="les56-fragrance__image"
+                              src="{{ fragrance_image | asset_url }}"
+                              alt=""
+                              width="256"
+                              height="256"
+                              loading="lazy"
+                            >
+                          {%- elsif variant.featured_image -%}
+                            {{
+                              variant.featured_image
+                              | image_url: width: 160
+                              | image_tag: class: 'les56-fragrance__product-image', alt: '', loading: 'lazy'
+                            }}
+                          {%- endif -%}
+                        </span>
+                        <span class="les56-fragrance__name">{{ fragrance_name | escape }}</span>
+                        {%- unless variant.available -%}
+                          <span class="les56-sr-only"> ({{ 'products.product.sold_out' | t }})</span>
+                        {%- endunless -%}
+                      </label>
+                    {%- endcapture -%}
+                    {%- case fragrance_position -%}
+                      {%- when 1 -%}
+                        {%- assign fragrance_cards_1 = fragrance_cards_1 | append: fragrance_card -%}
+                      {%- when 2 -%}
+                        {%- assign fragrance_cards_2 = fragrance_cards_2 | append: fragrance_card -%}
+                      {%- when 3 -%}
+                        {%- assign fragrance_cards_3 = fragrance_cards_3 | append: fragrance_card -%}
+                      {%- when 4 -%}
+                        {%- assign fragrance_cards_4 = fragrance_cards_4 | append: fragrance_card -%}
+                      {%- when 5 -%}
+                        {%- assign fragrance_cards_5 = fragrance_cards_5 | append: fragrance_card -%}
+                      {%- else -%}
+                        {%- assign fragrance_cards_other = fragrance_cards_other | append: fragrance_card -%}
+                    {%- endcase -%}
+                  {%- endfor -%}
+                  <fieldset class="les56-fragrances">
+                    <legend class="les56-label">
+                      Parfum :
+                      <span
+                        class="les56-label__value"
+                        data-les56-fragrance-name
+                        style="color: {{ current_fragrance_color | escape }};"
+                      >
+                        {{- current_fragrance_name | escape -}}
+                      </span>
+                    </legend>
+                    <div class="les56-fragrances__list">
+                      {{- fragrance_cards_1 -}}
+                      {{- fragrance_cards_2 -}}
+                      {{- fragrance_cards_3 -}}
+                      {{- fragrance_cards_4 -}}
+                      {{- fragrance_cards_5 -}}
+                      {{- fragrance_cards_other -}}
+                    </div>
+                  </fieldset>
+                {%- endif -%}
+
+                {%- if quantity_blocks.size > 0 -%}
+                  <fieldset class="les56-quantities">
+                    <legend class="les56-label">Quantité :</legend>
+                    <div class="les56-quantities__grid">
+                      {%- assign quantity_checked = false -%}
+                      {%- for quantity_block in quantity_blocks -%}
+                        {%- liquid
+                          assign quantity_value = quantity_block.settings.value | default: 1
+                          assign discount_text = quantity_block.settings.discount | strip
+                          assign discount_bp = discount_text | remove: '%' | remove: '-' | replace: ',', '.' | strip | times: 100 | round
+                          assign quantity_remaining_bp = 10000 | minus: discount_bp
+                          assign quantity_unit = current_variant.price | times: quantity_remaining_bp | plus: 9999 | divided_by: 10000
+                          assign quantity_total = quantity_unit | times: quantity_value
+                          assign quantity_compare = compare_unit | times: quantity_value
+                          assign quantity_input_id = 'les56-quantity-' | append: section.id | append: '-' | append: forloop.index
+                          assign bottle_columns = quantity_value
+                          if bottle_columns > 3
+                            assign bottle_columns = 3
+                          endif
+                          assign bottle_rows = quantity_value | plus: 2 | divided_by: 3
+                        -%}
+                        <input
+                          type="radio"
+                          class="les56-sr-only"
+                          id="{{ quantity_input_id }}"
+                          name="quantity"
+                          form="{{ form_id }}"
+                          value="{{ quantity_value }}"
+                          data-les56-quantity
+                          data-discount-bp="{{ discount_bp }}"
+                          {% if quantity_checked == false and quantity_value == default_quantity %}
+                            checked
+                          {% endif %}
+                        >
+                        {%- if quantity_value == default_quantity -%}
+                          {%- assign quantity_checked = true -%}
+                        {%- endif -%}
+                        <label for="{{ quantity_input_id }}" class="les56-quantity" {{ quantity_block.shopify_attributes }}>
+                          <span class="les56-quantity__radio" aria-hidden="true"></span>
+                          <span
+                            class="les56-quantity__icon"
+                            style="--les56-bottle-columns: {{ bottle_columns }}; --les56-bottle-rows: {{ bottle_rows }};"
+                            aria-hidden="true"
+                          >
+                            {%- for bottle in (1..quantity_value) -%}
+                              {%- assign bottle_index = forloop.index0 -%}
+                              <span
+                                class="les56-bottle"
+                                style="--les56-bottle-column: {{ bottle_index | modulo: 3 }}; --les56-bottle-row: {{ bottle_index | divided_by: 3 }};"
+                              ></span>
+                            {%- endfor -%}
+                          </span>
+                          <span class="les56-quantity__label">{{ quantity_block.settings.text | default: quantity_value | escape }}</span>
+                          <span class="les56-quantity__price">
+                            <span class="les56-quantity__total" data-les56-quantity-total>
+                              {{- quantity_total | money | replace: '.', ',' -}}
+                            </span>
+                            <s
+                              class="les56-compare"
+                              data-les56-quantity-compare
+                              {% unless quantity_compare > quantity_total %}
+                                hidden
+                              {% endunless %}
+                            >
+                              {{- quantity_compare | money | replace: '.', ',' -}}
+                            </s>
+                          </span>
+                          {%- liquid
+                            assign quantity_popular = false
+                            if quantity_value == section.settings.popular_quantity and section.settings.popular_label != blank
+                              assign quantity_popular = true
+                            endif
+                          -%}
+                          {%- if quantity_popular or discount_text != blank -%}
+                            <span class="les56-quantity__pills{% if quantity_popular %} les56-quantity__pills--popular{% endif %}">
+                              {%- if quantity_popular -%}
+                                <span class="les56-pill les56-pill--popular">{{ section.settings.popular_label | escape }}</span>
+                              {%- endif -%}
+                              {%- if discount_text != blank -%}
+                                <span class="les56-pill les56-pill--discount">{{ discount_text | escape }}</span>
+                              {%- endif -%}
+                            </span>
+                          {%- endif -%}
+                        </label>
+                      {%- endfor -%}
+                    </div>
+                  </fieldset>
+                {%- endif -%}
+
+                {%- if has_plans -%}
+                  <div
+                    class="les56-subscription"
+                    data-les56-subscription
+                    {% if current_variant.selling_plan_allocations.size == 0 %}
+                      hidden
+                    {% endif %}
+                  >
+                    <p class="les56-subscription__intro">{{ section.settings.subscription_intro | escape }}</p>
+                    <div class="les56-subscription__option">
+                      <input
+                        type="checkbox"
+                        class="les56-sr-only"
+                        id="les56-subscribe-{{ section.id }}"
+                        data-les56-subscribe
+                        {% if current_variant.requires_selling_plan %}
+                          checked disabled
+                        {% endif %}
+                      >
+                      <label for="les56-subscribe-{{ section.id }}" class="les56-subscription__toggle">
+                        <span class="les56-subscription__radio" aria-hidden="true"></span>
+                        <span class="les56-subscription__text">
+                          <span class="les56-subscription__title">Je m’abonne</span>
+                          <span class="les56-subscription__note">Annulable à tout moment</span>
+                        </span>
+                        <span
+                          class="les56-subscription__bubble"
+                          data-les56-subscription-bubble
+                          data-copy-single="{{ section.settings.subscription_bubble_single | escape }}"
+                          data-copy-multiple="{{ section.settings.subscription_bubble_multiple | escape }}"
+                        >
+                          {%- if default_quantity > 1 -%}
+                            {{ section.settings.subscription_bubble_multiple | escape }}
+                          {%- else -%}
+                            {{ section.settings.subscription_bubble_single | escape }}
+                          {%- endif -%}
+                        </span>
+                      </label>
+                      <div class="les56-subscription__frequency" data-les56-frequency hidden>
+                        <label class="les56-subscription__frequency-label" for="les56-plan-{{ section.id }}">
+                          Livraison :
+                        </label>
+                        <select
+                          id="les56-plan-{{ section.id }}"
+                          class="les56-subscription__select"
+                          name="selling_plan"
+                          form="{{ form_id }}"
+                          data-les56-plan
+                          data-variant-id="{{ current_variant.id }}"
+                          disabled
+                        >
+                          {%- for allocation in current_variant.selling_plan_allocations -%}
+                            <option value="{{ allocation.selling_plan.id }}">
+                              {{- allocation.selling_plan.name | escape -}}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                {%- endif -%}
+              </div>
+
+            {%- when 'buy_buttons' -%}
+              <div class="les56-buy" {{ block.shopify_attributes }}>
+                {%- form 'product',
+                  product,
+                  id: form_id,
+                  class: 'les56-form',
+                  is: 'product-form',
+                  data-les56-form: ''
+                -%}
+                  <input type="hidden" name="id" value="{{ current_variant.id }}" data-les56-variant-id>
+                  {%- if quantity_blocks.size == 0 -%}
+                    <input type="hidden" name="quantity" value="1">
+                  {%- endif -%}
+                  <button
+                    type="submit"
+                    name="add"
+                    class="les56-cta"
+                    data-les56-submit="main"
+                    {% unless current_variant.available %}
+                      disabled
+                    {% endunless %}
+                  >
+                    {{- submit_content -}}
+                  </button>
+                  <div class="product-form__error-message les56-error" role="alert" hidden></div>
+                {%- endform -%}
+              </div>
+
+            {%- when 'reassurance' -%}
+              {%- assign reassurance_count = 0 -%}
+              {%- for i in (1..5) -%}
+                {%- assign reassurance_text_key = 'item_' | append: i | append: '_text' -%}
+                {%- if block.settings[reassurance_text_key] != blank -%}
+                  {%- assign reassurance_count = reassurance_count | plus: 1 -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if reassurance_count > 0 -%}
+                <les56-rotator
+                  class="les56-reassurance"
+                  data-interval="{{ block.settings.autoplay_speed }}"
+                  style="--les56-reassurance-color: {{ block.settings.text_color }};"
+                  {{ block.shopify_attributes }}
+                >
+                  <div class="les56-reassurance__items">
+                    {%- assign reassurance_index = 0 -%}
+                    {%- for i in (1..5) -%}
+                      {%- liquid
+                        assign reassurance_icon_key = 'item_' | append: i | append: '_icon'
+                        assign reassurance_text_key = 'item_' | append: i | append: '_text'
+                      -%}
+                      {%- if block.settings[reassurance_text_key] != blank -%}
+                        <div
+                          class="les56-reassurance__item"
+                          data-les56-rotator-item
+                          {% if reassurance_index > 0 %}
+                            hidden
+                          {% endif %}
+                        >
+                          {%- if block.settings[reassurance_icon_key] != blank -%}
+                            <span class="les56-reassurance__icon" aria-hidden="true">
+                              {{- block.settings[reassurance_icon_key] -}}
+                            </span>
+                          {%- endif -%}
+                          <div class="les56-reassurance__text">{{ block.settings[reassurance_text_key] }}</div>
+                        </div>
+                        {%- assign reassurance_index = reassurance_index | plus: 1 -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                  {%- if reassurance_count > 1 -%}
+                    <div class="les56-reassurance__dots">
+                      {%- for i in (1..reassurance_count) -%}
+                        <button
+                          type="button"
+                          class="les56-reassurance__dot"
+                          data-les56-rotator-dot
+                          aria-label="Afficher le message {{ i }} sur {{ reassurance_count }}"
+                          aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                        ></button>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                </les56-rotator>
+              {%- endif -%}
+
+            {%- when 'product_variations' -%}
+              {%- render 'product-variants', block: block, product: product, product_id: product.id, section_id: section.id -%}
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="les56__details">
+      {%- assign accordions_rendered = false -%}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'collapsible_tab' -%}
+            {%- unless accordions_rendered -%}
+              <div class="les56-accordions" data-les56-region="accordions" {{ block.shopify_attributes }}>
+                {{- live_accordions -}}
+              </div>
+              {%- assign accordions_rendered = true -%}
+            {%- endunless -%}
+
+          {%- when 'icons' -%}
+            <ul class="les56-icons" role="list" {{ block.shopify_attributes }}>
+              {%- for i in (1..4) -%}
+                {%- liquid
+                  assign icon_setting = 'icon_' | append: i
+                  assign text_setting = 'text_' | append: i
+                -%}
+                {%- unless block.settings[icon_setting] == blank and block.settings[text_setting] == blank -%}
+                  <li class="les56-icons__item">
+                    <span class="les56-icons__icon" aria-hidden="true">{{ block.settings[icon_setting] }}</span>
+                    <span class="les56-icons__text">{{ block.settings[text_setting] | escape }}</span>
+                  </li>
+                {%- endunless -%}
+              {%- endfor -%}
+            </ul>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+
+  {%- if buy_block -%}
+    <div class="les56-sticky" data-les56-sticky hidden>
+      <div class="les56-sticky__inner">
+        <p class="les56-sticky__title" data-les56-sticky-title>{{ live_title | escape }}</p>
+        <button
+          type="submit"
+          name="add"
+          form="{{ form_id }}"
+          class="les56-cta les56-cta--sticky"
+          data-les56-submit="sticky"
+          {% unless current_variant.available %}
+            disabled
+          {% endunless %}
+        >
+          {{- submit_content -}}
+        </button>
+      </div>
+      <p class="les56-error les56-sticky__error" data-les56-sticky-error role="alert" hidden></p>
+    </div>
+  {%- endif -%}
+
+  {{- variant_templates -}}
+
+  <script type="application/ld+json">
+    {{- product | structured_data -}}
+  </script>
+</les56-product>
+
+{% schema %}
+{
+  "name": "LES-56 main product",
+  "class": "les56-main-product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_info",
+      "default": true,
+      "label": "t:sections.main-product.settings.enable_sticky_info.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-product.settings.header__media.content",
+      "info": "t:sections.main-product.settings.header__media.info"
+    },
+    {
+      "type": "header",
+      "content": "Recommended image size",
+      "info": "Recommended image size: 1200px 1200px"
+    },
+    {
+      "type": "select",
+      "id": "gallery_layout",
+      "options": [
+        {
+          "value": "scroll",
+          "label": "t:sections.main-product.settings.gallery_layout.options__1.label"
+        },
+        {
+          "value": "columns",
+          "label": "t:sections.main-product.settings.gallery_layout.options__2.label"
+        },
+        {
+          "value": "thumbnail",
+          "label": "t:sections.main-product.settings.gallery_layout.options__3.label"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "thumbnail",
+      "label": "t:sections.main-product.settings.gallery_layout.label"
+    },
+    {
+      "type": "select",
+      "id": "thumbnail_position",
+      "options": [
+        {
+          "value": "beside",
+          "label": "t:sections.main-product.settings.thumbnail_position.options__1.label"
+        },
+        {
+          "value": "below",
+          "label": "t:sections.main-product.settings.thumbnail_position.options__2.label"
+        },
+        {
+          "value": "after",
+          "label": "After media"
+        }
+      ],
+      "default": "beside",
+      "label": "t:sections.main-product.settings.thumbnail_position.label",
+      "info": "t:sections.main-product.settings.thumbnail_position.info"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.global.settings.image_ratio.options__1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.global.settings.image_ratio.options__2.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.global.settings.image_ratio.options__3.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:sections.global.settings.image_ratio.options__4.label"
+        },
+        {
+          "value": "wide",
+          "label": "t:sections.global.settings.image_ratio.options__5.label"
+        },
+        {
+          "value": "adapt_first",
+          "label": "t:sections.global.settings.image_ratio.options__7.label"
+        }
+      ],
+      "default": "adapt_first",
+      "label": "t:sections.global.settings.image_ratio.label",
+      "info": "t:sections.main-product.settings.image_ratio.info"
+    },
+    {
+      "type": "select",
+      "id": "image_zoom",
+      "options": [
+        {
+          "value": "lightbox",
+          "label": "t:sections.main-product.settings.image_zoom.options__1.label"
+        },
+        {
+          "value": "hover",
+          "label": "t:sections.main-product.settings.image_zoom.options__2.label"
+        },
+        {
+          "value": "none",
+          "label": "t:sections.main-product.settings.image_zoom.options__3.label"
+        }
+      ],
+      "default": "lightbox",
+      "label": "t:sections.main-product.settings.image_zoom.label",
+      "info": "t:sections.main-product.settings.image_zoom.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_variants",
+      "default": false,
+      "label": "t:sections.main-product.settings.hide_variants.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_autoplay",
+      "default": false,
+      "label": "t:sections.main-product.settings.enable_video_autoplay.label",
+      "info": "t:sections.main-product.settings.enable_video_autoplay.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "default": false,
+      "label": "t:sections.main-product.settings.enable_video_looping.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__mobile.content"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "options": [
+        {
+          "value": "partial",
+          "label": "t:sections.main-product.settings.mobile_layout.options__1.label"
+        },
+        {
+          "value": "full_width",
+          "label": "t:sections.main-product.settings.mobile_layout.options__2.label"
+        }
+      ],
+      "default": "partial",
+      "label": "t:sections.main-product.settings.mobile_layout.label"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio_mobile",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.global.settings.image_ratio.options__1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.global.settings.image_ratio.options__2.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.global.settings.image_ratio.options__3.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:sections.global.settings.image_ratio.options__4.label"
+        },
+        {
+          "value": "wide",
+          "label": "t:sections.global.settings.image_ratio.options__5.label"
+        },
+        {
+          "value": "adapt_first",
+          "label": "t:sections.global.settings.image_ratio.options__7.label"
+        }
+      ],
+      "default": "adapt_first",
+      "label": "t:sections.global.settings.image_ratio_mobile.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_thumbnail",
+      "default": false,
+      "label": "t:sections.main-product.settings.mobile_thumbnail.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__section.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile padding top",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile padding bottom",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.global.settings.padding_top.label",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.global.settings.padding_bottom.label",
+      "default": 72
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "t:sections.global.settings.divider.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.global.settings.full_width.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "rounded",
+      "default": false,
+      "label": "t:sections.global.settings.rounded.label"
+    },
+    {
+      "type": "header",
+      "content": "LES-56"
+    },
+    {
+      "type": "textarea",
+      "id": "badges",
+      "label": "Badges (un par ligne)",
+      "default": "🌿 100% d’origine naturelle\n🌱 Certifiée Ecocert\nFabriquée en 🇫🇷\n✅ Sans huile de palme\n✅ Sans dérivés de pétrole\n🙌 Testée sur peaux sensibles"
+    },
+    {
+      "type": "number",
+      "id": "popular_quantity",
+      "label": "Quantité mise en avant",
+      "default": 3
+    },
+    {
+      "type": "text",
+      "id": "popular_label",
+      "label": "Libellé de la quantité mise en avant",
+      "default": "populaire 🔥"
+    },
+    {
+      "type": "text",
+      "id": "subscription_intro",
+      "label": "Texte abonnement",
+      "default": "Abonnement : Libérez-vous de la charge mentale et économisez toute l’année"
+    },
+    {
+      "type": "text",
+      "id": "subscription_bubble_single",
+      "label": "Bulle abonnement (1 unité)",
+      "default": "-15% toute l’année"
+    },
+    {
+      "type": "text",
+      "id": "subscription_bubble_multiple",
+      "label": "Bulle abonnement (plusieurs unités)",
+      "default": "-15% supplémentaires"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "breadcrumb",
+      "name": "t:sections.global.blocks.breadcrumb.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_collections_link",
+          "label": "t:sections.main-product.blocks.breadcrumb.settings.show_collections_link.label",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.main-product.blocks.text.name",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "default": "Text block",
+          "label": "t:sections.global.settings.text.label"
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "options": [
+            {
+              "value": "text-sm",
+              "label": "t:sections.global.settings.text_size.options__1.label"
+            },
+            {
+              "value": "text-base",
+              "label": "t:sections.global.settings.text_size.options__2.label"
+            },
+            {
+              "value": "text-base lg:text-lg",
+              "label": "t:sections.global.settings.text_size.options__3.label"
+            },
+            {
+              "value": "text-base lg:text-xl",
+              "label": "t:sections.global.settings.text_size.options__4.label"
+            }
+          ],
+          "default": "text-base",
+          "label": "t:sections.global.settings.text_size.label"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "name": "t:sections.main-product.blocks.title.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "title_size",
+          "options": [
+            {
+              "value": "product-title-sm",
+              "label": "t:sections.global.settings.title_size.options__1.label"
+            },
+            {
+              "value": "product-title-md",
+              "label": "t:sections.global.settings.title_size.options__2.label"
+            },
+            {
+              "value": "product-title-lg",
+              "label": "t:sections.global.settings.title_size.options__3.label"
+            }
+          ],
+          "default": "product-title-md",
+          "label": "t:sections.global.settings.title_size.label"
+        },
+        {
+          "type": "select",
+          "id": "title_size_mobile",
+          "options": [
+            {
+              "value": "product-title-sm",
+              "label": "t:sections.global.settings.title_size.options__1.label"
+            },
+            {
+              "value": "product-title-md",
+              "label": "t:sections.global.settings.title_size.options__2.label"
+            },
+            {
+              "value": "product-title-lg",
+              "label": "t:sections.global.settings.title_size.options__3.label"
+            }
+          ],
+          "default": "product-title-md",
+          "label": "t:sections.global.settings.title_size_mobile.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_price",
+          "default": true,
+          "label": "t:sections.main-product.blocks.title.settings.show_price.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_rating",
+          "default": true,
+          "label": "t:sections.main-product.blocks.title.settings.show_rating.label",
+          "info": "t:sections.main-product.blocks.title.settings.show_rating.info"
+        }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "t:sections.main-product.blocks.price.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_taxes_notice",
+          "default": true,
+          "label": "t:sections.main-product.blocks.price.settings.show_taxes_notice.label"
+        }
+      ]
+    },
+    {
+      "type": "sku",
+      "name": "t:sections.main-product.blocks.sku.name",
+      "limit": 1
+    },
+    {
+      "type": "inventory",
+      "name": "t:sections.main-product.blocks.inventory.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "range",
+          "id": "inventory_threshold",
+          "label": "t:sections.main-product.blocks.inventory.settings.inventory_threshold.label",
+          "info": "t:sections.main-product.blocks.inventory.settings.inventory_threshold.info",
+          "default": 10,
+          "min": 0,
+          "max": 20,
+          "step": 1
+        },
+        {
+          "type": "checkbox",
+          "id": "show_inventory_transfer",
+          "default": true,
+          "label": "t:sections.main-product.blocks.inventory.settings.show_inventory_transfer.label",
+          "info": "t:sections.main-product.blocks.inventory.settings.show_inventory_transfer.info"
+        },
+        {
+          "type": "select",
+          "id": "show_inventory_quantity",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.main-product.blocks.inventory.settings.show_inventory_quantity.options__1.label"
+            },
+            {
+              "value": "low",
+              "label": "t:sections.main-product.blocks.inventory.settings.show_inventory_quantity.options__2.label"
+            },
+            {
+              "value": "always",
+              "label": "t:sections.main-product.blocks.inventory.settings.show_inventory_quantity.options__3.label"
+            }
+          ],
+          "default": "low",
+          "label": "t:sections.main-product.blocks.inventory.settings.show_inventory_quantity.label"
+        },
+        {
+          "type": "select",
+          "id": "color_scheme",
+          "options": [
+            {
+              "value": "accent-1",
+              "label": "t:sections.main-product.blocks.inventory.settings.color_scheme.options__1.label"
+            },
+            {
+              "value": "accent-2",
+              "label": "t:sections.main-product.blocks.inventory.settings.color_scheme.options__2.label"
+            },
+            {
+              "value": "accent-3",
+              "label": "t:sections.main-product.blocks.inventory.settings.color_scheme.options__3.label"
+            },
+            {
+              "value": "accent-4",
+              "label": "t:sections.main-product.blocks.inventory.settings.color_scheme.options__4.label"
+            },
+            {
+              "value": "accent-5",
+              "label": "t:sections.main-product.blocks.inventory.settings.color_scheme.options__5.label"
+            },
+            {
+              "value": "accent-6",
+              "label": "t:sections.main-product.blocks.inventory.settings.color_scheme.options__6.label"
+            }
+          ],
+          "default": "accent-1",
+          "label": "t:sections.main-product.blocks.inventory.settings.color_scheme.label"
+        }
+      ]
+    },
+    {
+      "type": "quantity_selector",
+      "name": "t:sections.main-product.blocks.quantity_selector.name",
+      "limit": 1
+    },
+    {
+      "type": "volume_pricing",
+      "name": "t:sections.main-product.blocks.volume_pricing.name",
+      "limit": 1
+    },
+    {
+      "type": "variant_picker",
+      "name": "t:sections.main-product.blocks.variant_picker.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_variant_labels",
+          "default": true,
+          "label": "t:sections.main-product.blocks.variant_picker.settings.show_variant_labels.label"
+        },
+        {
+          "type": "select",
+          "id": "picker_type",
+          "options": [
+            {
+              "value": "dropdown",
+              "label": "t:sections.main-product.blocks.variant_picker.settings.picker_type.options__1.label"
+            },
+            {
+              "value": "button",
+              "label": "t:sections.main-product.blocks.variant_picker.settings.picker_type.options__2.label"
+            }
+          ],
+          "default": "button",
+          "label": "t:sections.main-product.blocks.variant_picker.settings.picker_type.label"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.blocks.variant_picker.settings.header__color.content"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_color_swatches",
+          "default": true,
+          "label": "t:sections.main-product.blocks.variant_picker.settings.enable_color_swatches.label",
+          "info": "t:sections.main-product.blocks.variant_picker.settings.enable_color_swatches.info"
+        },
+        {
+          "type": "select",
+          "id": "color_swatch_type",
+          "options": [
+            {
+              "value": "color",
+              "label": "t:sections.main-product.blocks.variant_picker.settings.color_swatch_type.options__1.label"
+            },
+            {
+              "value": "variant",
+              "label": "t:sections.main-product.blocks.variant_picker.settings.color_swatch_type.options__2.label"
+            }
+          ],
+          "default": "color",
+          "label": "t:sections.main-product.blocks.variant_picker.settings.color_swatch_type.label",
+          "info": "t:sections.main-product.blocks.variant_picker.settings.color_swatch_type.info"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.blocks.variant_picker.settings.header__size.content"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.variant_picker.settings.paragraph__size.content"
+        },
+        {
+          "type": "page",
+          "id": "size_chart",
+          "label": "t:sections.main-product.blocks.variant_picker.settings.size_chart.label"
+        }
+      ]
+    },
+    {
+      "type": "cluutch-variant_picker",
+      "name": "Cluutch variant picker",
+      "limit": 1
+    },
+    {
+      "type": "variants",
+      "name": "Cluutch-variants",
+      "limit": 1
+    },
+    {
+      "type": "product_variations",
+      "name": "t:sections.main-product.blocks.product_variations.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.product_variations.settings.paragraph.content"
+        },
+        {
+          "type": "text",
+          "id": "option_name",
+          "label": "t:sections.main-product.blocks.product_variations.settings.option_name.label",
+          "info": "t:sections.main-product.blocks.product_variations.settings.option_name.info"
+        },
+        {
+          "type": "text",
+          "id": "option_value_metafield",
+          "label": "t:sections.main-product.blocks.product_variations.settings.option_value_metafield.label",
+          "info": "t:sections.main-product.blocks.product_variations.settings.option_value_metafield.info"
+        },
+        {
+          "type": "product_list",
+          "id": "products",
+          "label": "t:sections.main-product.blocks.product_variations.settings.products.label",
+          "info": "t:sections.main-product.blocks.product_variations.settings.products.info"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.blocks.variant_picker.settings.header__color.content"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_color_swatches",
+          "default": true,
+          "label": "t:sections.main-product.blocks.variant_picker.settings.enable_color_swatches.label"
+        },
+        {
+          "type": "select",
+          "id": "color_swatch_type",
+          "options": [
+            {
+              "value": "color",
+              "label": "t:sections.main-product.blocks.product_variations.settings.color_swatch_type.options__1.label"
+            },
+            {
+              "value": "variant",
+              "label": "t:sections.main-product.blocks.product_variations.settings.color_swatch_type.options__2.label"
+            }
+          ],
+          "default": "color",
+          "label": "t:sections.main-product.blocks.product_variations.settings.color_swatch_type.label",
+          "info": "t:sections.main-product.blocks.product_variations.settings.color_swatch_type.info"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.blocks.variant_picker.settings.header__size.content"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.variant_picker.settings.paragraph__size.content"
+        },
+        {
+          "type": "page",
+          "id": "size_chart",
+          "label": "t:sections.main-product.blocks.variant_picker.settings.size_chart.label"
+        }
+      ]
+    },
+    {
+      "type": "buy_buttons",
+      "name": "t:sections.main-product.blocks.buy_buttons.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_quantity_selector",
+          "default": true,
+          "label": "t:sections.main-product.blocks.buy_buttons.settings.show_quantity_selector.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "default": true,
+          "label": "t:sections.main-product.blocks.buy_buttons.settings.show_dynamic_checkout.label",
+          "info": "t:sections.main-product.blocks.buy_buttons.settings.show_dynamic_checkout.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_gift_card_recipient",
+          "default": true,
+          "label": "t:sections.main-product.blocks.buy_buttons.settings.show_gift_card_recipient.label",
+          "info": "t:sections.main-product.blocks.buy_buttons.settings.show_gift_card_recipient.info"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.blocks.back_in_stock.settings.header.content",
+          "info": "t:sections.main-product.blocks.back_in_stock.settings.header.info"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.back_in_stock.settings.paragraph.content"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_back_in_stock",
+          "default": false,
+          "label": "t:sections.main-product.blocks.back_in_stock.settings.enabled.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_back_in_stock_name",
+          "default": false,
+          "label": "t:sections.main-product.blocks.back_in_stock.settings.show_name.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_back_in_stock_phone",
+          "default": false,
+          "label": "t:sections.main-product.blocks.back_in_stock.settings.show_phone.label"
+        }
+      ]
+    },
+    {
+      "type": "pickup_availability",
+      "name": "t:sections.main-product.blocks.pickup_availability.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.pickup_availability.settings.paragraph.content"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "t:sections.main-product.blocks.description.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "text_size",
+          "options": [
+            {
+              "value": "text-sm",
+              "label": "t:sections.global.settings.text_size.options__1.label"
+            },
+            {
+              "value": "text-base",
+              "label": "t:sections.global.settings.text_size.options__2.label"
+            },
+            {
+              "value": "text-base lg:text-lg",
+              "label": "t:sections.global.settings.text_size.options__3.label"
+            },
+            {
+              "value": "text-base lg:text-xl",
+              "label": "t:sections.global.settings.text_size.options__4.label"
+            }
+          ],
+          "default": "text-base",
+          "label": "t:sections.global.settings.text_size.label"
+        }
+      ]
+    },
+    {
+      "type": "share",
+      "name": "t:sections.main-product.blocks.share.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "share_label",
+          "label": "t:sections.global.settings.text.label",
+          "default": "Share"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.share.settings.featured_image_info.content"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.share.settings.title_info.content"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.blocks.share.settings.header__help.content"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_help_desk",
+          "label": "t:sections.main-product.blocks.share.settings.show_help_desk.label",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "help_label",
+          "label": "t:sections.main-product.blocks.help_desk.settings.help_label.label",
+          "default": "Need help?"
+        },
+        {
+          "type": "select",
+          "id": "help_type",
+          "options": [
+            {
+              "value": "drawer",
+              "label": "t:sections.main-product.blocks.help_desk.settings.help_type.options__1.label"
+            },
+            {
+              "value": "page",
+              "label": "t:sections.main-product.blocks.help_desk.settings.help_type.options__2.label"
+            }
+          ],
+          "default": "drawer",
+          "label": "t:sections.main-product.blocks.help_desk.settings.help_type.label"
+        },
+        {
+          "type": "page",
+          "id": "help_page",
+          "label": "t:sections.main-product.blocks.help_desk.settings.help_page.label"
+        }
+      ]
+    },
+    {
+      "type": "help_desk",
+      "name": "t:sections.main-product.blocks.help_desk.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "help_label",
+          "label": "t:sections.main-product.blocks.help_desk.settings.help_label.label",
+          "default": "Need help?"
+        },
+        {
+          "type": "select",
+          "id": "help_type",
+          "options": [
+            {
+              "value": "drawer",
+              "label": "t:sections.main-product.blocks.help_desk.settings.help_type.options__1.label"
+            },
+            {
+              "value": "page",
+              "label": "t:sections.main-product.blocks.help_desk.settings.help_type.options__2.label"
+            }
+          ],
+          "default": "drawer",
+          "label": "t:sections.main-product.blocks.help_desk.settings.help_type.label"
+        },
+        {
+          "type": "page",
+          "id": "help_page",
+          "label": "t:sections.main-product.blocks.help_desk.settings.help_page.label"
+        }
+      ]
+    },
+    {
+      "type": "liquid",
+      "name": "t:sections.custom-liquid.name",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "liquid",
+          "label": "t:sections.custom-liquid.settings.liquid.label",
+          "info": "t:sections.custom-liquid.settings.liquid.info"
+        }
+      ]
+    },
+    {
+      "type": "rating",
+      "name": "t:sections.main-product.blocks.rating.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.rating.settings.paragraph.content"
+        }
+      ]
+    },
+    {
+      "type": "complementary",
+      "name": "t:sections.main-product.blocks.complementary_products.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.complementary_products.settings.paragraph.content"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Pairs well with",
+          "label": "t:sections.global.settings.heading.label"
+        },
+        {
+          "type": "range",
+          "id": "product_limit",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "default": 10,
+          "label": "t:sections.main-product.blocks.complementary_products.settings.product_limit.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_vendor",
+          "default": true,
+          "label": "t:sections.main-product.blocks.complementary_products.settings.show_vendor.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_price",
+          "default": true,
+          "label": "t:sections.main-product.blocks.complementary_products.settings.show_price.label"
+        }
+      ]
+    },
+    {
+      "type": "collapsible_tab",
+      "name": "t:sections.main-product.blocks.collapsible_tab.name"
+    },
+    {
+      "type": "countdown",
+      "name": "t:sections.main-product.blocks.countdown.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.countdown.settings.paragraph.content"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Hurry up!",
+          "label": "t:sections.global.settings.heading.label"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "default": "Sale end in:",
+          "label": "t:sections.global.settings.subheading.label"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.global.settings.header__colors.content",
+          "info": "t:sections.global.settings.header__colors.info"
+        },
+        {
+          "type": "color",
+          "id": "color_text",
+          "label": "t:sections.global.settings.color_text.label",
+          "default": "#e11d48"
+        },
+        {
+          "type": "color",
+          "id": "color_background",
+          "label": "t:sections.global.settings.color_background.label",
+          "default": "#fff1f2"
+        },
+        {
+          "type": "color_background",
+          "id": "gradient_background",
+          "label": "t:sections.global.settings.gradient_background.label"
+        }
+      ]
+    },
+    {
+      "type": "icons",
+      "name": "Icons",
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon_1",
+          "label": "Icon 1"
+        },
+        {
+          "type": "text",
+          "id": "text_1",
+          "label": "Text 1"
+        },
+        {
+          "type": "html",
+          "id": "icon_2",
+          "label": "Icon 2"
+        },
+        {
+          "type": "text",
+          "id": "text_2",
+          "label": "Text 2"
+        },
+        {
+          "type": "html",
+          "id": "icon_3",
+          "label": "Icon 3"
+        },
+        {
+          "type": "text",
+          "id": "text_3",
+          "label": "Text 3"
+        },
+        {
+          "type": "html",
+          "id": "icon_4",
+          "label": "Icon 4"
+        },
+        {
+          "type": "text",
+          "id": "text_4",
+          "label": "Text 4"
+        }
+      ]
+    },
+    {
+      "type": "back_in_stock",
+      "name": "t:sections.main-product.blocks.back_in_stock.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.back_in_stock.settings.header.info"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.back_in_stock.settings.paragraph.content"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.global.settings.heading.label"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "default": "<p>Sign up to be the first to know when it's here</p>",
+          "label": "t:sections.global.settings.description.label"
+        }
+      ]
+    },
+    {
+      "type": "line_item_property",
+      "name": "t:sections.main-product.blocks.line_item_property.name",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.line_item_property.settings.paragraph.content"
+        },
+        {
+          "type": "select",
+          "id": "type",
+          "options": [
+            {
+              "value": "text",
+              "label": "t:sections.main-product.blocks.line_item_property.settings.type.options__1.label"
+            },
+            {
+              "value": "textarea",
+              "label": "t:sections.main-product.blocks.line_item_property.settings.type.options__2.label"
+            },
+            {
+              "value": "checkbox",
+              "label": "t:sections.main-product.blocks.line_item_property.settings.type.options__3.label"
+            },
+            {
+              "value": "radio",
+              "label": "t:sections.main-product.blocks.line_item_property.settings.type.options__4.label"
+            },
+            {
+              "value": "select",
+              "label": "t:sections.main-product.blocks.line_item_property.settings.type.options__5.label"
+            }
+          ],
+          "default": "text",
+          "label": "t:sections.main-product.blocks.line_item_property.settings.type.label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.main-product.blocks.line_item_property.settings.label.label",
+          "default": "Your label"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "t:sections.main-product.blocks.line_item_property.settings.required.label",
+          "info": "t:sections.main-product.blocks.line_item_property.settings.required.info",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.blocks.line_item_property.settings.header__checkbox.content",
+          "info": "t:sections.main-product.blocks.line_item_property.settings.header__checkbox.info"
+        },
+        {
+          "type": "text",
+          "id": "checked_value",
+          "label": "t:sections.main-product.blocks.line_item_property.settings.checked_value.label",
+          "default": "Yes"
+        },
+        {
+          "type": "text",
+          "id": "unchecked_value",
+          "label": "t:sections.main-product.blocks.line_item_property.settings.unchecked_value.label",
+          "default": "No"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.blocks.line_item_property.settings.header__radio.content",
+          "info": "t:sections.main-product.blocks.line_item_property.settings.header__radio.info"
+        },
+        {
+          "type": "text",
+          "id": "radio_options",
+          "label": "t:sections.main-product.blocks.line_item_property.settings.options.label",
+          "info": "t:sections.main-product.blocks.line_item_property.settings.options.info"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.blocks.line_item_property.settings.header__dropdown.content",
+          "info": "t:sections.main-product.blocks.line_item_property.settings.header__dropdown.info"
+        },
+        {
+          "type": "text",
+          "id": "select_options",
+          "label": "t:sections.main-product.blocks.line_item_property.settings.options.label",
+          "info": "t:sections.main-product.blocks.line_item_property.settings.options.info"
+        }
+      ]
+    },
+    {
+      "type": "sticky_buy_button",
+      "name": "t:sections.main-product.blocks.sticky_buy_button.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-product.blocks.sticky_buy_button.settings.paragraph.content"
+        }
+      ]
+    },
+    {
+      "type": "quantity-button",
+      "name": "quantity",
+      "settings": [
+        {
+          "type": "number",
+          "id": "value",
+          "label": "Variant Size"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Variant Price"
+        },
+        {
+          "type": "text",
+          "id": "compare",
+          "label": "Variant Compare At Price"
+        },
+        {
+          "type": "text",
+          "id": "discount",
+          "label": "Discount Percent"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Variant Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Variant Image"
+        },
+        {
+          "type": "text",
+          "id": "discount_label",
+          "label": "Discount Label"
+        }
+      ]
+    },
+    {
+      "type": "lpb-scrolling-banner",
+      "name": "LPB scrolling banner",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texte",
+          "default": "Livraison gratuite dès 30€ d'achat"
+        },
+        {
+          "type": "range",
+          "id": "speed",
+          "min": 5,
+          "max": 40,
+          "step": 1,
+          "unit": "s",
+          "label": "Vitesse de défilement",
+          "default": 20,
+          "info": "Plus le nombre est petit, plus c'est rapide"
+        },
+        {
+          "type": "color",
+          "id": "color_background",
+          "label": "Couleur de fond",
+          "default": "#37B6AD"
+        },
+        {
+          "type": "color",
+          "id": "color_text",
+          "label": "Couleur du texte",
+          "default": "#FFFFFA"
+        },
+        {
+          "type": "range",
+          "id": "padding",
+          "min": 4,
+          "max": 40,
+          "step": 2,
+          "unit": "px",
+          "label": "Padding",
+          "default": 12
+        },
+        {
+          "type": "header",
+          "content": "Programmation"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_schedule",
+          "label": "Activer la programmation",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "start_date",
+          "label": "Date de début",
+          "info": "Format : JJ/MM/AAAA (ex : 15/01/2025)"
+        },
+        {
+          "type": "select",
+          "id": "start_time",
+          "label": "Heure de début",
+          "default": "00:00",
+          "options": [
+            {
+              "value": "00:00",
+              "label": "00h00"
+            },
+            {
+              "value": "01:00",
+              "label": "01h00"
+            },
+            {
+              "value": "02:00",
+              "label": "02h00"
+            },
+            {
+              "value": "03:00",
+              "label": "03h00"
+            },
+            {
+              "value": "04:00",
+              "label": "04h00"
+            },
+            {
+              "value": "05:00",
+              "label": "05h00"
+            },
+            {
+              "value": "06:00",
+              "label": "06h00"
+            },
+            {
+              "value": "07:00",
+              "label": "07h00"
+            },
+            {
+              "value": "08:00",
+              "label": "08h00"
+            },
+            {
+              "value": "09:00",
+              "label": "09h00"
+            },
+            {
+              "value": "10:00",
+              "label": "10h00"
+            },
+            {
+              "value": "11:00",
+              "label": "11h00"
+            },
+            {
+              "value": "12:00",
+              "label": "12h00"
+            },
+            {
+              "value": "13:00",
+              "label": "13h00"
+            },
+            {
+              "value": "14:00",
+              "label": "14h00"
+            },
+            {
+              "value": "15:00",
+              "label": "15h00"
+            },
+            {
+              "value": "16:00",
+              "label": "16h00"
+            },
+            {
+              "value": "17:00",
+              "label": "17h00"
+            },
+            {
+              "value": "18:00",
+              "label": "18h00"
+            },
+            {
+              "value": "19:00",
+              "label": "19h00"
+            },
+            {
+              "value": "20:00",
+              "label": "20h00"
+            },
+            {
+              "value": "21:00",
+              "label": "21h00"
+            },
+            {
+              "value": "22:00",
+              "label": "22h00"
+            },
+            {
+              "value": "23:00",
+              "label": "23h00"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "end_date",
+          "label": "Date de fin",
+          "info": "Format : JJ/MM/AAAA (ex : 31/01/2025)"
+        },
+        {
+          "type": "select",
+          "id": "end_time",
+          "label": "Heure de fin",
+          "default": "23:00",
+          "options": [
+            {
+              "value": "00:00",
+              "label": "00h00"
+            },
+            {
+              "value": "01:00",
+              "label": "01h00"
+            },
+            {
+              "value": "02:00",
+              "label": "02h00"
+            },
+            {
+              "value": "03:00",
+              "label": "03h00"
+            },
+            {
+              "value": "04:00",
+              "label": "04h00"
+            },
+            {
+              "value": "05:00",
+              "label": "05h00"
+            },
+            {
+              "value": "06:00",
+              "label": "06h00"
+            },
+            {
+              "value": "07:00",
+              "label": "07h00"
+            },
+            {
+              "value": "08:00",
+              "label": "08h00"
+            },
+            {
+              "value": "09:00",
+              "label": "09h00"
+            },
+            {
+              "value": "10:00",
+              "label": "10h00"
+            },
+            {
+              "value": "11:00",
+              "label": "11h00"
+            },
+            {
+              "value": "12:00",
+              "label": "12h00"
+            },
+            {
+              "value": "13:00",
+              "label": "13h00"
+            },
+            {
+              "value": "14:00",
+              "label": "14h00"
+            },
+            {
+              "value": "15:00",
+              "label": "15h00"
+            },
+            {
+              "value": "16:00",
+              "label": "16h00"
+            },
+            {
+              "value": "17:00",
+              "label": "17h00"
+            },
+            {
+              "value": "18:00",
+              "label": "18h00"
+            },
+            {
+              "value": "19:00",
+              "label": "19h00"
+            },
+            {
+              "value": "20:00",
+              "label": "20h00"
+            },
+            {
+              "value": "21:00",
+              "label": "21h00"
+            },
+            {
+              "value": "22:00",
+              "label": "22h00"
+            },
+            {
+              "value": "23:00",
+              "label": "23h00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "reassurance",
+      "name": "Reassurance produit",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Element 1"
+        },
+        {
+          "type": "html",
+          "id": "item_1_icon",
+          "label": "Icone (emoji ou SVG)",
+          "default": "🚚"
+        },
+        {
+          "type": "richtext",
+          "id": "item_1_text",
+          "label": "Texte",
+          "default": "<p><strong>Livraison offerte</strong> dès 50€</p>"
+        },
+        {
+          "type": "header",
+          "content": "Element 2"
+        },
+        {
+          "type": "html",
+          "id": "item_2_icon",
+          "label": "Icone (emoji ou SVG)",
+          "default": "⭐"
+        },
+        {
+          "type": "richtext",
+          "id": "item_2_text",
+          "label": "Texte",
+          "default": "<p><strong>4,8/5</strong> – 6 370 avis vérifiés</p>"
+        },
+        {
+          "type": "header",
+          "content": "Element 3"
+        },
+        {
+          "type": "html",
+          "id": "item_3_icon",
+          "label": "Icone (emoji ou SVG)",
+          "default": "💬"
+        },
+        {
+          "type": "richtext",
+          "id": "item_3_text",
+          "label": "Texte",
+          "default": "<p><strong>SAV aux petits soins</strong> – 94% de satisfaction</p>"
+        },
+        {
+          "type": "header",
+          "content": "Element 4"
+        },
+        {
+          "type": "html",
+          "id": "item_4_icon",
+          "label": "Icone (emoji ou SVG)",
+          "default": "🔒"
+        },
+        {
+          "type": "richtext",
+          "id": "item_4_text",
+          "label": "Texte",
+          "default": "<p><strong>Paiement sécurisé</strong> – CB, Apple Pay...</p>"
+        },
+        {
+          "type": "header",
+          "content": "Element 5"
+        },
+        {
+          "type": "html",
+          "id": "item_5_icon",
+          "label": "Icone (emoji ou SVG)"
+        },
+        {
+          "type": "richtext",
+          "id": "item_5_text",
+          "label": "Texte"
+        },
+        {
+          "type": "header",
+          "content": "Style"
+        },
+        {
+          "type": "checkbox",
+          "id": "display_as_list",
+          "label": "Afficher en liste (sans slider)",
+          "default": false,
+          "info": "Si coche, les elements s'affichent les uns sous les autres (gauche sur desktop, centre sur mobile)"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Couleur du texte",
+          "default": "#003435"
+        },
+        {
+          "type": "range",
+          "id": "autoplay_speed",
+          "label": "Vitesse du défilement (ms)",
+          "min": 1000,
+          "max": 8000,
+          "step": 500,
+          "default": 3000,
+          "info": "Temps d'affichage de chaque element"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
