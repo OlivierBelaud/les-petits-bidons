@@ -101,7 +101,6 @@
       this.dots.forEach((dot, position) => dot.classList.toggle('is-active', position === this.activeIndex));
 
       if (scroll && this.viewport) {
-        this.scrollTarget = this.activeIndex;
         this.viewport.scrollTo({ left: this.viewport.clientWidth * this.activeIndex, behavior: 'smooth' });
       }
     }
@@ -111,12 +110,8 @@
       this.scrollFrame = requestAnimationFrame(() => {
         const width = this.viewport.clientWidth;
         if (!width) return;
+        // The visible slide always wins, even when a requested smooth scroll is interrupted.
         const index = Math.round(this.viewport.scrollLeft / width);
-        // Ignore intermediate positions of a programmatic smooth scroll.
-        if (this.scrollTarget !== undefined) {
-          if (index !== this.scrollTarget) return;
-          this.scrollTarget = undefined;
-        }
         if (index !== this.activeIndex) this.setActive(index, false);
       });
     }

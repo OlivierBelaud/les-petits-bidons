@@ -1013,6 +1013,40 @@ test('thumbnails list every image except the active one and select on click', ()
   assert.deepEqual(t.visibleThumbs(), [0, 1, 2]);
 });
 
+test('an interrupted smooth scroll leaves the gallery on the slide that is actually visible', () => {
+  const t = setup();
+  const viewport = t.$('[data-les56-viewport]');
+  const settleOn = (index) => {
+    viewport.scrollLeft = index * viewport.clientWidth;
+    viewport.dispatchEvent(new t.window.Event('scroll'));
+  };
+  const state = () => ({
+    thumbs: t.visibleThumbs(),
+    dots: t.$$('[data-les56-dot]').map((dot) => dot.classList.contains('is-active')),
+    tabindex: t.$$('[data-les56-slide]').map((slide) => slide.getAttribute('tabindex')),
+    hidden: t.$$('[data-les56-slide]').map((slide) => slide.getAttribute('aria-hidden')),
+  });
+
+  t.click(t.$('[data-les56-thumb][data-index="2"]'));
+  // The shopper swipes back before the requested smooth scroll reaches image 3: image 2 stays on screen.
+  settleOn(1);
+  settleOn(1);
+  assert.deepEqual(state(), {
+    thumbs: [0, 2],
+    dots: [false, true, false],
+    tabindex: ['-1', '0', '-1'],
+    hidden: ['true', 'false', 'true'],
+  });
+
+  t.click(t.$('[data-les56-next]'));
+  assert.equal(viewport.lastScroll.left, 2 * 380);
+  assert.deepEqual(t.visibleThumbs(), [0, 1]);
+  t.click(t.$('[data-les56-thumb][data-index="0"]'));
+  assert.deepEqual(t.visibleThumbs(), [1, 2]);
+  settleOn(0);
+  assert.deepEqual(state().dots, [true, false, false]);
+});
+
 test('zoom opens from the image, closes with Escape and returns focus to the image', () => {
   const t = setup();
   t.click(t.$('[data-les56-thumb][data-index="1"]'));
