@@ -697,6 +697,29 @@
   transform: translate(-50%, -50%) rotate(-8.62deg);
 }
 
+/*
+ * Below the 380px frame the two prices no longer fit beside the radio, pack and label: let the
+ * price shrink and drop the struck-out amount onto a second line, each amount kept whole.
+ */
+@media screen and (max-width: 379px) {
+  .les56-quantity__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: 3px;
+    min-width: 0;
+  }
+
+  .les56-quantity__price > * {
+    white-space: nowrap;
+  }
+
+  .les56-quantity__price .les56-compare {
+    margin-left: 0;
+  }
+}
+
 .les56-quantity__pills {
   position: absolute;
   top: -8px;
