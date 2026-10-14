@@ -210,6 +210,7 @@
       this.observeSticky();
       this.mirrorFormErrors();
       this.relocateAppWidgets();
+      this.observeAppBlocks();
     }
 
     disconnectedCallback() {
@@ -218,6 +219,7 @@
       this.stickyObserver?.disconnect();
       this.errorObserver?.disconnect();
       this.appObserver?.disconnect();
+      this.appBlockObserver?.disconnect();
     }
 
     variantById(id) {
@@ -462,7 +464,9 @@
       const slot = this.querySelector('[data-les56-app-slot]');
       const form = this.productForm;
       const buy = form?.closest('.les56-buy');
-      if (!slot || !form?.id || !buy || !('MutationObserver' in window)) return;
+      // `form.id` is the variant `<input name="id">` (form named-property access), not the form's ID.
+      const formId = form?.getAttribute('id');
+      if (!slot || !formId || !buy || !('MutationObserver' in window)) return;
 
       const relocate = () => {
         for (const container of [buy, form]) {
@@ -470,7 +474,7 @@
             if (FORM_PARTS.has(node.tagName) || node.matches('.product-form__error-message')) continue;
             slot.append(node);
             for (const field of node.querySelectorAll('input[name], select[name], textarea[name]')) {
-              if (!field.hasAttribute('form') && !field.closest('form')) field.setAttribute('form', form.id);
+              if (!field.hasAttribute('form') && !field.closest('form')) field.setAttribute('form', formId);
             }
           }
         }
@@ -479,6 +483,21 @@
       this.appObserver = new MutationObserver(relocate);
       this.appObserver.observe(buy, { childList: true });
       this.appObserver.observe(form, { childList: true });
+    }
+
+    // App blocks (a countdown with no running campaign) often render an empty container, which must not
+    // add the block spacing; the spacing comes with the first output that takes up room.
+    observeAppBlocks() {
+      const blocks = Array.from(this.querySelectorAll('[data-les56-app]'));
+      if (!blocks.length) return;
+      if (!('ResizeObserver' in window)) {
+        for (const block of blocks) block.classList.add('has-content');
+        return;
+      }
+      this.appBlockObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) entry.target.classList.toggle('has-content', entry.contentRect.height > 0);
+      });
+      for (const block of blocks) this.appBlockObserver.observe(block);
     }
   }
 

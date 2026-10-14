@@ -277,11 +277,16 @@
   text-transform: none;
 }
 
+/*
+ * One 18px line box: the amount and the smaller unit share a baseline, and the unit's own line box
+ * (lower, as the fonts differ) overflows instead of growing the row past the Figma 18px.
+ */
 .les56-price {
   grid-area: price;
   display: flex;
   align-items: baseline;
   gap: 4px;
+  height: 18px;
   padding-left: 3px;
   color: #000;
   font-style: italic;
@@ -366,8 +371,23 @@
   white-space: nowrap;
 }
 
-/* Mobile frame order: rows (1, 2), (4, 5), (3, 6); desktop keeps the merchant order. */
+/* Figma emoji advance (badge width − text width in the frames); the platform glyph stays centred on it. */
+.les56-badge__icon {
+  display: inline-flex;
+  justify-content: center;
+  width: 1.025em;
+}
+
+/*
+ * Mobile frame order: rows (1, 2), (4, 5), (3, 6); desktop keeps the merchant order.
+ * Figma spacing: 7px, 8px and 7px between the badges of each row; rows 2 and 3 sit 3px right of
+ * centre (equal and opposite margins move a row without changing its width).
+ */
 @media screen and (max-width: 1023px) {
+  .les56-badges {
+    column-gap: 0;
+  }
+
   .les56-badge:nth-child(n + 4) {
     order: 1;
   }
@@ -375,6 +395,25 @@
   .les56-badge:nth-child(3),
   .les56-badge:nth-child(n + 6) {
     order: 2;
+  }
+
+  .les56-badge:nth-child(2),
+  .les56-badge:nth-child(6) {
+    margin-left: 7px;
+  }
+
+  .les56-badge:nth-child(3),
+  .les56-badge:nth-child(4) {
+    margin-left: 3px;
+  }
+
+  .les56-badge:nth-child(5) {
+    margin-left: 8px;
+  }
+
+  .les56-badge:nth-child(5),
+  .les56-badge:nth-child(6) {
+    margin-right: -3px;
   }
 }
 
@@ -574,7 +613,7 @@
   display: flex;
   align-items: center;
   height: 45px;
-  padding-left: 8px;
+  padding-left: 7px;
   border: 1px solid var(--les56-border);
   border-radius: 8px;
   cursor: pointer;
@@ -603,7 +642,7 @@
   flex: none;
   width: calc(7.85px + (var(--les56-bottle-columns) - 1) * 6.2px);
   height: calc(15px + (var(--les56-bottle-rows) - 1) * 8px);
-  margin-left: 8px;
+  margin-left: 9px;
 }
 
 .les56-bottle {
@@ -767,7 +806,7 @@
 .les56-subscription__bubble {
   align-self: flex-start;
   margin-top: 3px;
-  margin-left: 8px;
+  margin-left: 7px;
   padding: 0 6px;
   border: 0.968px solid var(--les56-orange);
   border-radius: 44px;
@@ -1030,6 +1069,11 @@
   padding: 0 16px;
 }
 
+/* An app block takes room only once its output does (assets/les56-product.js). */
+.les56-app:not(.has-content) {
+  margin-top: 0;
+}
+
 /* ---------- Sticky add to cart ---------- */
 
 .les56-sticky {
@@ -1182,6 +1226,7 @@
       'title price'
       'rating rating';
     grid-template-columns: minmax(0, 403px) 1fr;
+    align-content: start;
     align-items: start;
     column-gap: 0;
     row-gap: 6px;
@@ -1233,10 +1278,10 @@
   }
 
   /*
-   * Desktop frame: badges 1–3 on the first row (16px apart), the rest on the second row at y+48.
+   * Desktop frame: badges 1–3 on the first row, the rest on the second row at y+48.
    * The zero-height ::before is a flex line break, so the 14px between rows is two 7px row gaps.
-   * The second row is 3px apart: browser emoji glyphs are wider than Figma's, and the Figma
-   * 7–12px spacing would push the sixth badge onto a third row in the 520px column.
+   * Figma spacing: 12px on the first row, 7px then 6px on the second. The first row sits 7.5px left
+   * of centre and the second 2px right (equal and opposite margins keep each row's width).
    */
   .les56-badges {
     column-gap: 0;
@@ -1258,15 +1303,28 @@
 
   .les56-badge:nth-child(2),
   .les56-badge:nth-child(3) {
-    margin-left: 16px;
+    margin-left: 12px;
   }
 
-  .les56-badge:nth-child(n + 5) {
-    margin-left: 3px;
+  .les56-badge:nth-child(3) {
+    margin-right: 15px;
+  }
+
+  .les56-badge:nth-child(4) {
+    margin-left: 2px;
+  }
+
+  .les56-badge:nth-child(5) {
+    margin-left: 7px;
+  }
+
+  .les56-badge:nth-child(6) {
+    margin-left: 6px;
+    margin-right: -2px;
   }
 
   .les56-fragrances {
-    margin-top: 35px;
+    margin-top: 34px;
   }
 
   .les56-fragrances .les56-label {
@@ -1332,7 +1390,7 @@
   }
 
   .les56 .les56-quantity {
-    padding-left: 9px;
+    padding-left: 8px;
   }
 
   .les56-quantity__label {
@@ -1368,7 +1426,7 @@
   }
 
   .les56-subscription__bubble {
-    margin-left: 34px;
+    margin-left: 33px;
     font-size: 14px;
   }
 

@@ -374,7 +374,7 @@
         {%- for block in section.blocks -%}
           {%- case block.type -%}
             {%- when '@app' -%}
-              <div class="les56-app">{% render block %}</div>
+              <div class="les56-app" data-les56-app>{% render block %}</div>
 
             {%- when 'text' -%}
               {%- if block.settings.text != blank -%}
@@ -499,6 +499,11 @@
                   {%- if section.settings.family_headline != blank -%}
                     <p class="les56-tagline">{{ section.settings.family_headline }}</p>
                   {%- endif -%}
+                  {%- comment -%}
+                    A leading or trailing emoji word gets its own box with the Figma glyph advance, so the
+                    platform emoji font cannot widen the badges; the badge text itself is unchanged.
+                    An emoji word starts with a pictograph UTF-8 sequence and only holds caseless non-ASCII.
+                  {%- endcomment -%}
                   {%- liquid
                     assign badge_items = ''
                     assign badge_count = 0
@@ -506,8 +511,43 @@
                     for badge in badges
                       assign badge_text = badge | strip
                       if badge_text != blank
-                        assign badge_text = badge_text | escape
-                        assign badge_items = badge_items | append: '<li class="les56-badge">' | append: badge_text | append: '</li>'
+                        assign badge_words = badge_text | split: ' '
+                        assign badge_html = ''
+                        for badge_word in badge_words
+                          assign badge_word_first = forloop.first
+                          assign badge_word_icon = false
+                          if forloop.first or forloop.last
+                            assign badge_word_icon = true
+                          endif
+                          assign icon_code = badge_word | url_encode | slice: 0, 6
+                          assign icon_upper = badge_word | upcase
+                          assign icon_lower = badge_word | downcase
+                          if badge_words.size == 1 or icon_upper != icon_lower
+                            assign badge_word_icon = false
+                          endif
+                          unless icon_code == '%F0%9F' or icon_code == '%E2%AC' or icon_code == '%E2%AD' or icon_code contains '%E2%9'
+                            assign badge_word_icon = false
+                          endunless
+                          if badge_word_icon
+                            assign icon_chars = badge_word | split: ''
+                            for icon_char in icon_chars
+                              assign char_code = icon_char | url_encode | slice: 0, 2
+                              unless char_code == '%C' or char_code == '%D' or char_code == '%E' or char_code == '%F'
+                                assign badge_word_icon = false
+                              endunless
+                            endfor
+                          endif
+
+                          assign badge_piece = badge_word | escape
+                          if badge_word_icon
+                            assign badge_piece = '<span class="les56-badge__icon">' | append: badge_piece | append: '</span>'
+                          endif
+                          unless badge_word_first
+                            assign badge_html = badge_html | append: ' '
+                          endunless
+                          assign badge_html = badge_html | append: badge_piece
+                        endfor
+                        assign badge_items = badge_items | append: '<li class="les56-badge">' | append: badge_html | append: '</li>'
                         assign badge_count = badge_count | plus: 1
                       endif
                     endfor

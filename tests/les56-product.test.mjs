@@ -8,6 +8,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const productScript = read('../assets/les56-product.js');
 const themeScript = read('../assets/theme.js');
 const sectionSource = read('../sections/les56-main-product.liquid');
+const productStyles = read('../assets/les56-product.css');
 const productTemplate = JSON.parse(read('../templates/product.json').replace(/^\/\*[\s\S]*?\*\//, ''));
 
 // The real theme ProductForm (cart request, error markup, drawer events) runs next to the section script.
@@ -92,10 +93,11 @@ function parseHtml(html) {
   return root.children;
 }
 
-function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&preview_theme_id=186855653754' } = {}) {
+function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&preview_theme_id=186855653754', resizeObserver = false } = {}) {
   const registry = new Map();
   const mutationObservers = new Set();
   const intersectionObservers = [];
+  const resizeObservers = [];
   const fetchCalls = [];
   const published = [];
   let pending = null;
@@ -166,7 +168,16 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
     }
 
     get tagName() { return this.localName.toUpperCase(); }
-    get id() { return this.getAttribute('id') || ''; }
+    // As in browsers (HTMLFormElement named properties override built-ins), a form control named or
+    // identified "id" shadows form.id: the product form's `<input name="id">` does exactly that.
+    get id() {
+      if (this.localName === 'form') {
+        const named = document.querySelectorAll('input, select, textarea, button')
+          .find((control) => control.form === this && [control.getAttribute('name'), control.getAttribute('id')].includes('id'));
+        if (named) return named;
+      }
+      return this.getAttribute('id') || '';
+    }
     get name() { return this.getAttribute('name') || ''; }
     get type() { return (this.getAttribute('type') || (this.localName === 'button' ? 'submit' : 'text')).toLowerCase(); }
     get content() { return this.templateContent; }
@@ -438,6 +449,13 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
     disconnect() { this.targets = []; }
   }
 
+  class FakeResizeObserver {
+    constructor(callback) { this.callback = callback; this.targets = []; resizeObservers.push(this); }
+    observe(target) { this.targets.push(target); }
+    unobserve(target) { this.targets = this.targets.filter((item) => item !== target); }
+    disconnect() { this.targets = []; }
+  }
+
   class FakeFormData {
     constructor(form) {
       this.entriesList = [];
@@ -513,6 +531,7 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
       },
     },
   };
+  if (resizeObserver) context.ResizeObserver = FakeResizeObserver;
   context.window = context;
   context.self = context;
   vm.createContext(context);
@@ -525,6 +544,7 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
     fetchCalls,
     published,
     intersectionObservers,
+    resizeObservers,
     mount(markup) {
       for (const node of materialize(parseHtml(markup), false)) document.body.appendChild(node);
       return document.body.querySelector('les56-product');
@@ -701,6 +721,7 @@ function renderSection(product) {
           ${fragrances}
           <fieldset class="les56-quantities"><legend>Quantité :</legend>${quantityCards}</fieldset>
           ${subscription}
+          <div class="les56-app" data-les56-app></div>
           <div class="les56-buy">
             <form id="${formId}" is="product-form" data-les56-form method="post" action="/cart/add">
               <input type="hidden" name="id" value="${current.id}" data-les56-variant-id>
@@ -1020,7 +1041,7 @@ test('an app widget injected above the button is moved below the accordions and 
   assert.equal(widget.parentNode, t.$('[data-les56-app-slot]'));
   assert.equal(t.form.contains(widget), false);
   assert.equal(t.form.querySelector('[data-les56-variant-id]').parentNode, t.form, 'own hidden fields stay');
-  assert.equal(widget.querySelector('[name="bundle_item"]').getAttribute('form'), t.form.id);
+  assert.equal(widget.querySelector('[name="bundle_item"]').getAttribute('form'), t.form.getAttribute('id'));
   assert.equal(widget.querySelector('button').hasAttribute('form'), false, 'widget buttons never become submitters');
 
   t.click(t.$('[data-les56-submit="main"]'));
@@ -1037,6 +1058,58 @@ test('a widget the app injects after load is relocated too', async () => {
   await flush();
   assert.equal(widget.parentNode, t.$('[data-les56-app-slot]'));
   assert.equal(t.form.querySelector('[data-les56-submit="main"]').parentNode, t.form);
+});
+
+test('relocated app fields name the real form ID although the variant field shadows form.id', async () => {
+  const t = setup({ product: { ...lessive, injectedWidget: bundleWidget } });
+  const formId = t.form.getAttribute('id');
+  assert.equal(formId, 'les56-form-template--1__main');
+  assert.equal(typeof t.form.id, 'object', 'form.id is the <input name="id">, as in a real browser');
+  assert.equal(t.form.id, t.form.querySelector('[data-les56-variant-id]'));
+
+  const bundleItem = t.$('[name="bundle_item"]');
+  assert.equal(bundleItem.getAttribute('form'), formId);
+  assert.equal(bundleItem.form, t.form);
+
+  const lateWidget = t.document.createElement('div');
+  const lateField = t.document.createElement('input');
+  lateField.setAttribute('type', 'hidden');
+  lateField.setAttribute('name', 'properties[_bundle]');
+  lateField.setAttribute('value', 'doseur');
+  lateWidget.appendChild(lateField);
+  t.form.appendChild(lateWidget);
+  await flush();
+  assert.equal(lateWidget.parentNode, t.$('[data-les56-app-slot]'));
+  assert.equal(lateField.getAttribute('form'), formId);
+
+  t.click(t.$('[data-les56-submit="main"]'));
+  assert.equal(t.fetchCalls.length, 1);
+  assert.deepEqual(t.fetchCalls[0].body.getAll('id'), ['56810523722106']);
+  assert.deepEqual(t.fetchCalls[0].body.getAll('bundle_item'), ['42']);
+  assert.deepEqual(t.fetchCalls[0].body.getAll('properties[_bundle]'), ['doseur']);
+});
+
+test('an app block adds its spacing only while its output takes up room', () => {
+  const t = setup({ resizeObserver: true });
+  const block = t.$('[data-les56-app]');
+  const observer = t.resizeObservers.find((item) => item.targets.includes(block));
+  assert.ok(observer, 'app block observed');
+  assert.equal(block.classList.contains('has-content'), false);
+
+  observer.callback([{ target: block, contentRect: { height: 0 } }]);
+  assert.equal(block.classList.contains('has-content'), false, 'empty app container takes no room');
+  observer.callback([{ target: block, contentRect: { height: 64 } }]);
+  assert.equal(block.classList.contains('has-content'), true);
+  observer.callback([{ target: block, contentRect: { height: 0 } }]);
+  assert.equal(block.classList.contains('has-content'), false);
+
+  t.root.remove();
+  assert.deepEqual(observer.targets, [], 'observer released with the section');
+});
+
+test('without ResizeObserver an app block keeps its spacing', () => {
+  const t = setup();
+  assert.equal(t.$('[data-les56-app]').classList.contains('has-content'), true);
 });
 
 // ---------------------------------------------------------------------------
@@ -1091,6 +1164,13 @@ test('the family headline and badges are limited to the configured product type'
   assert.match(familyBlock, /^<div class="les56-family" {{ block\.shopify_attributes }}>\s*{%- if in_family -%}/);
   assert.match(familyBlock, /section\.settings\.badges/);
   assert.doesNotMatch(sectionSource, /data-les56-region="description"/, 'no per-variant tagline region');
+});
+
+test('state classes set by the section and script are styled', () => {
+  assert.match(sectionSource, /<span class="les56-badge__icon">/);
+  assert.match(productStyles, /\.les56-badge__icon\s*{[^}]*width:/);
+  assert.match(productScript, /'has-content'/);
+  assert.match(productStyles, /\.les56-app:not\(\.has-content\)\s*{\s*margin-top: 0;/);
 });
 
 test('the per-litre unit comes from Shopify unit pricing or a litre option value, never from a product id', () => {
