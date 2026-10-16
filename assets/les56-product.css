@@ -1223,10 +1223,10 @@
   display: none;
 }
 
+/* Klaviyo sets visibility and pointer-events back on the teaser's children: only display: none clears them. */
 html.les56-sticky-visible [class*="kl-teaser-"],
 html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
-  visibility: hidden !important;
-  pointer-events: none !important;
+  display: none !important;
 }
 
 .les56-sticky__error {

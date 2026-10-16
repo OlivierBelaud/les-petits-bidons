@@ -261,6 +261,9 @@
       this.planPicker?.removeEventListener('keydown', this.onPlanKeydown);
       document.removeEventListener('pointerdown', this.onPlanOutside, true);
       this.stickyObserver?.disconnect();
+      window.removeEventListener('scroll', this.reconcileSticky, { passive: true });
+      window.removeEventListener('resize', this.reconcileSticky, { passive: true });
+      cancelAnimationFrame(this.stickyFrame);
       document.documentElement.classList.remove(STICKY_VISIBLE_CLASS);
       this.errorObserver?.disconnect();
       this.appObserver?.disconnect();
@@ -611,6 +614,10 @@
       const footer = document.querySelector('.footer-group');
       let passedMainButton = false;
       let footerVisible = false;
+      const render = () => {
+        sticky.hidden = !passedMainButton || footerVisible;
+        document.documentElement.classList.toggle(STICKY_VISIBLE_CLASS, !sticky.hidden);
+      };
       this.stickyObserver = new IntersectionObserver((entries) => {
         for (const entry of entries) {
           if (entry.target === mainButton) {
@@ -620,11 +627,24 @@
             footerVisible = entry.isIntersecting;
           }
         }
-        sticky.hidden = !passedMainButton || footerVisible;
-        document.documentElement.classList.toggle(STICKY_VISIBLE_CLASS, !sticky.hidden);
+        render();
       }, { threshold: [0, 1] });
       this.stickyObserver.observe(mainButton);
       if (footer) this.stickyObserver.observe(footer);
+
+      // One fast jump (PageDown, a long wheel) can carry the button from below the screen to above it
+      // without crossing a threshold, and the observer then stays silent: scrolls and resizes re-read its
+      // position, once per frame.
+      this.reconcileSticky = () => {
+        cancelAnimationFrame(this.stickyFrame);
+        this.stickyFrame = requestAnimationFrame(() => {
+          passedMainButton = mainButton.getBoundingClientRect().top < 0;
+          render();
+        });
+      };
+      window.addEventListener('scroll', this.reconcileSticky, { passive: true });
+      window.addEventListener('resize', this.reconcileSticky, { passive: true });
+      this.reconcileSticky();
     }
 
     // ProductForm writes errors inside the form; repeat them where the sticky button is.

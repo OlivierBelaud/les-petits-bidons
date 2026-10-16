@@ -93,13 +93,17 @@ function parseHtml(html) {
   return root.children;
 }
 
-function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&preview_theme_id=186855653754', resizeObserver = false } = {}) {
+function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&preview_theme_id=186855653754', resizeObserver = false, frames = false } = {}) {
   const registry = new Map();
   const mutationObservers = new Set();
   const intersectionObservers = [];
   const resizeObservers = [];
   const fetchCalls = [];
   const published = [];
+  const windowListeners = [];
+  // With `frames`, animation frames wait for runFrames() like a real browser; otherwise they run at once.
+  const pendingFrames = new Map();
+  let lastFrame = 0;
   let pending = null;
   let document;
 
@@ -264,7 +268,10 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
     get classList() {
       const element = this;
       const read = () => (element.getAttribute('class') || '').split(/\s+/).filter(Boolean);
-      const write = (list) => element.setAttribute('class', list.join(' '));
+      // DOMTokenList update steps: no class attribute is created for an empty list.
+      const write = (list) => {
+        if (list.length || element.hasAttribute('class')) element.setAttribute('class', list.join(' '));
+      };
       return {
         contains: (name) => read().includes(name),
         add: (...names) => write([...new Set([...read(), ...names])]),
@@ -519,8 +526,21 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
       get: (name) => registry.get(name),
     },
     matchMedia: () => ({ matches: false, addEventListener() {}, removeEventListener() {} }),
-    requestAnimationFrame: (callback) => { callback(0); return 1; },
-    cancelAnimationFrame() {},
+    requestAnimationFrame(callback) {
+      if (!frames) { callback(0); return 1; }
+      pendingFrames.set(++lastFrame, callback);
+      return lastFrame;
+    },
+    cancelAnimationFrame(id) { pendingFrames.delete(id); },
+    addEventListener(type, listener, options) {
+      const capture = typeof options === 'boolean' ? options : Boolean(options?.capture);
+      windowListeners.push({ type, listener, capture, passive: Boolean(options?.passive) });
+    },
+    removeEventListener(type, listener, options) {
+      const capture = typeof options === 'boolean' ? options : Boolean(options?.capture);
+      const index = windowListeners.findIndex((entry) => entry.type === type && entry.listener === listener && entry.capture === capture);
+      if (index >= 0) windowListeners.splice(index, 1);
+    },
     setTimeout: () => 0,
     clearTimeout() {},
     setInterval: () => 0,
@@ -555,6 +575,19 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
     published,
     intersectionObservers,
     resizeObservers,
+    windowListeners,
+    pendingFrames,
+    // The browser dispatches window scroll and resize events to every listener registered for them.
+    fireWindow(type) {
+      const event = new FakeEvent(type);
+      event.target = document;
+      for (const entry of windowListeners.filter((item) => item.type === type)) entry.listener.call(context, event);
+    },
+    runFrames() {
+      const callbacks = [...pendingFrames.values()];
+      pendingFrames.clear();
+      for (const callback of callbacks) callback(0);
+    },
     mount(markup) {
       for (const node of materialize(parseHtml(markup), false)) document.body.appendChild(node);
       return document.body.querySelector('les56-product');
@@ -1202,9 +1235,116 @@ test('floating app launchers make way only while the sticky bar is shown', () =>
     for (const selector of selectors) {
       assert.match(selector, /^html\.les56-sticky-visible (\[class\*="kl-teaser-"\]|#smile-ui-lite-launcher-frame-container)$/, selector);
     }
-    assert.match(rule, /visibility: hidden/);
-    assert.doesNotMatch(rule, /display: none/, 'the apps keep their DOM and state');
+    // Klaviyo resets visibility and pointer-events on the teaser's children: only display: none takes the
+    // whole launcher out of rendering, hit-testing and the tab order. Their elements stay in the DOM.
+    assert.match(rule, /display: none !important/);
   }
+});
+
+// The main button's viewport position as Element.getBoundingClientRect reports it, counting layout reads.
+function placeMainButton(t, top) {
+  const main = t.$('[data-les56-submit="main"]');
+  main.layoutReads ??= 0;
+  main.getBoundingClientRect = () => {
+    main.layoutReads += 1;
+    return { top, bottom: top + 50, left: 16, right: 752, width: 736, height: 50 };
+  };
+  return main;
+}
+
+test('one jump that carries the main button from below to above the screen shows the sticky bar without an observer callback', () => {
+  const t = setup({ footer: true, frames: true });
+  const html = t.document.documentElement;
+  const sticky = t.$('[data-les56-sticky]');
+  const footer = t.document.querySelector('.footer-group');
+  const scrollListeners = t.windowListeners.filter((entry) => entry.type === 'scroll');
+  assert.equal(scrollListeners.length, 1, 'the section follows the page scroll');
+  assert.equal(scrollListeners[0].passive, true, 'without delaying scrolling');
+
+  // 768×1024 tablet: the button starts below the screen, so the observer reports it not intersecting.
+  const main = placeMainButton(t, 1470.953);
+  t.runFrames();
+  assert.equal(sticky.hidden, true, 'not shown while the button is still below the screen');
+
+  // One PageDown or long wheel of 1800px: the button goes straight to above the screen, crossing no
+  // observer threshold, so the observer stays silent.
+  placeMainButton(t, 1470.953 - 1800);
+  const readsBefore = main.layoutReads;
+  t.fireWindow('scroll');
+  t.fireWindow('scroll');
+  t.fireWindow('scroll');
+  assert.equal(main.layoutReads, readsBefore, 'no layout read on the raw scroll events');
+  assert.equal(t.pendingFrames.size, 1, 'scroll events are coalesced into one frame');
+  t.runFrames();
+  assert.equal(main.layoutReads, readsBefore + 1, 'one position read per frame');
+  assert.equal(sticky.hidden, false, 'shown once the button has left the top of the screen');
+  assert.equal(html.classList.contains('les56-sticky-visible'), true);
+
+  // Near the footer the bar makes way, and comes back when the footer leaves.
+  const footerObserver = t.intersectionObservers.find((item) => item.targets.includes(footer));
+  footerObserver.callback([{ target: footer, isIntersecting: true, boundingClientRect: { top: 500, bottom: 900 } }]);
+  t.fireWindow('scroll');
+  t.runFrames();
+  assert.equal(sticky.hidden, true, 'hidden near the footer');
+  assert.equal(html.classList.contains('les56-sticky-visible'), false);
+  footerObserver.callback([{ target: footer, isIntersecting: false, boundingClientRect: { top: 1100, bottom: 1500 } }]);
+  assert.equal(sticky.hidden, false, 'shown again once the footer leaves');
+
+  // The shopper returns to the button: hidden while it is fully visible or below the screen again.
+  placeMainButton(t, 400);
+  t.fireWindow('scroll');
+  t.runFrames();
+  assert.equal(sticky.hidden, true, 'hidden while the button is fully visible');
+  assert.equal(html.classList.contains('les56-sticky-visible'), false);
+  placeMainButton(t, -2000);
+  t.fireWindow('scroll');
+  t.runFrames();
+  assert.equal(sticky.hidden, false);
+  placeMainButton(t, 1470.953);
+  t.fireWindow('scroll');
+  t.runFrames();
+  assert.equal(sticky.hidden, true, 'hidden after one jump back below the button');
+  assert.equal(html.classList.contains('les56-sticky-visible'), false);
+});
+
+test('the sticky bar follows the main button position on load and on resize', () => {
+  const t = setup({ frames: true });
+  const html = t.document.documentElement;
+  const sticky = t.$('[data-les56-sticky]');
+  assert.equal(t.windowListeners.filter((entry) => entry.type === 'resize').length, 1, 'the section follows viewport resizes');
+
+  // A page restored already scrolled past the button shows the bar without waiting for a scroll.
+  placeMainButton(t, -300);
+  t.runFrames();
+  assert.equal(sticky.hidden, false, 'reconciled on load');
+  assert.equal(html.classList.contains('les56-sticky-visible'), true);
+
+  // Rotating to landscape brings the button back on screen; a narrower viewport pushes it above again.
+  placeMainButton(t, 300);
+  t.fireWindow('resize');
+  t.runFrames();
+  assert.equal(sticky.hidden, true, 'hidden when a resize brings the button back');
+  assert.equal(html.classList.contains('les56-sticky-visible'), false);
+  placeMainButton(t, -10);
+  t.fireWindow('resize');
+  t.runFrames();
+  assert.equal(sticky.hidden, false, 'shown when a resize moves the button above the screen');
+});
+
+test('a removed section releases its scroll and resize listeners and its pending frame', () => {
+  const t = setup({ frames: true });
+  const html = t.document.documentElement;
+  placeMainButton(t, -300);
+  t.runFrames();
+  assert.equal(html.classList.contains('les56-sticky-visible'), true);
+
+  t.fireWindow('scroll');
+  assert.equal(t.pendingFrames.size, 1);
+  t.root.remove();
+  assert.deepEqual(t.windowListeners.filter((entry) => ['scroll', 'resize'].includes(entry.type)), [], 'listeners removed');
+  assert.equal(t.pendingFrames.size, 0, 'pending frame cancelled');
+  t.runFrames();
+  assert.equal(html.classList.contains('les56-sticky-visible'), false, 'launchers restored when the section goes');
 });
 
 test('thumbnails list every image except the active one and select on click', () => {
