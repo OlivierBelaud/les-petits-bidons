@@ -94,7 +94,6 @@
   display: block;
 }
 
-/* The frame clips the slides, and the zoomed image, to its rounded corners at every width. */
 .les56-gallery__frame {
   position: relative;
   overflow: hidden;
@@ -116,7 +115,10 @@
 }
 
 .les56-gallery__slide {
+  display: flex;
   flex: 0 0 100%;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   padding: 0;
@@ -129,14 +131,18 @@
 
 .les56-gallery__image {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 20px;
   object-fit: contain;
   transform-origin: var(--les56-zoom-x, 50%) var(--les56-zoom-y, 50%);
   transition: transform 0.2s ease;
 }
 
-/* Zoomed: no swipe, the pointer or finger pans the image (assets/les56-product.js). */
 .les56-gallery.is-zoomed .les56-gallery__viewport {
   overflow: hidden;
 }
@@ -163,7 +169,6 @@
   background: var(--les56-mint-light);
 }
 
-/* Plus sign; the vertical bar goes once zoomed, leaving a minus. */
 .les56-gallery__zoom::before,
 .les56-gallery__zoom::after {
   content: '';
@@ -862,7 +867,6 @@
   backdrop-filter: blur(11px);
 }
 
-/* The delivery dropdown sits against the right inner edge of the subscription option at every width. */
 .les56-subscription__frequency {
   display: flex;
   align-items: center;
@@ -906,7 +910,6 @@
   white-space: nowrap;
 }
 
-/* Separated chevron, inset from the rounded edge. */
 .les56-plan__chevron {
   position: relative;
   flex: none;
@@ -978,7 +981,6 @@
 
 /* ---------- Add to cart ---------- */
 
-/* Below the desktop layout the button spans the whole product column. */
 .les56-buy {
   margin-top: 20px;
 }
@@ -1205,7 +1207,6 @@
 
 /* ---------- Sticky add to cart ---------- */
 
-/* Full-width bar and button, above the bottom safe area. */
 .les56-sticky {
   position: fixed;
   right: 0;
@@ -1222,10 +1223,6 @@
   display: none;
 }
 
-/*
- * While the sticky bar shows (assets/les56-product.js), the floating Klaviyo teaser and Smile launcher
- * it would cover are hidden, not removed: they come back with their state when the bar goes.
- */
 html.les56-sticky-visible [class*="kl-teaser-"],
 html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
   visibility: hidden !important;

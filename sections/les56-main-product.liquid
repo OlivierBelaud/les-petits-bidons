@@ -567,8 +567,6 @@
                   -%}
                   {%- for variant in product.variants -%}
                     {%- liquid
-                      # Known fragrances keep the Figma order, illustration and palette; the name is the
-                      # option value (Figma's "Bébé Sans Parfum" alias aside).
                       assign fragrance_key = variant.option1 | handleize
                       assign fragrance_name = variant.option1
                       assign fragrance_image = ''
@@ -596,7 +594,6 @@
                           assign fragrance_position = 5
                       endcase
 
-                      # The merchant's variant colours (fields of the former variant buttons) come first.
                       assign merchant_background = variant.metafields.custom.cluutch_variant_button_color.value | strip
                       assign merchant_text = variant.metafields.custom.variant_text_color.value | strip
                       if merchant_background != blank
@@ -606,7 +603,6 @@
                         assign fragrance_text_color = merchant_text
                       endif
 
-                      # The accent (selected border, chosen name) is the darker of the two, visible on white.
                       assign fragrance_accent = fragrance_color
                       assign background_mark = fragrance_color | slice: 0
                       assign text_mark = fragrance_text_color | slice: 0
@@ -813,28 +809,26 @@
 
                 {%- if has_plans -%}
                   {%- liquid
-                    # Real discount of the plan a subscription starts with (same rule as assets/les56-product.js).
                     assign subscription_percent = 0
                     assign subscription_offer = current_variant.selling_plan_allocations.first
                     if subscription_offer and current_variant.price > subscription_offer.price
                       assign subscription_percent = current_variant.price | minus: subscription_offer.price | times: 100.0 | divided_by: current_variant.price | round
                     endif
 
-                    # The merchant copy keeps its wording; the word before its first % is the example amount.
                     assign bubble_copy = section.settings.subscription_bubble_single
                     if default_quantity > 1
                       assign bubble_copy = section.settings.subscription_bubble_multiple
                     endif
                     assign bubble_amount = '-' | append: subscription_percent | append: '%'
                     if bubble_copy contains '%'
-                      assign bubble_head = bubble_copy | split: '%' | first
-                      assign bubble_tail = bubble_copy | remove_first: bubble_head | remove_first: '%'
-                      assign bubble_head = bubble_head | rstrip
-                      assign bubble_example = bubble_head | split: ' ' | last
-                      if bubble_example != blank
-                        assign bubble_head = bubble_head | remove_last: bubble_example
+                      assign copy_before_percent = bubble_copy | split: '%' | first
+                      assign copy_after_percent = bubble_copy | remove_first: copy_before_percent | remove_first: '%'
+                      assign copy_before_percent = copy_before_percent | rstrip
+                      assign example_discount_token = copy_before_percent | split: ' ' | last
+                      if example_discount_token != blank
+                        assign copy_before_percent = copy_before_percent | remove_last: example_discount_token
                       endif
-                      assign bubble_text = bubble_head | append: bubble_amount | append: bubble_tail
+                      assign bubble_text = copy_before_percent | append: bubble_amount | append: copy_after_percent
                     elsif bubble_copy != blank
                       assign bubble_text = bubble_amount | append: ' ' | append: bubble_copy
                     else
@@ -879,10 +873,6 @@
                           {%- endif -%}
                         </span>
                       </label>
-                      {%- comment -%}
-                        Delivery dropdown (button + listbox, assets/les56-product.js). The hidden native select
-                        is the only selling_plan field the form submits; it is disabled for one-time purchases.
-                      {%- endcomment -%}
                       <div class="les56-subscription__frequency" data-les56-frequency hidden>
                         <span class="les56-subscription__frequency-label" id="les56-plan-label-{{ section.id }}">
                           Livraison :

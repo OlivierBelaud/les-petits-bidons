@@ -18,17 +18,12 @@
     return unit * quantity;
   }
 
-  // Whole percentage a plan allocation takes off the variant price; 0 when it gives no discount.
   function discountPercent(priceCents, planCents) {
     if (!priceCents || planCents == null || planCents >= priceCents) return 0;
     return Math.round(((priceCents - planCents) * 100) / priceCents);
   }
 
-  /*
-   * The merchant's bubble copy carries an example amount ("-15% toute l’année"): the word before its
-   * first % is replaced by the real discount, as the section does on the first render.
-   */
-  function bubbleText(copy, percent) {
+  function replaceExampleDiscountPercent(copy, percent) {
     const amount = `-${percent}%`;
     const index = copy.indexOf('%');
     if (index < 0) return copy ? `${amount} ${copy}` : amount;
@@ -50,7 +45,6 @@
       .trim();
   }
 
-  // Inline zoom: the active image is enlarged inside its own frame and follows the pointer.
   const ZOOM_SCALE = 2.5;
 
   class Les56Gallery extends HTMLElement {
@@ -135,7 +129,6 @@
       });
     }
 
-    // No popup, focus move or scroll lock: the zoom only changes the active image in its frame.
     setZoom(zoomed) {
       this.zoomed = zoomed;
       this.classList.toggle('is-zoomed', zoomed);
@@ -149,7 +142,6 @@
 
       if (zoomed) {
         document.addEventListener('keydown', this.onKeydown);
-        // Ask the responsive image for a source sharp enough for the enlarged size.
         const width = active?.getBoundingClientRect().width;
         const image = active?.querySelector('img');
         if (image && width) image.setAttribute('sizes', `${Math.ceil(width * ZOOM_SCALE)}px`);
@@ -158,7 +150,6 @@
       }
     }
 
-    // The zoom origin follows the pointer, which pans the enlarged image within the clipped frame.
     panTo(event) {
       const slide = this.slides[this.activeIndex];
       const rect = slide?.getBoundingClientRect();
@@ -492,21 +483,16 @@
       const frequency = this.querySelector('[data-les56-frequency]');
       if (frequency) frequency.hidden = !plan;
 
-      // The discount of the chosen plan, or of the plan a subscription would start with.
       const bubble = this.querySelector('[data-les56-subscription-bubble]');
       if (bubble) {
         const offered = plan || plans.find((candidate) => candidate.id === this.state.planId) || plans[0];
         const percent = discountPercent(variant.price, offered?.price);
         const copy = (quantity > 1 ? bubble.dataset.copyMultiple : bubble.dataset.copySingle) || '';
         bubble.hidden = !percent;
-        bubble.textContent = percent ? bubbleText(copy, percent) : '';
+        bubble.textContent = percent ? replaceExampleDiscountPercent(copy, percent) : '';
       }
     }
 
-    /*
-     * Delivery dropdown: a button and a listbox showing the variant's real plans. The hidden native
-     * select stays the only `selling_plan` field; a choice is written to it and announced as a change.
-     */
     get planOptions() {
       return this.planList ? Array.from(this.planList.querySelectorAll('[role="option"]')) : [];
     }
@@ -617,12 +603,6 @@
       compareElement.hidden = compareCents <= totalCents;
     }
 
-    /*
-     * The sticky bar shows as soon as the main button starts leaving the top of the screen (no longer
-     * fully visible, top clipped), never while it is still below, and makes way for the footer.
-     * While it shows, the floating app launchers it would cover are hidden by a class on <html>
-     * (assets/les56-product.css); the apps keep their markup and state.
-     */
     observeSticky() {
       const sticky = this.querySelector('[data-les56-sticky]');
       const mainButton = this.querySelector('[data-les56-submit="main"]');
