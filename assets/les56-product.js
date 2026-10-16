@@ -10,11 +10,29 @@
   if (!window.customElements) return;
 
   const BASIS_POINTS = 10000;
+  const STICKY_VISIBLE_CLASS = 'les56-sticky-visible';
 
   // Matches Shopify's quantity discount: one upward rounding per discounted unit.
   function lineTotal(unitCents, discountBasisPoints, quantity) {
     const unit = Math.ceil((unitCents * (BASIS_POINTS - discountBasisPoints)) / BASIS_POINTS);
     return unit * quantity;
+  }
+
+  // Whole percentage a plan allocation takes off the variant price; 0 when it gives no discount.
+  function discountPercent(priceCents, planCents) {
+    if (!priceCents || planCents == null || planCents >= priceCents) return 0;
+    return Math.round(((priceCents - planCents) * 100) / priceCents);
+  }
+
+  /*
+   * The merchant's bubble copy carries an example amount ("-15% toute l’année"): the word before its
+   * first % is replaced by the real discount, as the section does on the first render.
+   */
+  function bubbleText(copy, percent) {
+    const amount = `-${percent}%`;
+    const index = copy.indexOf('%');
+    if (index < 0) return copy ? `${amount} ${copy}` : amount;
+    return copy.slice(0, index).trimEnd().replace(/\S*$/, '') + amount + copy.slice(index + 1);
   }
 
   // The design writes prices the French way (16,90€) whatever separator the shop format uses.
@@ -32,23 +50,25 @@
       .trim();
   }
 
+  // Inline zoom: the active image is enlarged inside its own frame and follows the pointer.
+  const ZOOM_SCALE = 2.5;
+
   class Les56Gallery extends HTMLElement {
     connectedCallback() {
       this.viewport = this.querySelector('[data-les56-viewport]');
       this.slides = Array.from(this.querySelectorAll('[data-les56-slide]'));
       this.thumbs = Array.from(this.querySelectorAll('[data-les56-thumb]'));
       this.dots = Array.from(this.querySelectorAll('[data-les56-dot]'));
-      this.dialog = this.querySelector('[data-les56-zoom]');
-      this.zoomImage = this.querySelector('[data-les56-zoom-image]');
+      this.zoomToggle = this.querySelector('[data-les56-zoom-toggle]');
+      this.zoomed = false;
 
       this.onClick = this.onClick.bind(this);
       this.onScroll = this.onScroll.bind(this);
-      this.onZoomClosed = this.onZoomClosed.bind(this);
-      this.onZoomKeydown = this.onZoomKeydown.bind(this);
+      this.onPointerMove = this.onPointerMove.bind(this);
+      this.onKeydown = this.onKeydown.bind(this);
       this.addEventListener('click', this.onClick);
       this.viewport?.addEventListener('scroll', this.onScroll, { passive: true });
-      this.dialog?.addEventListener('close', this.onZoomClosed);
-      this.dialog?.addEventListener('keydown', this.onZoomKeydown);
+      this.viewport?.addEventListener('pointermove', this.onPointerMove);
 
       this.setActive(0, false);
     }
@@ -56,20 +76,14 @@
     disconnectedCallback() {
       this.removeEventListener('click', this.onClick);
       this.viewport?.removeEventListener('scroll', this.onScroll, { passive: true });
-      this.dialog?.removeEventListener('keydown', this.onZoomKeydown);
-      this.zoomTrigger = null;
-      if (this.dialog?.open) this.dialog.close();
-      this.dialog?.removeEventListener('close', this.onZoomClosed);
+      this.viewport?.removeEventListener('pointermove', this.onPointerMove);
+      document.removeEventListener('keydown', this.onKeydown);
       cancelAnimationFrame(this.scrollFrame);
     }
 
     onClick(event) {
       const target = event.target;
-      if (this.dialog?.open) {
-        if (target === this.dialog || target.closest('[data-les56-zoom-close]')) this.closeZoom();
-        else if (target.closest('[data-les56-zoom-image]')) this.dialog.classList.toggle('is-zoomed');
-        return;
-      }
+      if (target.closest('[data-les56-zoom-toggle]')) return this.setZoom(!this.zoomed);
 
       const thumb = target.closest('[data-les56-thumb]');
       if (thumb) {
@@ -81,14 +95,19 @@
       if (target.closest('[data-les56-prev]')) return this.setActive(this.activeIndex - 1, true);
       if (target.closest('[data-les56-next]')) return this.setActive(this.activeIndex + 1, true);
 
-      const slide = target.closest('[data-les56-slide]');
-      if (slide) this.openZoom(slide);
+      if (!target.closest('[data-les56-slide]')) return;
+      if (this.zoomed) return this.setZoom(false);
+      this.setZoom(true);
+      // A pointer click zooms where the shopper pointed; keyboard activation (detail 0) on the centre.
+      if (event.detail) this.panTo(event);
     }
 
     setActive(index, scroll) {
       const count = this.slides.length;
       if (!count) return;
+      const previous = this.activeIndex;
       this.activeIndex = ((index % count) + count) % count;
+      if (this.zoomed && previous !== this.activeIndex) this.setZoom(false);
 
       this.slides.forEach((slide, position) => {
         const active = position === this.activeIndex;
@@ -116,30 +135,47 @@
       });
     }
 
-    openZoom(slide) {
-      if (!this.dialog || typeof this.dialog.showModal !== 'function') return;
-      this.zoomTrigger = slide;
-      this.zoomImage.setAttribute('src', slide.dataset.zoomSrc);
-      this.zoomImage.setAttribute('alt', slide.dataset.zoomAlt || '');
-      this.dialog.classList.remove('is-zoomed');
-      this.dialog.showModal();
-      this.querySelector('[data-les56-zoom-close]')?.focus();
+    // No popup, focus move or scroll lock: the zoom only changes the active image in its frame.
+    setZoom(zoomed) {
+      this.zoomed = zoomed;
+      this.classList.toggle('is-zoomed', zoomed);
+      const active = this.slides[this.activeIndex];
+      for (const slide of this.slides) {
+        slide.setAttribute('aria-pressed', zoomed && slide === active ? 'true' : 'false');
+        slide.style.removeProperty('--les56-zoom-x');
+        slide.style.removeProperty('--les56-zoom-y');
+      }
+      this.zoomToggle?.setAttribute('aria-pressed', zoomed ? 'true' : 'false');
+
+      if (zoomed) {
+        document.addEventListener('keydown', this.onKeydown);
+        // Ask the responsive image for a source sharp enough for the enlarged size.
+        const width = active?.getBoundingClientRect().width;
+        const image = active?.querySelector('img');
+        if (image && width) image.setAttribute('sizes', `${Math.ceil(width * ZOOM_SCALE)}px`);
+      } else {
+        document.removeEventListener('keydown', this.onKeydown);
+      }
     }
 
-    closeZoom() {
-      if (this.dialog?.open) this.dialog.close();
+    // The zoom origin follows the pointer, which pans the enlarged image within the clipped frame.
+    panTo(event) {
+      const slide = this.slides[this.activeIndex];
+      const rect = slide?.getBoundingClientRect();
+      if (!rect?.width || !rect.height) return;
+      const percent = (offset, size) => `${Math.round(Math.min(1, Math.max(0, offset / size)) * 10000) / 100}%`;
+      slide.style.setProperty('--les56-zoom-x', percent(event.clientX - rect.left, rect.width));
+      slide.style.setProperty('--les56-zoom-y', percent(event.clientY - rect.top, rect.height));
     }
 
-    onZoomKeydown(event) {
-      if (event.key !== 'Escape') return;
+    onPointerMove(event) {
+      if (this.zoomed) this.panTo(event);
+    }
+
+    onKeydown(event) {
+      if (event.key !== 'Escape' || !this.zoomed) return;
       event.preventDefault();
-      this.closeZoom();
-    }
-
-    onZoomClosed() {
-      const trigger = this.zoomTrigger;
-      this.zoomTrigger = null;
-      if (trigger?.isConnected) trigger.focus({ preventScroll: true });
+      this.setZoom(false);
     }
   }
 
@@ -187,6 +223,9 @@
       this.variantIdInput = this.querySelector('[data-les56-variant-id]');
       this.subscribeInput = this.querySelector('[data-les56-subscribe]');
       this.planSelect = this.querySelector('[data-les56-plan]');
+      this.planPicker = this.querySelector('[data-les56-plan-picker]');
+      this.planTrigger = this.querySelector('[data-les56-plan-trigger]');
+      this.planList = this.querySelector('[data-les56-plan-list]');
       this.mainButton = this.querySelector('[data-les56-submit="main"]');
       this.stickyButton = this.querySelector('[data-les56-submit="sticky"]');
 
@@ -202,11 +241,16 @@
       this.onClick = this.onClick.bind(this);
       this.onClickCapture = this.onClickCapture.bind(this);
       this.onSubmitted = this.onSubmitted.bind(this);
+      this.onPlanClick = this.onPlanClick.bind(this);
+      this.onPlanKeydown = this.onPlanKeydown.bind(this);
+      this.onPlanOutside = this.onPlanOutside.bind(this);
       this.addEventListener('change', this.onChange);
       this.addEventListener('submit', this.onSubmit, true);
       this.addEventListener('click', this.onClick);
       this.addEventListener('click', this.onClickCapture, true);
       this.addEventListener('submit', this.onSubmitted);
+      this.planPicker?.addEventListener('click', this.onPlanClick);
+      this.planPicker?.addEventListener('keydown', this.onPlanKeydown);
 
       this.selectQuantityFromUrl();
       this.update();
@@ -222,7 +266,11 @@
       this.removeEventListener('click', this.onClick);
       this.removeEventListener('click', this.onClickCapture, true);
       this.removeEventListener('submit', this.onSubmitted);
+      this.planPicker?.removeEventListener('click', this.onPlanClick);
+      this.planPicker?.removeEventListener('keydown', this.onPlanKeydown);
+      document.removeEventListener('pointerdown', this.onPlanOutside, true);
       this.stickyObserver?.disconnect();
+      document.documentElement.classList.remove(STICKY_VISIBLE_CLASS);
       this.errorObserver?.disconnect();
       this.appObserver?.disconnect();
       this.appBlockObserver?.disconnect();
@@ -430,10 +478,12 @@
             return option;
           }));
           this.planSelect.dataset.variantId = String(variant.id);
+          this.renderPlanOptions(plans);
         }
         if (plan) this.planSelect.value = String(plan.id);
         // A disabled select is left out of the form data: one-time purchases send no plan.
         this.planSelect.disabled = !plan;
+        this.syncPlanPicker();
       }
       if (this.subscribeInput) {
         this.subscribeInput.checked = Boolean(plan);
@@ -442,8 +492,121 @@
       const frequency = this.querySelector('[data-les56-frequency]');
       if (frequency) frequency.hidden = !plan;
 
+      // The discount of the chosen plan, or of the plan a subscription would start with.
       const bubble = this.querySelector('[data-les56-subscription-bubble]');
-      if (bubble) bubble.textContent = quantity > 1 ? bubble.dataset.copyMultiple : bubble.dataset.copySingle;
+      if (bubble) {
+        const offered = plan || plans.find((candidate) => candidate.id === this.state.planId) || plans[0];
+        const percent = discountPercent(variant.price, offered?.price);
+        const copy = (quantity > 1 ? bubble.dataset.copyMultiple : bubble.dataset.copySingle) || '';
+        bubble.hidden = !percent;
+        bubble.textContent = percent ? bubbleText(copy, percent) : '';
+      }
+    }
+
+    /*
+     * Delivery dropdown: a button and a listbox showing the variant's real plans. The hidden native
+     * select stays the only `selling_plan` field; a choice is written to it and announced as a change.
+     */
+    get planOptions() {
+      return this.planList ? Array.from(this.planList.querySelectorAll('[role="option"]')) : [];
+    }
+
+    renderPlanOptions(plans) {
+      if (!this.planList) return;
+      this.closePlanList(false);
+      const listId = this.planList.getAttribute('id');
+      this.planList.replaceChildren(...plans.map((candidate) => {
+        const option = document.createElement('li');
+        option.setAttribute('id', `${listId}-${candidate.id}`);
+        option.setAttribute('class', 'les56-plan__option');
+        option.setAttribute('role', 'option');
+        option.dataset.value = String(candidate.id);
+        option.textContent = candidate.name;
+        return option;
+      }));
+    }
+
+    syncPlanPicker() {
+      const value = this.planSelect.value;
+      let selected = null;
+      for (const option of this.planOptions) {
+        const match = option.dataset.value === value;
+        option.setAttribute('aria-selected', match ? 'true' : 'false');
+        if (match) selected = option;
+      }
+      const label = this.querySelector('[data-les56-plan-value]');
+      if (label) label.textContent = selected ? selected.textContent : '';
+    }
+
+    openPlanList() {
+      if (!this.planList || !this.planOptions.length) return;
+      this.planList.hidden = false;
+      this.planTrigger?.setAttribute('aria-expanded', 'true');
+      this.setActivePlanOption(this.planOptions.find((option) => option.getAttribute('aria-selected') === 'true') || this.planOptions[0]);
+      this.planList.focus();
+      document.addEventListener('pointerdown', this.onPlanOutside, true);
+    }
+
+    closePlanList(restoreFocus) {
+      document.removeEventListener('pointerdown', this.onPlanOutside, true);
+      if (!this.planList || this.planList.hidden) return;
+      this.planList.hidden = true;
+      this.planList.removeAttribute('aria-activedescendant');
+      this.planTrigger?.setAttribute('aria-expanded', 'false');
+      if (restoreFocus) this.planTrigger?.focus();
+    }
+
+    setActivePlanOption(option) {
+      if (!option) return;
+      for (const candidate of this.planOptions) candidate.classList.toggle('is-active', candidate === option);
+      this.planList.setAttribute('aria-activedescendant', option.getAttribute('id'));
+      option.scrollIntoView?.({ block: 'nearest' });
+    }
+
+    choosePlan(option) {
+      if (option && option.dataset.value !== this.planSelect.value) {
+        this.planSelect.value = option.dataset.value;
+        this.planSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      this.closePlanList(true);
+    }
+
+    onPlanClick(event) {
+      const option = event.target.closest('[role="option"]');
+      if (option) return this.choosePlan(option);
+      if (!event.target.closest('[data-les56-plan-trigger]')) return;
+      if (this.planList?.hidden) this.openPlanList();
+      else this.closePlanList(true);
+    }
+
+    onPlanKeydown(event) {
+      if (event.target.closest('[data-les56-plan-trigger]')) {
+        if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+        event.preventDefault();
+        this.openPlanList();
+        return;
+      }
+      if (event.target !== this.planList) return;
+
+      const options = this.planOptions;
+      const current = options.findIndex((option) => option.getAttribute('id') === this.planList.getAttribute('aria-activedescendant'));
+      const moves = { ArrowDown: current + 1, ArrowUp: current - 1, Home: 0, End: options.length - 1 };
+      if (event.key in moves) {
+        event.preventDefault();
+        this.setActivePlanOption(options[Math.min(options.length - 1, Math.max(0, moves[event.key]))]);
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        this.choosePlan(options[current]);
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        this.closePlanList(true);
+      } else if (event.key === 'Tab') {
+        this.closePlanList(false);
+      }
+    }
+
+    onPlanOutside(event) {
+      if (!this.planPicker?.contains(event.target)) this.closePlanList(false);
     }
 
     renderPrice(totalElement, compareElement, totalCents, compareCents) {
@@ -454,6 +617,12 @@
       compareElement.hidden = compareCents <= totalCents;
     }
 
+    /*
+     * The sticky bar shows as soon as the main button starts leaving the top of the screen (no longer
+     * fully visible, top clipped), never while it is still below, and makes way for the footer.
+     * While it shows, the floating app launchers it would cover are hidden by a class on <html>
+     * (assets/les56-product.css); the apps keep their markup and state.
+     */
     observeSticky() {
       const sticky = this.querySelector('[data-les56-sticky]');
       const mainButton = this.querySelector('[data-les56-submit="main"]');
@@ -465,13 +634,15 @@
       this.stickyObserver = new IntersectionObserver((entries) => {
         for (const entry of entries) {
           if (entry.target === mainButton) {
-            passedMainButton = !entry.isIntersecting && entry.boundingClientRect.bottom < 0;
+            const rootTop = entry.rootBounds ? entry.rootBounds.top : 0;
+            passedMainButton = entry.intersectionRatio < 1 && entry.boundingClientRect.top < rootTop;
           } else if (entry.target === footer) {
             footerVisible = entry.isIntersecting;
           }
         }
         sticky.hidden = !passedMainButton || footerVisible;
-      });
+        document.documentElement.classList.toggle(STICKY_VISIBLE_CLASS, !sticky.hidden);
+      }, { threshold: [0, 1] });
       this.stickyObserver.observe(mainButton);
       if (footer) this.stickyObserver.observe(footer);
     }

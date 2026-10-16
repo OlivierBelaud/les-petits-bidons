@@ -94,8 +94,12 @@
   display: block;
 }
 
+/* The frame clips the slides, and the zoomed image, to its rounded corners at every width. */
 .les56-gallery__frame {
   position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  isolation: isolate;
 }
 
 .les56-gallery__viewport {
@@ -118,6 +122,7 @@
   padding: 0;
   border: 0;
   background: transparent;
+  overflow: hidden;
   scroll-snap-align: start;
   cursor: zoom-in;
 }
@@ -127,6 +132,57 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transform-origin: var(--les56-zoom-x, 50%) var(--les56-zoom-y, 50%);
+  transition: transform 0.2s ease;
+}
+
+/* Zoomed: no swipe, the pointer or finger pans the image (assets/les56-product.js). */
+.les56-gallery.is-zoomed .les56-gallery__viewport {
+  overflow: hidden;
+}
+
+.les56-gallery.is-zoomed .les56-gallery__slide {
+  cursor: zoom-out;
+  touch-action: none;
+}
+
+.les56-gallery.is-zoomed .les56-gallery__slide[aria-pressed='true'] .les56-gallery__image {
+  transform: scale(2.5);
+}
+
+.les56 .les56-gallery__zoom {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--les56-mint-dark);
+  border-radius: 50%;
+  background: var(--les56-mint-light);
+}
+
+/* Plus sign; the vertical bar goes once zoomed, leaving a minus. */
+.les56-gallery__zoom::before,
+.les56-gallery__zoom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--les56-mint-dark);
+  transform: translate(-50%, -50%);
+}
+
+.les56-gallery__zoom::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.les56-gallery__zoom[aria-pressed='true']::after {
+  display: none;
 }
 
 .les56-gallery__arrow {
@@ -183,70 +239,6 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-.les56-zoom {
-  width: 100vw;
-  max-width: none;
-  height: 100dvh;
-  max-height: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: var(--les56-background);
-}
-
-.les56-zoom[open] {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: auto;
-}
-
-.les56-zoom::backdrop {
-  background: rgb(0 52 53 / 60%);
-}
-
-.les56-zoom__image {
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: 100%;
-  object-fit: contain;
-  cursor: zoom-in;
-}
-
-.les56-zoom.is-zoomed {
-  align-items: flex-start;
-  justify-content: flex-start;
-}
-
-.les56-zoom.is-zoomed .les56-zoom__image {
-  width: min(2048px, 200vw);
-  max-width: none;
-  max-height: none;
-  cursor: zoom-out;
-}
-
-.les56-zoom__close {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 1px solid var(--les56-mint-dark);
-  border-radius: 50%;
-  background: var(--les56-mint-light);
-}
-
-.les56-zoom__close-icon {
-  width: 20px;
-  height: 20px;
 }
 
 /* ---------- Heading: title, price, rating ---------- */
@@ -478,7 +470,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  border: 3px solid var(--les56-fragrance-color);
+  border: 3px solid var(--les56-fragrance-accent);
   border-radius: 12px;
   pointer-events: none;
 }
@@ -870,38 +862,125 @@
   backdrop-filter: blur(11px);
 }
 
+/* The delivery dropdown sits against the right inner edge of the subscription option at every width. */
 .les56-subscription__frequency {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   padding: 0 11px 12px 39px;
 }
 
 .les56-subscription__frequency-label {
+  flex: none;
   font-size: 12px;
   font-weight: 500;
   line-height: 18px;
 }
 
-.les56-subscription__select {
-  min-width: 177px;
-  height: 30px;
-  padding: 0 8px 0 12px;
-  border: 1px solid var(--les56-border);
+.les56-plan {
+  position: relative;
+  min-width: 0;
+}
+
+.les56 .les56-plan__trigger {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  height: 32px;
+  padding: 0 0 0 12px;
+  border: 1px solid rgb(0 52 53 / 25%);
   border-radius: 8px;
-  background-color: #fff;
+  background: var(--les56-cream);
   color: var(--les56-text);
-  font: inherit;
   font-size: 12px;
   font-weight: 500;
+  line-height: 18px;
+  text-align: left;
+}
+
+.les56-plan__value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Separated chevron, inset from the rounded edge. */
+.les56-plan__chevron {
+  position: relative;
+  flex: none;
+  align-self: stretch;
+  width: 34px;
+  margin-left: 10px;
+  border-left: 1px solid rgb(0 52 53 / 25%);
+}
+
+.les56-plan__chevron::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translate(-50%, -75%) rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.les56-plan__trigger[aria-expanded='true'] .les56-plan__chevron::before {
+  transform: translate(-50%, -25%) rotate(225deg);
+}
+
+.les56 .les56-plan__list {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 3;
+  min-width: 100%;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 32px));
+  max-height: 240px;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  border: 1px solid var(--les56-border);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(0 52 53 / 12%);
+  list-style: none;
+}
+
+.les56-plan__list:focus-visible {
+  outline: 2px solid var(--les56-mint-dark);
+  outline-offset: 2px;
+}
+
+.les56-plan__option {
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: var(--les56-text);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+.les56-plan__option:hover,
+.les56-plan__option.is-active {
+  background: var(--les56-mint-light);
+}
+
+.les56-plan__option[aria-selected='true'] {
+  font-weight: 700;
 }
 
 /* ---------- Add to cart ---------- */
 
+/* Below the desktop layout the button spans the whole product column. */
 .les56-buy {
   margin-top: 20px;
-  padding: 0 11px;
 }
 
 .les56 .les56-cta {
@@ -910,9 +989,8 @@
   justify-content: center;
   gap: 10px;
   width: 100%;
-  max-width: 512px;
   height: 50px;
-  padding: 0 40px;
+  padding: 0 16px;
   border: 0;
   border-radius: 40px;
   background: var(--les56-mint);
@@ -1127,28 +1205,31 @@
 
 /* ---------- Sticky add to cart ---------- */
 
+/* Full-width bar and button, above the bottom safe area. */
 .les56-sticky {
   position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 20;
-  padding: 10px 11px calc(10px + env(safe-area-inset-bottom));
+  padding: 10px max(11px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(11px, env(safe-area-inset-left));
   background: var(--les56-background);
   box-shadow: 0 -4px 16px rgb(0 52 53 / 8%);
   animation: les56-sticky-in 0.2s ease-out;
 }
 
-.les56-sticky__inner {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  max-width: 1360px;
-  margin: 0 auto;
-}
-
 .les56-sticky__title {
   display: none;
+}
+
+/*
+ * While the sticky bar shows (assets/les56-product.js), the floating Klaviyo teaser and Smile launcher
+ * it would cover are hidden, not removed: they come back with their state when the bar goes.
+ */
+html.les56-sticky-visible [class*="kl-teaser-"],
+html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .les56-sticky__error {
@@ -1169,6 +1250,10 @@
   .les56-gallery__viewport {
     scroll-behavior: auto;
   }
+
+  .les56-gallery__image {
+    transition: none;
+  }
 }
 
 /* ---------- Tablet: single column, contained ---------- */
@@ -1178,11 +1263,6 @@
     max-width: 640px;
     margin: 0 auto;
     padding-top: 16px;
-  }
-
-  .les56-gallery__frame {
-    overflow: hidden;
-    border-radius: 20px;
   }
 }
 
@@ -1205,11 +1285,6 @@
     grid-template-columns: minmax(0, 770fr) minmax(400px, 520fr);
     align-items: start;
     column-gap: 49px;
-  }
-
-  .les56-gallery__frame {
-    overflow: hidden;
-    border-radius: 20px;
   }
 
   .les56-gallery__viewport {
@@ -1486,6 +1561,11 @@
     padding: 0 0 0 8px;
   }
 
+  .les56 .les56-buy .les56-cta {
+    max-width: 512px;
+    padding: 0 40px;
+  }
+
   .les56-reassurance {
     margin-top: 4px;
   }
@@ -1533,23 +1613,6 @@
   }
 
   .les56-sticky {
-    padding: 12px 40px;
-  }
-
-  .les56-sticky__title {
-    display: block;
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    font-family: 'Raleway', var(--font-heading-family, sans-serif);
-    font-size: 18px;
-    font-weight: 600;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .les56 .les56-cta--sticky {
-    width: 358px;
-    flex: none;
+    padding: 12px 40px calc(12px + env(safe-area-inset-bottom));
   }
 }

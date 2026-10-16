@@ -94,9 +94,8 @@
                 class="les56-gallery__slide"
                 data-les56-slide
                 data-index="{{ forloop.index0 }}"
-                data-zoom-src="{{ image | image_url: width: 2048 }}"
-                data-zoom-alt="{{ image_alt | escape }}"
-                aria-label="Agrandir l’image {{ forloop.index }} sur {{ image_count }}"
+                aria-pressed="false"
+                aria-label="Zoomer sur l’image {{ forloop.index }} sur {{ image_count }}"
                 {% unless forloop.first %}
                   tabindex="-1" aria-hidden="true"
                 {% endunless %}
@@ -109,12 +108,19 @@
                     alt: image_alt,
                     loading: image_loading,
                     fetchpriority: image_priority,
-                    widths: '380, 570, 760, 1140, 1540',
+                    widths: '380, 570, 760, 1140, 1540, 2048',
                     sizes: '(min-width: 1024px) 770px, (min-width: 600px) 640px, 100vw'
                 }}
               </button>
             {%- endfor -%}
           </div>
+          <button
+            type="button"
+            class="les56-gallery__zoom"
+            data-les56-zoom-toggle
+            aria-pressed="false"
+            aria-label="Zoomer sur l’image"
+          ></button>
           {%- if image_count > 1 -%}
             <button
               type="button"
@@ -166,20 +172,6 @@
             {%- endfor -%}
           </div>
         {%- endif -%}
-        <dialog class="les56-zoom" data-les56-zoom aria-label="Zoom sur l’image">
-          <button type="button" class="les56-zoom__close" data-les56-zoom-close aria-label="Fermer le zoom">
-            {%- render 'icon', icon: 'close', class: 'les56-zoom__close-icon' -%}
-          </button>
-          <img
-            class="les56-zoom__image"
-            data-les56-zoom-image
-            src="{{ gallery_images.first | image_url: width: 2048 }}"
-            alt=""
-            width="2048"
-            height="2048"
-            loading="lazy"
-          >
-        </dialog>
       </les56-gallery>
     {%- endif -%}
   {%- endcapture -%}
@@ -575,13 +567,16 @@
                   -%}
                   {%- for variant in product.variants -%}
                     {%- liquid
+                      # Known fragrances keep the Figma order, illustration and palette; the name is the
+                      # option value (Figma's "Bébé Sans Parfum" alias aside).
                       assign fragrance_key = variant.option1 | handleize
+                      assign fragrance_name = variant.option1
                       assign fragrance_image = ''
                       assign fragrance_position = 0
+                      assign fragrance_color = '#37b6ad'
                       assign fragrance_text_color = '#ffffff'
                       case fragrance_key
                         when 'fleurs-blanches'
-                          assign fragrance_name = 'Fleurs Blanches'
                           assign fragrance_color = '#f0813c'
                           assign fragrance_position = 1
                         when 'bebe', 'bebe-sans-parfum'
@@ -590,28 +585,45 @@
                           assign fragrance_color = '#5893f2'
                           assign fragrance_position = 2
                         when 'lavande'
-                          assign fragrance_name = 'Lavande'
                           assign fragrance_color = '#966fd7'
                           assign fragrance_position = 3
                         when 'amande-douce'
-                          assign fragrance_name = 'Amande douce'
                           assign fragrance_color = '#b7c68f'
                           assign fragrance_text_color = '#fffffa'
                           assign fragrance_position = 4
                         when 'eucalyptus'
-                          assign fragrance_name = 'Eucalyptus'
                           assign fragrance_color = '#37b6ad'
                           assign fragrance_position = 5
-                        else
-                          assign fragrance_name = variant.option1
-                          assign fragrance_color = variant.metafields.custom.variant_text_color.value | default: '#37b6ad'
                       endcase
+
+                      # The merchant's variant colours (fields of the former variant buttons) come first.
+                      assign merchant_background = variant.metafields.custom.cluutch_variant_button_color.value | strip
+                      assign merchant_text = variant.metafields.custom.variant_text_color.value | strip
+                      if merchant_background != blank
+                        assign fragrance_color = merchant_background
+                      endif
+                      if merchant_text != blank
+                        assign fragrance_text_color = merchant_text
+                      endif
+
+                      # The accent (selected border, chosen name) is the darker of the two, visible on white.
+                      assign fragrance_accent = fragrance_color
+                      assign background_mark = fragrance_color | slice: 0
+                      assign text_mark = fragrance_text_color | slice: 0
+                      if background_mark == '#' and text_mark == '#'
+                        assign background_brightness = fragrance_color | color_brightness
+                        assign text_brightness = fragrance_text_color | color_brightness
+                        if text_brightness < background_brightness
+                          assign fragrance_accent = fragrance_text_color
+                        endif
+                      endif
+
                       if fragrance_position > 0
                         assign fragrance_image = 'les56-fragrance-' | append: fragrance_key | append: '.jpg'
                       endif
                       if variant.id == current_variant.id
                         assign current_fragrance_name = fragrance_name
-                        assign current_fragrance_color = fragrance_color
+                        assign current_fragrance_color = fragrance_accent
                       endif
                       assign fragrance_input_id = 'les56-variant-' | append: section.id | append: '-' | append: variant.id
                     -%}
@@ -624,7 +636,7 @@
                         value="{{ variant.id }}"
                         data-les56-variant-input
                         data-fragrance-name="{{ fragrance_name | escape }}"
-                        data-fragrance-color="{{ fragrance_color | escape }}"
+                        data-fragrance-color="{{ fragrance_accent | escape }}"
                         {% if variant.id == current_variant.id %}
                           checked
                         {% endif %}
@@ -632,7 +644,7 @@
                       <label
                         for="{{ fragrance_input_id }}"
                         class="les56-fragrance les56-fragrance--{{ fragrance_key }}{% unless variant.available %} is-unavailable{% endunless %}"
-                        style="--les56-fragrance-color: {{ fragrance_color | escape }}; --les56-fragrance-text: {{ fragrance_text_color }};"
+                        style="--les56-fragrance-color: {{ fragrance_color | escape }}; --les56-fragrance-text: {{ fragrance_text_color | escape }}; --les56-fragrance-accent: {{ fragrance_accent | escape }};"
                       >
                         <span class="les56-fragrance__art" aria-hidden="true">
                           {%- if fragrance_image != blank -%}
@@ -800,6 +812,35 @@
                 {%- endif -%}
 
                 {%- if has_plans -%}
+                  {%- liquid
+                    # Real discount of the plan a subscription starts with (same rule as assets/les56-product.js).
+                    assign subscription_percent = 0
+                    assign subscription_offer = current_variant.selling_plan_allocations.first
+                    if subscription_offer and current_variant.price > subscription_offer.price
+                      assign subscription_percent = current_variant.price | minus: subscription_offer.price | times: 100.0 | divided_by: current_variant.price | round
+                    endif
+
+                    # The merchant copy keeps its wording; the word before its first % is the example amount.
+                    assign bubble_copy = section.settings.subscription_bubble_single
+                    if default_quantity > 1
+                      assign bubble_copy = section.settings.subscription_bubble_multiple
+                    endif
+                    assign bubble_amount = '-' | append: subscription_percent | append: '%'
+                    if bubble_copy contains '%'
+                      assign bubble_head = bubble_copy | split: '%' | first
+                      assign bubble_tail = bubble_copy | remove_first: bubble_head | remove_first: '%'
+                      assign bubble_head = bubble_head | rstrip
+                      assign bubble_example = bubble_head | split: ' ' | last
+                      if bubble_example != blank
+                        assign bubble_head = bubble_head | remove_last: bubble_example
+                      endif
+                      assign bubble_text = bubble_head | append: bubble_amount | append: bubble_tail
+                    elsif bubble_copy != blank
+                      assign bubble_text = bubble_amount | append: ' ' | append: bubble_copy
+                    else
+                      assign bubble_text = bubble_amount
+                    endif
+                  -%}
                   <div
                     class="les56-subscription"
                     data-les56-subscription
@@ -829,33 +870,78 @@
                           data-les56-subscription-bubble
                           data-copy-single="{{ section.settings.subscription_bubble_single | escape }}"
                           data-copy-multiple="{{ section.settings.subscription_bubble_multiple | escape }}"
+                          {% if subscription_percent == 0 %}
+                            hidden
+                          {% endif %}
                         >
-                          {%- if default_quantity > 1 -%}
-                            {{ section.settings.subscription_bubble_multiple | escape }}
-                          {%- else -%}
-                            {{ section.settings.subscription_bubble_single | escape }}
+                          {%- if subscription_percent > 0 -%}
+                            {{- bubble_text | escape -}}
                           {%- endif -%}
                         </span>
                       </label>
+                      {%- comment -%}
+                        Delivery dropdown (button + listbox, assets/les56-product.js). The hidden native select
+                        is the only selling_plan field the form submits; it is disabled for one-time purchases.
+                      {%- endcomment -%}
                       <div class="les56-subscription__frequency" data-les56-frequency hidden>
-                        <label class="les56-subscription__frequency-label" for="les56-plan-{{ section.id }}">
+                        <span class="les56-subscription__frequency-label" id="les56-plan-label-{{ section.id }}">
                           Livraison :
-                        </label>
-                        <select
-                          id="les56-plan-{{ section.id }}"
-                          class="les56-subscription__select"
-                          name="selling_plan"
-                          form="{{ form_id }}"
-                          data-les56-plan
-                          data-variant-id="{{ current_variant.id }}"
-                          disabled
-                        >
-                          {%- for allocation in current_variant.selling_plan_allocations -%}
-                            <option value="{{ allocation.selling_plan.id }}">
-                              {{- allocation.selling_plan.name | escape -}}
-                            </option>
-                          {%- endfor -%}
-                        </select>
+                        </span>
+                        <div class="les56-plan" data-les56-plan-picker>
+                          <select
+                            id="les56-plan-{{ section.id }}"
+                            class="les56-sr-only"
+                            name="selling_plan"
+                            form="{{ form_id }}"
+                            data-les56-plan
+                            data-variant-id="{{ current_variant.id }}"
+                            tabindex="-1"
+                            aria-hidden="true"
+                            disabled
+                          >
+                            {%- for allocation in current_variant.selling_plan_allocations -%}
+                              <option value="{{ allocation.selling_plan.id }}">
+                                {{- allocation.selling_plan.name | escape -}}
+                              </option>
+                            {%- endfor -%}
+                          </select>
+                          <button
+                            type="button"
+                            class="les56-plan__trigger"
+                            id="les56-plan-trigger-{{ section.id }}"
+                            data-les56-plan-trigger
+                            aria-haspopup="listbox"
+                            aria-expanded="false"
+                            aria-controls="les56-plan-list-{{ section.id }}"
+                            aria-labelledby="les56-plan-label-{{ section.id }} les56-plan-trigger-{{ section.id }}"
+                          >
+                            <span class="les56-plan__value" data-les56-plan-value>
+                              {{- current_variant.selling_plan_allocations.first.selling_plan.name | escape -}}
+                            </span>
+                            <span class="les56-plan__chevron" aria-hidden="true"></span>
+                          </button>
+                          <ul
+                            class="les56-plan__list"
+                            id="les56-plan-list-{{ section.id }}"
+                            role="listbox"
+                            tabindex="-1"
+                            aria-labelledby="les56-plan-label-{{ section.id }}"
+                            data-les56-plan-list
+                            hidden
+                          >
+                            {%- for allocation in current_variant.selling_plan_allocations -%}
+                              <li
+                                class="les56-plan__option"
+                                id="les56-plan-list-{{ section.id }}-{{ allocation.selling_plan.id }}"
+                                role="option"
+                                data-value="{{ allocation.selling_plan.id }}"
+                                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                              >
+                                {{- allocation.selling_plan.name | escape -}}
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>

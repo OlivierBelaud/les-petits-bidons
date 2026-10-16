@@ -453,7 +453,7 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
   }
 
   class FakeIntersectionObserver {
-    constructor(callback) { this.callback = callback; this.targets = []; intersectionObservers.push(this); }
+    constructor(callback, options = {}) { this.callback = callback; this.options = options; this.targets = []; intersectionObservers.push(this); }
     observe(target) { this.targets.push(target); }
     unobserve(target) { this.targets = this.targets.filter((item) => item !== target); }
     disconnect() { this.targets = []; }
@@ -631,8 +631,8 @@ const euro = (cents) => `${Math.floor(cents / 100)},${String(cents % 100).padSta
 function renderGallery(variant) {
   const count = variant.images.length;
   const slides = variant.images.map((image, index) => `
-    <button type="button" class="les56-gallery__slide" data-les56-slide data-index="${index}" data-zoom-src="/${image}-2048.jpg" data-zoom-alt="${image}" aria-label="Agrandir l’image ${index + 1} sur ${count}">
-      <img src="/${image}.jpg" alt="${image}">
+    <button type="button" class="les56-gallery__slide" data-les56-slide data-index="${index}" aria-pressed="false" aria-label="Zoomer sur l’image ${index + 1} sur ${count}">
+      <img class="les56-gallery__image" src="/${image}.jpg" alt="${image}" sizes="100vw">
     </button>`).join('');
   const thumbs = variant.images.map((image, index) => `
     <button type="button" class="les56-gallery__thumb" data-les56-thumb data-index="${index}" aria-label="Afficher l’image ${index + 1}"${index === 0 ? ' hidden' : ''}>
@@ -642,15 +642,12 @@ function renderGallery(variant) {
     <les56-gallery class="les56-gallery">
       <div class="les56-gallery__frame">
         <div class="les56-gallery__viewport" data-les56-viewport>${slides}</div>
+        <button type="button" class="les56-gallery__zoom" data-les56-zoom-toggle aria-pressed="false" aria-label="Zoomer sur l’image"></button>
         <button type="button" class="les56-gallery__arrow" data-les56-prev aria-label="Image précédente"></button>
         <button type="button" class="les56-gallery__arrow" data-les56-next aria-label="Image suivante"></button>
         <div class="les56-gallery__dots">${variant.images.map(() => '<span class="les56-gallery__dot" data-les56-dot></span>').join('')}</div>
       </div>
       <div class="les56-gallery__thumbs">${thumbs}</div>
-      <dialog class="les56-zoom" data-les56-zoom aria-label="Zoom">
-        <button type="button" class="les56-zoom__close" data-les56-zoom-close aria-label="Fermer"></button>
-        <img class="les56-zoom__image" data-les56-zoom-image alt="">
-      </dialog>
     </les56-gallery>`;
 }
 
@@ -692,17 +689,30 @@ function renderSection(product) {
       ${discounted && quantity.discount ? `<span class="les56-pill les56-pill--discount">${quantity.discount}</span>` : ''}
     </label>`).join('');
   const hasPlans = current.plans.length > 0;
+  // As the section renders it: the merchant copy with the current variant's real first-plan discount.
+  const bubble = product.bubble || { single: '-15% toute l’année', multiple: '-15% supplémentaires' };
+  const percent = hasPlans ? Math.round(((current.price - current.plans[0].price) * 100) / current.price) : 0;
+  const amountAt = bubble.single.indexOf('%');
+  const bubbleText = percent > 0 ? `${bubble.single.slice(0, amountAt).trimEnd().replace(/\S*$/, '')}-${percent}%${bubble.single.slice(amountAt + 1)}` : '';
   const subscription = variants.some((variant) => variant.plans.length) ? `
     <div class="les56-subscription" data-les56-subscription${hasPlans ? '' : ' hidden'}>
       <input type="checkbox" class="les56-sr-only" id="les56-subscribe-${sectionId}" data-les56-subscribe>
       <label for="les56-subscribe-${sectionId}">Je m’abonne
-        <span data-les56-subscription-bubble data-copy-single="-15% toute l’année" data-copy-multiple="-15% supplémentaires">-15% toute l’année</span>
+        <span data-les56-subscription-bubble data-copy-single="${bubble.single}" data-copy-multiple="${bubble.multiple}"${percent > 0 ? '' : ' hidden'}>${bubbleText}</span>
       </label>
       <div class="les56-subscription__frequency" data-les56-frequency hidden>
-        <label for="les56-plan-${sectionId}">Livraison :</label>
-        <select id="les56-plan-${sectionId}" name="selling_plan" form="${formId}" data-les56-plan disabled>
-          ${current.plans.map((plan) => `<option value="${plan.id}">${plan.name}</option>`).join('')}
-        </select>
+        <span id="les56-plan-label-${sectionId}">Livraison :</span>
+        <div class="les56-plan" data-les56-plan-picker>
+          <select id="les56-plan-${sectionId}" class="les56-sr-only" name="selling_plan" form="${formId}" data-les56-plan data-variant-id="${current.id}" tabindex="-1" aria-hidden="true" disabled>
+            ${current.plans.map((plan) => `<option value="${plan.id}">${plan.name}</option>`).join('')}
+          </select>
+          <button type="button" class="les56-plan__trigger" id="les56-plan-trigger-${sectionId}" data-les56-plan-trigger aria-haspopup="listbox" aria-expanded="false" aria-controls="les56-plan-list-${sectionId}" aria-labelledby="les56-plan-label-${sectionId} les56-plan-trigger-${sectionId}">
+            <span data-les56-plan-value>${current.plans[0]?.name || ''}</span>
+          </button>
+          <ul class="les56-plan__list" id="les56-plan-list-${sectionId}" role="listbox" tabindex="-1" aria-labelledby="les56-plan-label-${sectionId}" data-les56-plan-list hidden>
+            ${current.plans.map((plan, index) => `<li class="les56-plan__option" id="les56-plan-list-${sectionId}-${plan.id}" role="option" data-value="${plan.id}" aria-selected="${index === 0}">${plan.name}</li>`).join('')}
+          </ul>
+        </div>
       </div>
     </div>` : '';
   const submitContent = `
@@ -892,16 +902,168 @@ test('a frequency persists only when the new fragrance offers it, otherwise a va
   assert.equal(t.payload().selling_plan, '999');
   assert.deepEqual(plan.options.map((option) => option.value), ['999']);
   assert.equal(plan.value, '999');
+  assert.deepEqual(planOptions(t), [['999', 'Livraison toutes les 6 semaines', 'true']], 'dropdown rebuilt from the real plans');
+  assert.equal(t.$('[data-les56-plan-value]').textContent, 'Livraison toutes les 6 semaines');
   assert.equal(t.$('[data-les56-submit="main"] [data-les56-cta-total]').textContent, euro(1500));
   assert.equal(t.$('[data-les56-subscribe]').checked, true);
+
+  t.choose(variantInput(t, 55185604149626));
+  assert.deepEqual(planOptions(t).map(([value, , selected]) => [value, selected]), [[String(monthly.id), 'true'], [String(bimonthly.id), 'false']]);
+  assert.equal(t.payload().selling_plan, String(monthly.id), 'an unsold frequency falls back to a real plan');
 });
 
-test('quantity copy for the subscription bubble follows the ticket wording', () => {
+const planOptions = (t) => t.$$('[data-les56-plan-list] [role="option"]').map((option) => [
+  option.dataset.value, option.textContent, option.getAttribute('aria-selected'),
+]);
+
+test('the delivery dropdown is a button and listbox that writes the chosen real plan to the native select', () => {
+  const t = setup();
+  t.choose(t.$('[data-les56-subscribe]'));
+  const trigger = t.$('[data-les56-plan-trigger]');
+  const list = t.$('[data-les56-plan-list]');
+  assert.equal(t.$('[data-les56-plan]').getAttribute('aria-hidden'), 'true', 'the native select is only the form field');
+  assert.equal(trigger.getAttribute('aria-haspopup'), 'listbox');
+  assert.deepEqual(planOptions(t), [
+    [String(monthly.id), monthly.name, 'true'],
+    [String(bimonthly.id), bimonthly.name, 'false'],
+  ]);
+  assert.equal(t.$('[data-les56-plan-value]').textContent, monthly.name);
+
+  t.click(trigger);
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+  assert.equal(list.hidden, false);
+  assert.equal(t.document.activeElement, list);
+  assert.equal(list.getAttribute('aria-activedescendant'), `${list.getAttribute('id')}-${monthly.id}`);
+
+  t.click(t.$(`[role="option"][data-value="${bimonthly.id}"]`));
+  assert.equal(list.hidden, true);
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(t.document.activeElement, trigger, 'focus returns to the button');
+  assert.equal(t.$('[data-les56-plan-value]').textContent, bimonthly.name);
+  assert.deepEqual(planOptions(t).map(([, , selected]) => selected), ['false', 'true']);
+  assert.deepEqual(t.payload(), { id: '56810523722106', quantity: '1', selling_plan: String(bimonthly.id) });
+  assert.equal(t.$$('[name="selling_plan"]').length, 1, 'the native select stays the only plan field');
+
+  t.click(t.$('[data-les56-submit="main"]'));
+  assert.deepEqual(t.fetchCalls[0].body.getAll('selling_plan'), [String(bimonthly.id)]);
+
+  // Back to a one-time purchase: no plan is sent.
+  t.$('[data-les56-subscribe]').checked = false;
+  t.$('[data-les56-subscribe]').dispatchEvent(new t.window.Event('change', { bubbles: true }));
+  assert.equal(t.$('[data-les56-plan]').disabled, true);
+  assert.equal(t.payload().selling_plan, undefined);
+});
+
+test('the delivery dropdown works from the keyboard and closes on Escape, Tab or an outside click', () => {
+  const t = setup();
+  t.choose(t.$('[data-les56-subscribe]'));
+  const trigger = t.$('[data-les56-plan-trigger]');
+  const list = t.$('[data-les56-plan-list]');
+  const listId = list.getAttribute('id');
+  const active = () => list.getAttribute('aria-activedescendant');
+
+  trigger.focus();
+  t.keydown(trigger, 'ArrowDown');
+  assert.equal(list.hidden, false, 'arrow keys open the list');
+  assert.equal(active(), `${listId}-${monthly.id}`);
+  t.keydown(list, 'ArrowDown');
+  assert.equal(active(), `${listId}-${bimonthly.id}`);
+  t.keydown(list, 'ArrowDown');
+  assert.equal(active(), `${listId}-${bimonthly.id}`, 'stops on the last option');
+  t.keydown(list, 'Home');
+  assert.equal(active(), `${listId}-${monthly.id}`);
+  t.keydown(list, 'End');
+  t.keydown(list, 'Escape');
+  assert.equal(list.hidden, true);
+  assert.equal(t.document.activeElement, trigger);
+  assert.equal(t.payload().selling_plan, String(monthly.id), 'Escape keeps the plan');
+
+  t.click(trigger);
+  t.keydown(list, 'ArrowDown');
+  t.keydown(list, 'Enter');
+  assert.equal(list.hidden, true);
+  assert.equal(t.payload().selling_plan, String(bimonthly.id));
+  assert.equal(t.document.activeElement, trigger);
+
+  t.keydown(trigger, 'ArrowUp');
+  t.keydown(list, 'ArrowUp');
+  t.keydown(list, ' ');
+  assert.equal(t.payload().selling_plan, String(monthly.id), 'Space selects too');
+  assert.equal(t.$('[data-les56-submit="main"] [data-les56-cta-total]').textContent, euro(1521));
+
+  t.click(trigger);
+  t.keydown(list, 'Tab');
+  assert.equal(list.hidden, true, 'Tab closes without trapping the focus');
+
+  t.click(trigger);
+  const outside = new t.window.Event('pointerdown', { bubbles: true });
+  t.document.body.dispatchEvent(outside);
+  assert.equal(list.hidden, true, 'outside click closes');
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(t.document.listeners.some((entry) => entry.type === 'pointerdown'), false, 'outside listener released');
+
+  t.click(trigger);
+  t.root.remove();
+  assert.equal(t.document.listeners.some((entry) => entry.type === 'pointerdown'), false, 'released with the section');
+});
+
+test('the subscription bubble keeps the merchant wording with the real discount of the selected fragrance and plan', () => {
   const t = setup();
   const bubble = t.$('[data-les56-subscription-bubble]');
-  assert.equal(bubble.textContent, '-15% toute l’année');
+  // 1690 → 1521: the plan allocation is 10% off, whatever percentage the example copy carries.
+  assert.equal(bubble.textContent, '-10% toute l’année');
+  assert.equal(bubble.hidden, false);
   t.choose(quantityInput(t, 3));
-  assert.equal(bubble.textContent, '-15% supplémentaires');
+  assert.equal(bubble.textContent, '-10% supplémentaires');
+
+  // 1690 → 1500 is 11.2% off.
+  t.choose(variantInput(t, 55185604182394));
+  assert.equal(bubble.textContent, '-11% supplémentaires');
+  t.choose(quantityInput(t, 1));
+  assert.equal(bubble.textContent, '-11% toute l’année');
+
+  // Quantity discounts and plan allocations are unchanged: 1500 at one unit, ceil(1500 × 0.89) × 3.
+  t.choose(t.$('[data-les56-subscribe]'));
+  t.choose(quantityInput(t, 3));
+  assert.equal(t.$('[data-les56-submit="main"] [data-les56-cta-total]').textContent, euro(Math.ceil(1500 * 0.89) * 3));
+});
+
+test('the bubble follows the chosen plan and never shows a discount the plan does not give', () => {
+  const plans = [{ ...monthly, price: 1521 }, { ...bimonthly, price: 1436 }];
+  const product = {
+    ...lessive,
+    bubble: { single: 'Jusqu’à -15 % toute l’année', multiple: 'en plus' },
+    variants: [
+      { ...lessive.variants[0], plans },
+      { ...lessive.variants[1], plans: [{ ...monthly, price: 1690 }] },
+    ],
+  };
+  const t = setup({ product });
+  const bubble = t.$('[data-les56-subscription-bubble]');
+  assert.equal(bubble.textContent, 'Jusqu’à -10% toute l’année', 'only the example amount is replaced');
+
+  t.choose(t.$('[data-les56-subscribe]'));
+  t.$('[data-les56-plan]').value = String(bimonthly.id);
+  t.$('[data-les56-plan]').dispatchEvent(new t.window.Event('change', { bubbles: true }));
+  assert.equal(bubble.textContent, 'Jusqu’à -15% toute l’année', '1690 → 1436');
+  t.choose(quantityInput(t, 2));
+  assert.equal(bubble.textContent, '-15% en plus', 'copy without an amount gets the real one first');
+
+  t.choose(variantInput(t, 55185604149626));
+  assert.equal(bubble.hidden, true, 'a plan at full price shows no discount');
+  t.choose(variantInput(t, 56810523722106));
+  assert.equal(bubble.hidden, false);
+  assert.equal(bubble.textContent, '-10% en plus', 'the first plan is offered again after the fallback');
+});
+
+test('the section renders the real subscription discount in the bubble before any script runs', () => {
+  const markup = sectionSource.replace(/{%\s*schema\s*%}[\s\S]*$/, '');
+  assert.match(markup, /assign subscription_offer = current_variant\.selling_plan_allocations\.first/);
+  assert.match(markup, /current_variant\.price \| minus: subscription_offer\.price \| times: 100\.0 \| divided_by: current_variant\.price \| round/);
+  const bubble = markup.match(/<span\s+class="les56-subscription__bubble"[\s\S]*?<\/span>/)[0];
+  assert.match(bubble, /{{- bubble_text \| escape -}}/);
+  assert.match(bubble, /if subscription_percent == 0/);
+  assert.doesNotMatch(bubble, />\s*{{[^}]*section\.settings\.subscription_bubble/, 'the example copy is never shown as is');
 });
 
 test('an unavailable fragrance cannot be bought from either button or by submitting the form', () => {
@@ -930,7 +1092,7 @@ test('rapid fragrance changes always leave the latest choice in content, payload
   assert.equal(t.$('[data-les56-accordion="description"] .les56-accordion__intro').textContent, 'Fleurs Blanches short description');
   assert.equal(t.$('[data-les56-fragrance-name]').textContent, 'Fleurs Blanches');
   assert.equal(t.$('[data-les56-sticky-title]').textContent, 'Lessive Concentrée 1L Fleurs Blanches');
-  assert.deepEqual(t.$$('[data-les56-slide]').map((slide) => slide.dataset.zoomAlt), ['fleurs-1', 'fleurs-2']);
+  assert.deepEqual(t.$$('[data-les56-slide] img').map((image) => image.getAttribute('alt')), ['fleurs-1', 'fleurs-2']);
   assert.match(t.$('[data-les56-region="accordions"]').textContent, /Fleurs Blanches description/);
   const lastUrl = new URL(t.window.history.urls.at(-1));
   assert.equal(lastUrl.searchParams.get('variant'), '55185604149626');
@@ -977,23 +1139,72 @@ test('a failed add shows the error near both buttons and allows a retry', async 
   assert.ok(t.published.some((entry) => entry.name === 'cart-update'));
 });
 
-test('the sticky bar appears only after the main button scrolls away and leaves near the footer', () => {
+test('the sticky bar appears as soon as the main button starts leaving the top of the screen and leaves near the footer', () => {
   const t = setup({ footer: true });
   const footer = t.document.querySelector('.footer-group');
   const sticky = t.$('[data-les56-sticky]');
   const main = t.$('[data-les56-submit="main"]');
   const observer = t.intersectionObservers.find((item) => item.targets.includes(main));
   assert.ok(observer, 'main button observed');
+  assert.ok([observer.options.threshold].flat().includes(1), 'notified when the button stops being fully visible');
+  const rootBounds = { top: 0, bottom: 800 };
+  const at = (top, intersectionRatio) => observer.callback([{
+    target: main, rootBounds, intersectionRatio, isIntersecting: intersectionRatio > 0, boundingClientRect: { top, bottom: top + 50 },
+  }]);
 
-  observer.callback([{ target: main, isIntersecting: false, boundingClientRect: { top: 900, bottom: 950 } }]);
-  assert.equal(sticky.hidden, true, 'not shown before reaching the main button');
+  at(900, 0);
+  assert.equal(sticky.hidden, true, 'not shown while the button is still below the screen');
+  at(775, 0.5);
+  assert.equal(sticky.hidden, true, 'not shown while the button enters from below');
+  at(400, 1);
+  assert.equal(sticky.hidden, true, 'not shown while the button is fully visible');
 
-  observer.callback([{ target: main, isIntersecting: false, boundingClientRect: { top: -80, bottom: -30 } }]);
+  at(-10, 0.8);
+  assert.equal(sticky.hidden, false, 'shown once the top of the button is clipped');
+  at(-80, 0);
   assert.equal(sticky.hidden, false);
+  at(-20, 0.6);
+  assert.equal(sticky.hidden, false, 'still shown while scrolling back up to the button');
+  at(10, 1);
+  assert.equal(sticky.hidden, true, 'hidden again once the button is fully back');
 
+  at(-80, 0);
   const footerObserver = t.intersectionObservers.find((item) => item.targets.includes(footer));
   footerObserver.callback([{ target: footer, isIntersecting: true, boundingClientRect: { top: 500, bottom: 900 } }]);
   assert.equal(sticky.hidden, true);
+  footerObserver.callback([{ target: footer, isIntersecting: false, boundingClientRect: { top: 900, bottom: 1300 } }]);
+  assert.equal(sticky.hidden, false);
+});
+
+test('floating app launchers make way only while the sticky bar is shown', () => {
+  const t = setup();
+  const html = t.document.documentElement;
+  const main = t.$('[data-les56-submit="main"]');
+  const observer = t.intersectionObservers.find((item) => item.targets.includes(main));
+  const at = (top, intersectionRatio) => observer.callback([{
+    target: main, rootBounds: { top: 0, bottom: 800 }, intersectionRatio, isIntersecting: intersectionRatio > 0, boundingClientRect: { top, bottom: top + 50 },
+  }]);
+
+  assert.equal(html.classList.contains('les56-sticky-visible'), false);
+  at(-80, 0);
+  assert.equal(html.classList.contains('les56-sticky-visible'), true);
+  at(400, 1);
+  assert.equal(html.classList.contains('les56-sticky-visible'), false);
+  at(-80, 0);
+  t.root.remove();
+  assert.equal(html.classList.contains('les56-sticky-visible'), false, 'restored when the section goes');
+
+  // Only the overlapping Klaviyo teaser and Smile launcher are hidden, and only under that class.
+  const rules = productStyles.replace(/\/\*[\s\S]*?\*\//g, '').match(/[^{}]*les56-sticky-visible[^{}]*{[^}]*}/g) || [];
+  assert.ok(rules.length > 0);
+  for (const rule of rules) {
+    const selectors = rule.slice(0, rule.indexOf('{')).split(',').map((selector) => selector.trim());
+    for (const selector of selectors) {
+      assert.match(selector, /^html\.les56-sticky-visible (\[class\*="kl-teaser-"\]|#smile-ui-lite-launcher-frame-container)$/, selector);
+    }
+    assert.match(rule, /visibility: hidden/);
+    assert.doesNotMatch(rule, /display: none/, 'the apps keep their DOM and state');
+  }
 });
 
 test('thumbnails list every image except the active one and select on click', () => {
@@ -1047,19 +1258,101 @@ test('an interrupted smooth scroll leaves the gallery on the slide that is actua
   assert.deepEqual(state().dots, [true, false, false]);
 });
 
-test('zoom opens from the image, closes with Escape and returns focus to the image', () => {
-  const t = setup();
-  t.click(t.$('[data-les56-thumb][data-index="1"]'));
-  const trigger = t.$('[data-les56-slide][data-index="1"]');
-  t.click(trigger);
-  const dialog = t.$('[data-les56-zoom]');
-  assert.equal(dialog.open, true);
-  assert.equal(t.$('[data-les56-zoom-image]').getAttribute('src'), '/amande-2-2048.jpg');
-  assert.equal(t.document.activeElement, t.$('[data-les56-zoom-close]'));
+// A pointer event at viewport coordinates; detail 1 marks a pointer click (keyboard activation has 0).
+function pointer(t, element, type, clientX, clientY, pointerType = 'mouse') {
+  const event = new t.window.Event(type, { bubbles: true, cancelable: true, detail: 1 });
+  Object.assign(event, { clientX, clientY, pointerType });
+  element.dispatchEvent(event);
+  return event;
+}
 
-  t.keydown(dialog, 'Escape');
-  assert.equal(dialog.open, false);
-  assert.equal(t.document.activeElement, trigger);
+const zoomState = (t) => ({
+  zoomed: t.$('les56-gallery').classList.contains('is-zoomed'),
+  toggle: [t.$('[data-les56-zoom-toggle]').getAttribute('aria-pressed'), t.$('[data-les56-zoom-toggle]').getAttribute('aria-label')],
+  pressed: t.$$('[data-les56-slide]').map((slide) => slide.getAttribute('aria-pressed')),
+});
+
+test('the zoom control and the image toggle an inline zoom inside the frame, never a dialog', () => {
+  const t = setup();
+  assert.equal(t.$('dialog'), null, 'no popup');
+  const toggle = t.$('[data-les56-zoom-toggle]');
+  assert.equal(toggle.closest('.les56-gallery__frame'), t.$('.les56-gallery__frame'), 'control sits in the frame');
+  assert.deepEqual(zoomState(t), { zoomed: false, toggle: ['false', 'Zoomer sur l’image'], pressed: ['false', 'false', 'false'] });
+
+  t.click(toggle);
+  assert.deepEqual(zoomState(t), { zoomed: true, toggle: ['true', 'Zoomer sur l’image'], pressed: ['true', 'false', 'false'] });
+  assert.equal(t.document.activeElement, t.document.body, 'focus is not moved');
+  assert.equal(t.document.body.getAttribute('style'), null, 'no body scroll lock');
+  assert.equal(t.document.documentElement.getAttribute('class'), null);
+  t.click(toggle);
+  assert.equal(zoomState(t).zoomed, false);
+
+  // A click on the image zooms where the shopper pointed and a second click leaves the zoom.
+  const slide = t.$('[data-les56-slide][data-index="0"]');
+  slide.getBoundingClientRect = () => ({ left: 0, top: 100, right: 380, bottom: 450, width: 380, height: 350 });
+  pointer(t, slide.querySelector('img'), 'click', 95, 275);
+  assert.deepEqual(zoomState(t).pressed, ['true', 'false', 'false']);
+  assert.equal(slide.style.getPropertyValue('--les56-zoom-x'), '25%');
+  assert.equal(slide.style.getPropertyValue('--les56-zoom-y'), '50%');
+  pointer(t, slide, 'click', 95, 275);
+  assert.equal(zoomState(t).zoomed, false);
+
+  // Keyboard activation of the image (no pointer position) zooms on its centre.
+  slide.style.setProperty('--les56-zoom-x', '10%');
+  t.click(slide);
+  assert.equal(zoomState(t).zoomed, true);
+  assert.equal(slide.style.getPropertyValue('--les56-zoom-x'), '');
+});
+
+test('a zoomed image pans with the mouse or a finger in its frame and the zoom ends on Escape or a slide change', () => {
+  const t = setup();
+  const slides = t.$$('[data-les56-slide]');
+  for (const slide of slides) slide.getBoundingClientRect = () => ({ left: 0, top: 100, right: 380, bottom: 450, width: 380, height: 350 });
+  const viewport = t.$('[data-les56-viewport]');
+
+  pointer(t, slides[0], 'pointermove', 285, 135);
+  assert.equal(slides[0].style.getPropertyValue('--les56-zoom-x'), '', 'no pan while unzoomed');
+
+  t.click(t.$('[data-les56-zoom-toggle]'));
+  pointer(t, slides[0].querySelector('img'), 'pointermove', 285, 135);
+  assert.deepEqual([slides[0].style.getPropertyValue('--les56-zoom-x'), slides[0].style.getPropertyValue('--les56-zoom-y')], ['75%', '10%']);
+  pointer(t, slides[0], 'pointermove', 500, 40, 'touch');
+  assert.deepEqual([slides[0].style.getPropertyValue('--les56-zoom-x'), slides[0].style.getPropertyValue('--les56-zoom-y')], ['100%', '0%'], 'clamped to the image');
+  assert.ok(Number(slides[0].querySelector('img').getAttribute('sizes').replace('px', '')) >= 380 * 2, 'a sharper source is requested');
+
+  t.keydown(t.document.body, 'Escape');
+  assert.equal(zoomState(t).zoomed, false, 'Escape leaves the zoom wherever the focus is');
+  assert.equal(slides[0].style.getPropertyValue('--les56-zoom-x'), '', 'pan position reset');
+
+  t.click(t.$('[data-les56-zoom-toggle]'));
+  t.click(t.$('[data-les56-next]'));
+  assert.deepEqual(zoomState(t), { zoomed: false, toggle: ['false', 'Zoomer sur l’image'], pressed: ['false', 'false', 'false'] });
+  assert.equal(viewport.lastScroll.left, 380, 'arrows still change the image');
+
+  t.click(t.$('[data-les56-zoom-toggle]'));
+  assert.deepEqual(zoomState(t).pressed, ['false', 'true', 'false'], 'the visible image is the zoomed one');
+  t.click(t.$('[data-les56-thumb][data-index="2"]'));
+  assert.equal(zoomState(t).zoomed, false);
+  assert.deepEqual(t.visibleThumbs(), [0, 1]);
+
+  // Escape without a zoom leaves the key to the page (cart drawer, dialogs).
+  const escape = new t.window.Event('keydown', { bubbles: true, cancelable: true, key: 'Escape' });
+  t.document.body.dispatchEvent(escape);
+  assert.equal(escape.defaultPrevented, false);
+});
+
+test('a fragrance change resets the zoom and the replaced gallery releases its listeners', () => {
+  const t = setup();
+  const oldGallery = t.$('les56-gallery');
+  t.click(t.$('[data-les56-zoom-toggle]'));
+  assert.ok(t.document.listeners.some((entry) => entry.type === 'keydown'), 'Escape listened for while zoomed');
+
+  t.choose(variantInput(t, 55185604149626));
+  assert.notEqual(t.$('les56-gallery'), oldGallery);
+  assert.deepEqual(zoomState(t), { zoomed: false, toggle: ['false', 'Zoomer sur l’image'], pressed: ['false', 'false'] });
+  assert.deepEqual(oldGallery.listeners, []);
+  assert.equal(oldGallery.querySelector('[data-les56-viewport]').listeners.length, 0);
+  assert.equal(t.document.listeners.some((entry) => entry.type === 'keydown'), false);
 });
 
 test('the quantity in the URL preselects a configured quantity card', () => {
@@ -1353,12 +1646,35 @@ test('state classes set by the section and script are styled', () => {
   assert.match(productStyles, /\.les56-badge__icon\s*{[^}]*width:/);
   assert.match(productScript, /'has-content'/);
   assert.match(productStyles, /\.les56-app:not\(\.has-content\)\s*{\s*margin-top: 0;/);
+  assert.match(productScript, /'is-zoomed'/);
+  assert.match(productStyles, /\.les56-gallery\.is-zoomed [^{]*\.les56-gallery__image\s*{[^}]*transform: scale\(/);
 });
 
 test('the per-litre unit comes from Shopify unit pricing or a litre option value, never from a product id', () => {
   assert.match(sectionSource, /for option_value in variant\.options/);
   assert.match(sectionSource, /assign variant_unit_label = 'L'/);
   assert.doesNotMatch(sectionSource.replace(/{%\s*schema\s*%}[\s\S]*$/, ''), /\b\d{10,}\b/, 'no hard-coded product or variant id');
+});
+
+test('fragrance colours and names come from the merchant variant data, the Figma palette only filling an empty field', () => {
+  const markup = sectionSource.replace(/{%\s*schema\s*%}[\s\S]*$/, '');
+  const loop = markup.slice(markup.indexOf('assign fragrance_key = variant.option1'), markup.indexOf('{%- capture fragrance_card -%}'));
+  const card = markup.slice(markup.indexOf('{%- capture fragrance_card -%}'), markup.indexOf('{%- endcapture -%}', markup.indexOf('{%- capture fragrance_card -%}')));
+  const paletteEnd = loop.indexOf('endcase');
+  assert.ok(paletteEnd > 0);
+  for (const field of ['cluutch_variant_button_color', 'variant_text_color']) {
+    const read = loop.indexOf(`variant.metafields.custom.${field}.value`);
+    assert.ok(read > paletteEnd, `${field} overrides the palette`);
+  }
+  assert.match(loop, /if merchant_background != blank\s+assign fragrance_color = merchant_background/);
+  assert.match(loop, /if merchant_text != blank\s+assign fragrance_text_color = merchant_text/);
+  assert.match(loop, /assign fragrance_name = variant\.option1\b/, 'names come from the option value');
+  assert.match(card, /data-fragrance-color="{{ fragrance_accent \| escape }}"/, 'chosen name in the accent colour');
+  assert.match(card, /--les56-fragrance-accent: {{ fragrance_accent \| escape }}/);
+  assert.match(productStyles, /\.les56-sr-only:checked \+ \.les56-fragrance::after\s*{[^}]*border: 3px solid var\(--les56-fragrance-accent\)/);
+  // Real review data only.
+  assert.match(markup, /assign rating = product\.metafields\.reviews\.rating\.value/);
+  assert.match(markup, /assign rating_count = product\.metafields\.reviews\.rating_count\.value/);
 });
 
 test('the fragrance illustrations are the unedited Figma originals (Rectangle 1651–1655)', () => {
