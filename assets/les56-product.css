@@ -586,6 +586,28 @@
   --les56-image-top: -12.7%;
 }
 
+/*
+ * Below the 380px frame the five 70px cards no longer fit: let them shrink evenly and keep each
+ * crop centred where the 70px card had it (the offset is unchanged at 70px).
+ */
+@media screen and (max-width: 379px) {
+  .les56 .les56-fragrance {
+    flex: 0 1 70px;
+    min-width: 0;
+  }
+
+  .les56-fragrance__art {
+    left: calc(var(--les56-art-left) - 35px + 50%);
+  }
+}
+
+/* Keeps the longest single-word name (Eucalyptus) whole in the narrowest cards. */
+@media screen and (max-width: 359px) {
+  .les56-fragrance__name {
+    font-size: 11px;
+  }
+}
+
 /* ---------- Quantities ---------- */
 
 .les56-quantities {
@@ -865,6 +887,21 @@
   line-height: 18px;
   white-space: nowrap;
   backdrop-filter: blur(11px);
+}
+
+/*
+ * Below the 380px frame a long bubble no longer fits beside the 137px text: both may shrink, the
+ * text no further than its own lines and the bubble by wrapping between words.
+ */
+@media screen and (max-width: 379px) {
+  .les56-subscription__text {
+    flex-shrink: 1;
+  }
+
+  .les56-subscription__bubble {
+    text-align: center;
+    white-space: normal;
+  }
 }
 
 .les56-subscription__frequency {
@@ -1163,6 +1200,14 @@
 .les56-relocated-apps {
   margin-top: 24px;
   padding: 0 23px 0 22px;
+}
+
+/* BOGOS gives its variant menu a fixed 200px, past a narrow screen's edge: size it to its trigger and options. */
+@media screen and (max-width: 379px) {
+  .les56 .les56-relocated-apps .bogos-pa-variant-dropdown {
+    width: auto;
+    min-width: 100%;
+  }
 }
 
 .les56-icons {
