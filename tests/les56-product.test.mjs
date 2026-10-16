@@ -1181,9 +1181,12 @@ test('the sticky bar appears as soon as the main button starts leaving the top o
   assert.ok(observer, 'main button observed');
   assert.ok([observer.options.threshold].flat().includes(1), 'notified when the button stops being fully visible');
   const rootBounds = { top: 0, bottom: 800 };
-  const at = (top, intersectionRatio) => observer.callback([{
-    target: main, rootBounds, intersectionRatio, isIntersecting: intersectionRatio > 0, boundingClientRect: { top, bottom: top + 50 },
-  }]);
+  const at = (top, intersectionRatio) => {
+    placeMainButton(t, top);
+    observer.callback([{
+      target: main, rootBounds, intersectionRatio, isIntersecting: intersectionRatio > 0, boundingClientRect: { top, bottom: top + 50 },
+    }]);
+  };
 
   at(900, 0);
   assert.equal(sticky.hidden, true, 'not shown while the button is still below the screen');
@@ -1214,9 +1217,12 @@ test('floating app launchers make way only while the sticky bar is shown', () =>
   const html = t.document.documentElement;
   const main = t.$('[data-les56-submit="main"]');
   const observer = t.intersectionObservers.find((item) => item.targets.includes(main));
-  const at = (top, intersectionRatio) => observer.callback([{
-    target: main, rootBounds: { top: 0, bottom: 800 }, intersectionRatio, isIntersecting: intersectionRatio > 0, boundingClientRect: { top, bottom: top + 50 },
-  }]);
+  const at = (top, intersectionRatio) => {
+    placeMainButton(t, top);
+    observer.callback([{
+      target: main, rootBounds: { top: 0, bottom: 800 }, intersectionRatio, isIntersecting: intersectionRatio > 0, boundingClientRect: { top, bottom: top + 50 },
+    }]);
+  };
 
   assert.equal(html.classList.contains('les56-sticky-visible'), false);
   at(-80, 0);
@@ -1305,6 +1311,33 @@ test('one jump that carries the main button from below to above the screen shows
   t.runFrames();
   assert.equal(sticky.hidden, true, 'hidden after one jump back below the button');
   assert.equal(html.classList.contains('les56-sticky-visible'), false);
+});
+
+test('a late observer entry from before a jump does not hide the sticky bar the page has scrolled to', () => {
+  const t = setup({ footer: true, frames: true });
+  const html = t.document.documentElement;
+  const sticky = t.$('[data-les56-sticky]');
+  const main = placeMainButton(t, 1470.953);
+  t.runFrames();
+  assert.equal(sticky.hidden, true);
+
+  // The jump puts the button above the screen and the scroll frame shows the bar.
+  placeMainButton(t, 1470.953 - 1800);
+  t.fireWindow('scroll');
+  t.runFrames();
+  assert.equal(sticky.hidden, false);
+
+  // The observer then delivers an entry queued while the button was still below the screen.
+  const observer = t.intersectionObservers.find((item) => item.targets.includes(main));
+  observer.callback([{
+    target: main, rootBounds: { top: 0, bottom: 1024 }, intersectionRatio: 0, isIntersecting: false,
+    boundingClientRect: { top: 1470.953, bottom: 1520.953 },
+  }]);
+  assert.equal(sticky.hidden, false, 'still shown when the stale entry arrives');
+  assert.equal(html.classList.contains('les56-sticky-visible'), true);
+  t.runFrames();
+  assert.equal(sticky.hidden, false, 'still shown after the next frame, without another scroll');
+  assert.equal(html.classList.contains('les56-sticky-visible'), true);
 });
 
 test('the sticky bar follows the main button position on load and on resize', () => {

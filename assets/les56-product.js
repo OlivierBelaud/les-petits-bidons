@@ -619,11 +619,12 @@
         if (sticky.hidden !== hidden) sticky.hidden = hidden;
         document.documentElement.classList.toggle(STICKY_VISIBLE_CLASS, !hidden);
       };
+      // Entries can arrive after a later scroll frame: the button's position is read again, never taken from
+      // the entry, so an old entry cannot undo the current one.
       this.stickyObserver = new IntersectionObserver((entries) => {
         for (const entry of entries) {
           if (entry.target === mainButton) {
-            const rootTop = entry.rootBounds ? entry.rootBounds.top : 0;
-            passedMainButton = entry.intersectionRatio < 1 && entry.boundingClientRect.top < rootTop;
+            this.reconcileSticky();
           } else if (entry.target === footer) {
             footerVisible = entry.isIntersecting;
           }
