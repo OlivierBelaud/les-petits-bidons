@@ -586,10 +586,6 @@
   --les56-image-top: -12.7%;
 }
 
-/*
- * Below the 380px frame the five 70px cards no longer fit: let them shrink evenly and keep each
- * crop centred where the 70px card had it (the offset is unchanged at 70px).
- */
 @media screen and (max-width: 379px) {
   .les56 .les56-fragrance {
     flex: 0 1 70px;
@@ -601,7 +597,6 @@
   }
 }
 
-/* Keeps the longest single-word name (Eucalyptus) whole in the narrowest cards. */
 @media screen and (max-width: 359px) {
   .les56-fragrance__name {
     font-size: 11px;
@@ -889,10 +884,6 @@
   backdrop-filter: blur(11px);
 }
 
-/*
- * Below the 380px frame a long bubble no longer fits beside the 137px text: both may shrink, the
- * text no further than its own lines and the bubble by wrapping between words.
- */
 @media screen and (max-width: 379px) {
   .les56-subscription__text {
     flex-shrink: 1;

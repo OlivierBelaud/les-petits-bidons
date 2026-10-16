@@ -615,8 +615,9 @@
       let passedMainButton = false;
       let footerVisible = false;
       const render = () => {
-        sticky.hidden = !passedMainButton || footerVisible;
-        document.documentElement.classList.toggle(STICKY_VISIBLE_CLASS, !sticky.hidden);
+        const hidden = !passedMainButton || footerVisible;
+        if (sticky.hidden !== hidden) sticky.hidden = hidden;
+        document.documentElement.classList.toggle(STICKY_VISIBLE_CLASS, !hidden);
       };
       this.stickyObserver = new IntersectionObserver((entries) => {
         for (const entry of entries) {
