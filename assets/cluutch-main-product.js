@@ -658,7 +658,7 @@ function updatePlanPricing() {
   const comparePrice = parseFloat(priceEl.dataset.price);
   if (isNaN(comparePrice)) return;
 
-  const unitAfterQuantityDiscount = comparePrice / quantity;
+  const quantityDiscount = Math.abs(parseFloat(selectedRadio.dataset.discount || '0'));
 
   const planSelectors = document.querySelectorAll('.plan-selector');
 
@@ -675,12 +675,12 @@ function updatePlanPricing() {
     const subscriptionDiscount = parseFloat(selectedOption.dataset.percent || '0');
     if (isNaN(subscriptionDiscount)) return;
 
-    let total = 0;
-    for (let i = 0; i < quantity; i++) {
-      const afterSub = unitAfterQuantityDiscount * (1 - subscriptionDiscount / 100);
-      const rounded = shopifyRound(afterSub);
-      total += rounded;
-    }
+    // Shopify applies the lot discount to the allocated subscription unit price,
+    // rounding upward in cents once per unit (not to the already rounded lot price).
+    const planPriceCents = Number(selectedOption.dataset.planPrice);
+    const discountBasisPoints = Math.round(quantityDiscount * 100);
+    const totalCents = Math.ceil(planPriceCents * (10000 - discountBasisPoints) / 10000) * quantity;
+    const total = totalCents / 100;
 
     const original = comparePrice.toFixed(2);
 

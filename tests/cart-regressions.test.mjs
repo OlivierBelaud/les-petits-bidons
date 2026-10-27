@@ -2,6 +2,36 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
+const productScript = await readFile(new URL('../assets/cluutch-main-product.js', import.meta.url), 'utf8');
+const pricingSource = productScript.slice(productScript.indexOf('function shopifyBankersRound('), productScript.indexOf('\ndocument.addEventListener("DOMContentLoaded", () => {\n  updatePlanPricing();'));
+
+function subscriptionPrice({ quantity, discount, planPrice, productPrice, subscribed = true }) {
+  const price = { innerHTML: '' };
+  const percent = { textContent: '' };
+  const selected = {
+    value: String(quantity), dataset: { discount: `-${discount}%` },
+    closest: () => ({ querySelector: () => ({ dataset: { price: String(Math.ceil(productPrice * (100 - discount) / 100) * quantity / 100) } }) }),
+  };
+  const selector = { querySelector: (name) => ({
+    '.plan-button-select': { selectedIndex: 0, options: [{ dataset: { percent: '10', planPrice: String(planPrice), productPrice: String(productPrice) } }] },
+    '.plan-price': price, '.percent-price': percent,
+    '.button-subscribe': { checked: subscribed }, '.button-one-time': { checked: !subscribed },
+  })[name] };
+  Function('document', `${pricingSource}; updatePlanPricing();`)({
+    querySelector: () => selected, querySelectorAll: () => [selector],
+  });
+  return price.innerHTML;
+}
+
+test('subscription lots use the allocated plan price before the quantity discount, matching cart cents', () => {
+  for (const [quantity, discount, expected] of [[1, 0, '15.21'], [2, 9, '27.70'], [3, 11, '40.62'], [6, 12, '80.34']]) {
+    assert.equal(subscriptionPrice({ quantity, discount, planPrice: 1521, productPrice: 1690 }).split('€')[0], expected, `lot x${quantity}`);
+  }
+  // Another fragrance has a different allocated unit price; no price is hardcoded.
+  assert.equal(subscriptionPrice({ quantity: 3, discount: 11, planPrice: 1791, productPrice: 1990 }).split('€')[0], '47.82');
+  assert.equal(subscriptionPrice({ quantity: 2, discount: 9, planPrice: 1521, productPrice: 1690, subscribed: false }), '');
+});
+
 const cartScript = await readFile(new URL('../assets/cart.js', import.meta.url), 'utf8');
 const themeScript = await readFile(new URL('../assets/theme.js', import.meta.url), 'utf8');
 const cartDrawer = await readFile(new URL('../sections/cluutch-cart-drawer.liquid', import.meta.url), 'utf8');

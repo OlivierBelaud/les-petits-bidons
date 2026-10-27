@@ -137,6 +137,9 @@
               {% else %}
                 {%- liquid
                   assign rating_max = 5
+                  assign hide_rating = false
+                  assign rating_value = nil
+                  assign rating_count = nil
                   if product.metafields.reviews.rating.value != blank and product.metafields.reviews.rating_count.value > 0
                     assign rating_value = product.metafields.reviews.rating.value.rating | round: 1
                     assign rating_count = product.metafields.reviews.rating_count.value
