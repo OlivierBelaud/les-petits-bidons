@@ -18,7 +18,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="{{ settings.color_button_background }}">
-    <link rel="canonical" href="{{ canonical_url }}">
+    {%- if request.page_type == 'page' and page.handle == 'welcome10' or request.page_type == 'page' and page.handle == 'offre-welcome-10' -%}
+      <link rel="canonical" href="{{ shop.url }}/pages/offrewelcome10">
+    {%- else -%}
+      <link rel="canonical" href="{{ canonical_url }}">
+    {%- endif -%}
     {%- if request.page_type == 'product' -%}
       {%- assign hero_image = product.selected_or_first_available_variant.metafields.custom.cluutch_media_list.value | first -%}
       {%- if hero_image != blank -%}
