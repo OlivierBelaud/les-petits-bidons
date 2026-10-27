@@ -68,6 +68,7 @@
     }
 
     disconnectedCallback() {
+      this.slides.forEach((slide) => this.releaseVideo(slide));
       this.removeEventListener('click', this.onClick);
       this.viewport?.removeEventListener('scroll', this.onScroll, { passive: true });
       this.viewport?.removeEventListener('pointermove', this.onPointerMove);
@@ -89,7 +90,8 @@
       if (target.closest('[data-les56-prev]')) return this.setActive(this.activeIndex - 1, true);
       if (target.closest('[data-les56-next]')) return this.setActive(this.activeIndex + 1, true);
 
-      if (!target.closest('[data-les56-slide]')) return;
+      const slide = target.closest('[data-les56-slide]');
+      if (!slide || slide.dataset.mediaType === 'video' || slide.dataset.mediaType === 'external_video') return;
       if (this.zoomed) return this.setZoom(false);
       this.setZoom(true);
       // A pointer click zooms where the shopper pointed; keyboard activation (detail 0) on the centre.
@@ -107,15 +109,41 @@
         const active = position === this.activeIndex;
         slide.setAttribute('tabindex', active ? '0' : '-1');
         slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+        slide.toggleAttribute('inert', !active);
+        if (active) this.loadVideo(slide);
+        else this.releaseVideo(slide);
       });
+      if (this.zoomToggle) this.zoomToggle.hidden = Boolean(this.slides[this.activeIndex].querySelector('[data-les56-video]'));
       this.thumbs.forEach((thumb) => {
         thumb.hidden = Number(thumb.dataset.index) === this.activeIndex;
       });
       this.dots.forEach((dot, position) => dot.classList.toggle('is-active', position === this.activeIndex));
 
       if (scroll && this.viewport) {
-        this.viewport.scrollTo({ left: this.viewport.clientWidth * this.activeIndex, behavior: 'smooth' });
+        // Intermediate smooth-scroll positions would unload a selected player and
+        // make its focused slide inert. Mixed galleries navigate in one step.
+        const behavior = this.querySelector('[data-les56-video]') ? 'instant' : 'smooth';
+        this.viewport.scrollTo({ left: this.viewport.clientWidth * this.activeIndex, behavior });
       }
+    }
+
+    loadVideo(slide) {
+      const template = slide.querySelector('[data-les56-video]');
+      const player = slide.querySelector('[data-les56-player]');
+      if (!template || !player || player.children.length) return;
+      player.replaceChildren(template.content.cloneNode(true));
+      const poster = slide.querySelector('[data-les56-video-poster]');
+      if (poster) poster.hidden = true;
+    }
+
+    releaseVideo(slide) {
+      const player = slide.querySelector('[data-les56-player]');
+      if (!player) return;
+      player.querySelectorAll('video').forEach((video) => video.pause());
+      // Removing an iframe also stops an external player without loading provider APIs.
+      player.replaceChildren();
+      const poster = slide.querySelector('[data-les56-video-poster]');
+      if (poster) poster.hidden = false;
     }
 
     onScroll() {
@@ -130,11 +158,12 @@
     }
 
     setZoom(zoomed) {
+      if (zoomed && this.slides[this.activeIndex]?.querySelector('[data-les56-video]')) return;
       this.zoomed = zoomed;
       this.classList.toggle('is-zoomed', zoomed);
       const active = this.slides[this.activeIndex];
       for (const slide of this.slides) {
-        slide.setAttribute('aria-pressed', zoomed && slide === active ? 'true' : 'false');
+        if (!slide.querySelector('[data-les56-video]')) slide.setAttribute('aria-pressed', zoomed && slide === active ? 'true' : 'false');
         slide.style.removeProperty('--les56-zoom-x');
         slide.style.removeProperty('--les56-zoom-y');
       }

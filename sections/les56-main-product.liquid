@@ -67,21 +67,25 @@
 {%- for variant in product.variants -%}
   {%- liquid
     assign variant_title = variant.metafields.custom.cluutch_variant_title.value | default: product.title
-    assign gallery_images = variant.metafields.custom.cluutch_media_list.value
-    if gallery_images == blank
-      assign gallery_images = product.media | where: 'media_type', 'image'
+    assign gallery_media = variant.metafields.custom.cluutch_media_list.value
+    if gallery_media == blank
+      assign gallery_media = product.media | reject: 'media_type', 'model'
+    else
+      assign product_videos = product.media | reject: 'media_type', 'image' | reject: 'media_type', 'model'
+      assign gallery_media = gallery_media | concat: product_videos | uniq
     endif
-    assign image_count = gallery_images.size
+    assign media_count = gallery_media.size
   -%}
 
   {%- capture variant_gallery -%}
-    {%- if image_count > 0 -%}
+    {%- if media_count > 0 -%}
       <les56-gallery class="les56-gallery">
         <div class="les56-gallery__frame">
           <div class="les56-gallery__viewport" data-les56-viewport>
-            {%- for image in gallery_images -%}
+            {%- for media in gallery_media -%}
               {%- liquid
-                assign image_alt = image.alt | default: variant_title
+                assign image = media.preview_image | default: media
+                assign image_alt = media.alt | default: variant_title
                 assign image_loading = 'lazy'
                 assign image_priority = 'auto'
                 if forloop.first and variant.id == current_variant.id
@@ -89,29 +93,51 @@
                   assign image_priority = 'high'
                 endif
               -%}
-              <button
-                type="button"
-                class="les56-gallery__slide"
-                data-les56-slide
-                data-index="{{ forloop.index0 }}"
-                aria-pressed="false"
-                aria-label="Zoomer sur l’image {{ forloop.index }} sur {{ image_count }}"
-                {% unless forloop.first %}
-                  tabindex="-1" aria-hidden="true"
-                {% endunless %}
-              >
-                {{
-                  image
-                  | image_url: width: 1540
-                  | image_tag:
-                    class: 'les56-gallery__image',
-                    alt: image_alt,
-                    loading: image_loading,
-                    fetchpriority: image_priority,
-                    widths: '380, 570, 760, 1140, 1540, 2048',
-                    sizes: '(min-width: 1024px) 770px, (min-width: 600px) 640px, 100vw'
-                }}
-              </button>
+              {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+                <div
+                  class="les56-gallery__slide les56-gallery__slide--video"
+                  data-les56-slide
+                  data-media-type="{{ media.media_type }}"
+                  data-index="{{ forloop.index0 }}"
+                  role="group"
+                  aria-label="Vidéo {{ forloop.index }} sur {{ media_count }} : {{ image_alt | escape }}"
+                  {% unless forloop.first %}tabindex="-1" aria-hidden="true" inert{% endunless %}
+                >
+                  {{ image | image_url: width: 1540 | image_tag: class: 'les56-gallery__image', alt: image_alt, loading: image_loading, fetchpriority: image_priority, widths: '380, 570, 760, 1140, 1540', sizes: '(min-width: 1024px) 770px, (min-width: 600px) 640px, 100vw', data-les56-video-poster: '' }}
+                  <div class="les56-gallery__player" data-les56-player></div>
+                  <template data-les56-video>
+                    {%- if media.media_type == 'video' -%}
+                      {{ media | video_tag: class: 'les56-gallery__video', controls: true, playsinline: true, autoplay: false, loop: section.settings.enable_video_looping, preload: 'none' }}
+                    {%- else -%}
+                      {{ media | external_video_url: autoplay: 0, controls: 1 | external_video_tag: class: 'les56-gallery__video', loading: 'lazy', title: image_alt }}
+                    {%- endif -%}
+                  </template>
+                </div>
+              {%- else -%}
+                <button
+                  type="button"
+                  class="les56-gallery__slide"
+                  data-les56-slide
+                  data-index="{{ forloop.index0 }}"
+                  aria-pressed="false"
+                  aria-label="Zoomer sur l’image {{ forloop.index }} sur {{ media_count }}"
+                  {% unless forloop.first %}
+                    tabindex="-1" aria-hidden="true"
+                  {% endunless %}
+                >
+                  {{
+                    image
+                    | image_url: width: 1540
+                    | image_tag:
+                      class: 'les56-gallery__image',
+                      alt: image_alt,
+                      loading: image_loading,
+                      fetchpriority: image_priority,
+                      widths: '380, 570, 760, 1140, 1540, 2048',
+                      sizes: '(min-width: 1024px) 770px, (min-width: 600px) 640px, 100vw'
+                  }}
+                </button>
+              {%- endif -%}
             {%- endfor -%}
           </div>
           <button
@@ -121,7 +147,7 @@
             aria-pressed="false"
             aria-label="Zoomer sur l’image"
           ></button>
-          {%- if image_count > 1 -%}
+          {%- if media_count > 1 -%}
             <button
               type="button"
               class="les56-gallery__arrow les56-gallery__arrow--prev"
@@ -139,21 +165,22 @@
               <img src="{{ 'les56-arrow.svg' | asset_url }}" alt="" width="22" height="17" loading="lazy">
             </button>
             <div class="les56-gallery__dots" aria-hidden="true">
-              {%- for image in gallery_images -%}
+              {%- for media in gallery_media -%}
                 <span class="les56-gallery__dot{% if forloop.first %} is-active{% endif %}" data-les56-dot></span>
               {%- endfor -%}
             </div>
           {%- endif -%}
         </div>
-        {%- if image_count > 1 -%}
+        {%- if media_count > 1 -%}
           <div class="les56-gallery__thumbs">
-            {%- for image in gallery_images -%}
+            {%- for media in gallery_media -%}
+              {%- assign image = media.preview_image | default: media -%}
               <button
                 type="button"
                 class="les56-gallery__thumb"
                 data-les56-thumb
                 data-index="{{ forloop.index0 }}"
-                aria-label="Afficher l’image {{ forloop.index }}"
+                aria-label="Afficher {% if media.media_type == 'video' or media.media_type == 'external_video' %}la vidéo{% else %}l’image{% endif %} {{ forloop.index }}"
                 {% if forloop.first %}
                   hidden
                 {% endif %}
@@ -168,6 +195,9 @@
                     widths: '90, 135, 240',
                     sizes: '(min-width: 1024px) 115px, 45px'
                 }}
+                {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+                  <span class="les56-gallery__play" aria-hidden="true">{% render 'icon', icon: 'play' %}</span>
+                {%- endif -%}
               </button>
             {%- endfor -%}
           </div>

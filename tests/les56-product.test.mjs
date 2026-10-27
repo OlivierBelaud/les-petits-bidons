@@ -402,6 +402,7 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
     blur() { if (document.activeElement === this) document.activeElement = document.body; }
     getBoundingClientRect() { return { top: 0, bottom: 0, left: 0, right: 0, width: 0, height: 0 }; }
     scrollTo(options) { this.lastScroll = options; this.scrollLeft = options.left; }
+    pause() { this.pauseCalls = (this.pauseCalls || 0) + 1; }
     showModal() { this.setAttribute('open', ''); }
     close() {
       if (!this.open) return;
@@ -662,12 +663,18 @@ const coffret = {
 const euro = (cents) => `${Math.floor(cents / 100)},${String(cents % 100).padStart(2, '0')}€`;
 
 function renderGallery(variant) {
-  const count = variant.images.length;
-  const slides = variant.images.map((image, index) => `
+  const media = [...variant.images.map((id) => ({ id, type: 'image' })), ...(variant.videos || [])];
+  const count = media.length;
+  const slides = media.map(({ id: image, type }, index) => type !== 'image' ? `
+    <div class="les56-gallery__slide les56-gallery__slide--video" data-les56-slide data-media-type="${type}" data-index="${index}" role="group" aria-label="Vidéo ${index + 1}">
+      <img data-les56-video-poster src="/${image}.jpg" alt="Vidéo">
+      <div data-les56-player></div>
+      <template data-les56-video>${type === 'video' ? `<video controls preload="none"><source src="/${image}.mp4"></video>` : `<iframe src="https://www.youtube.com/embed/${image}" title="Vidéo"></iframe>`}</template>
+    </div>` : `
     <button type="button" class="les56-gallery__slide" data-les56-slide data-index="${index}" aria-pressed="false" aria-label="Zoomer sur l’image ${index + 1} sur ${count}">
       <img class="les56-gallery__image" src="/${image}.jpg" alt="${image}" sizes="100vw">
     </button>`).join('');
-  const thumbs = variant.images.map((image, index) => `
+  const thumbs = media.map(({ id: image }, index) => `
     <button type="button" class="les56-gallery__thumb" data-les56-thumb data-index="${index}" aria-label="Afficher l’image ${index + 1}"${index === 0 ? ' hidden' : ''}>
       <img src="/${image}-thumb.jpg" alt="">
     </button>`).join('');
@@ -678,7 +685,7 @@ function renderGallery(variant) {
         <button type="button" class="les56-gallery__zoom" data-les56-zoom-toggle aria-pressed="false" aria-label="Zoomer sur l’image"></button>
         <button type="button" class="les56-gallery__arrow" data-les56-prev aria-label="Image précédente"></button>
         <button type="button" class="les56-gallery__arrow" data-les56-next aria-label="Image suivante"></button>
-        <div class="les56-gallery__dots">${variant.images.map(() => '<span class="les56-gallery__dot" data-les56-dot></span>').join('')}</div>
+        <div class="les56-gallery__dots">${media.map(() => '<span class="les56-gallery__dot" data-les56-dot></span>').join('')}</div>
       </div>
       <div class="les56-gallery__thumbs">${thumbs}</div>
     </les56-gallery>`;
@@ -1386,6 +1393,7 @@ test('thumbnails list every image except the active one and select on click', ()
   t.click(t.$('[data-les56-thumb][data-index="2"]'));
   assert.deepEqual(t.visibleThumbs(), [0, 1]);
   assert.equal(t.$('[data-les56-viewport]').lastScroll.left, 2 * 380);
+  assert.equal(t.$('[data-les56-viewport]').lastScroll.behavior, 'smooth', 'image-only galleries retain smooth navigation');
   assert.equal(t.document.activeElement, t.$('[data-les56-slide][data-index="2"]'));
 
   t.click(t.$('[data-les56-next]'));
@@ -1395,6 +1403,82 @@ test('thumbnails list every image except the active one and select on click', ()
   assert.deepEqual(t.visibleThumbs(), [1, 2, 3], 'replacement gallery starts on its first image');
   t.click(t.$('[data-les56-thumb][data-index="3"]'));
   assert.deepEqual(t.visibleThumbs(), [0, 1, 2]);
+});
+
+const mixedMediaProduct = () => ({
+  ...lessive,
+  variants: lessive.variants.map((variant) => ({ ...variant, videos: [
+    { id: 'shopify-demo', type: 'video' }, { id: 'youtube-demo', type: 'external_video' },
+  ] })),
+});
+
+test('video slides load on selection, hide image zoom and leave native controls operable', () => {
+  const t = setup({ product: mixedMediaProduct() });
+  const gallery = t.$('les56-gallery');
+  assert.equal(t.$('video'), null, 'no video is loaded behind the initial image');
+  assert.equal(t.$('iframe'), null, 'no external player is loaded behind the initial image');
+  t.click(t.$('[data-les56-thumb][data-index="3"]'));
+  const video = t.$('video');
+  assert.ok(video, 'hosted player activated');
+  assert.equal(video.hasAttribute('controls'), true);
+  assert.equal(video.getAttribute('preload'), 'none');
+  assert.equal(t.$('[data-les56-zoom-toggle]').hidden, true);
+  t.click(video);
+  assert.equal(gallery.zoomed, false, 'native player clicks never zoom');
+  gallery.setZoom(true);
+  assert.equal(gallery.zoomed, false, 'a video cannot be zoomed programmatically either');
+
+  t.click(t.$('[data-les56-next]'));
+  assert.ok(video.pauseCalls > 0, 'the previous video is paused');
+  assert.equal(t.$('video'), null, 'inactive player released');
+  const iframe = t.$('iframe');
+  assert.ok(iframe, 'external player activated');
+  t.click(t.$('[data-les56-next]'));
+  assert.equal(t.$('iframe'), null, 'external player removed to stop playback');
+  assert.equal(t.$('[data-les56-zoom-toggle]').hidden, false, 'zoom restored on image');
+  assert.equal(iframe.isConnected, false);
+});
+
+test('video navigation keeps its player and keyboard focus through scroll reconciliation', () => {
+  const t = setup({ product: mixedMediaProduct(), frames: true });
+  const gallery = t.$('les56-gallery');
+  const viewport = t.$('[data-les56-viewport]');
+  viewport.scrollTo = (options) => {
+    // A smooth scroll first reports the old physical position; instant navigation
+    // lands at its destination before scroll events reconcile the active slide.
+    viewport.scrollLeft = options.behavior === 'smooth' ? 0 : options.left;
+    viewport.dispatchEvent(new t.window.Event('scroll'));
+  };
+  const thumb = t.$('[data-les56-thumb][data-index="4"]');
+  thumb.focus();
+  t.click(thumb);
+  const frame = t.$('iframe');
+  const selected = t.$('[data-les56-slide][data-index="4"]');
+  t.runFrames();
+  assert.equal(gallery.activeIndex, 4, 'selected video remains active after scroll events');
+  assert.equal(t.$('iframe'), frame, 'the player is not unloaded during navigation');
+  assert.equal(frame.isConnected, true);
+  assert.equal(t.document.activeElement, selected, 'focus stays on the selected media');
+
+  viewport.scrollLeft = 0;
+  viewport.dispatchEvent(new t.window.Event('scroll'));
+  t.runFrames();
+  assert.equal(gallery.activeIndex, 0, 'a real swipe still follows the physically visible image');
+  assert.equal(t.$('iframe'), null, 'leaving the video still stops it');
+});
+
+test('fragrance replacement and gallery disconnect stop the current video', () => {
+  const t = setup({ product: mixedMediaProduct() });
+  t.click(t.$('[data-les56-thumb][data-index="3"]'));
+  const first = t.$('video');
+  t.choose(variantInput(t, 55185604149626));
+  assert.ok(first.pauseCalls > 0, 'switching fragrance pauses playback');
+  assert.equal(first.isConnected, false);
+  assert.equal(t.$('video'), null, 'the next fragrance starts on its first image');
+  t.click(t.$('[data-les56-thumb][data-index="2"]'));
+  const second = t.$('video');
+  t.root.remove();
+  assert.ok(second.pauseCalls > 0, 'removing the section pauses playback');
 });
 
 test('an interrupted smooth scroll leaves the gallery on the slide that is actually visible', () => {
