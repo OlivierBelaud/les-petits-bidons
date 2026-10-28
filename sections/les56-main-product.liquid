@@ -1070,38 +1070,39 @@
               {%- render 'product-variants', block: block, product: product, product_id: product.id, section_id: section.id -%}
           {%- endcase -%}
         {%- endfor -%}
-        <div class="les56__details">
-          {%- assign accordions_rendered = false -%}
-          {%- for block in section.blocks -%}
-            {%- case block.type -%}
-              {%- when 'collapsible_tab' -%}
-                {%- unless accordions_rendered -%}
-                  <div class="les56-accordions" data-les56-region="accordions" {{ block.shopify_attributes }}>
-                    {{- live_accordions -}}
-                  </div>
-                  {%- assign accordions_rendered = true -%}
-                {%- endunless -%}
-
-              {%- when 'icons' -%}
-                <ul class="les56-icons" role="list" {{ block.shopify_attributes }}>
-                  {%- for i in (1..4) -%}
-                    {%- liquid
-                      assign icon_setting = 'icon_' | append: i
-                      assign text_setting = 'text_' | append: i
-                    -%}
-                    {%- unless block.settings[icon_setting] == blank and block.settings[text_setting] == blank -%}
-                      <li class="les56-icons__item">
-                        <span class="les56-icons__icon" aria-hidden="true">{{ block.settings[icon_setting] }}</span>
-                        <span class="les56-icons__text">{{ block.settings[text_setting] | escape }}</span>
-                      </li>
-                    {%- endunless -%}
-                  {%- endfor -%}
-                </ul>
-            {%- endcase -%}
-          {%- endfor -%}
-          <div class="les56-relocated-apps" data-les56-app-slot></div>
-        </div>
       </div>
+    </div>
+
+    <div class="les56__details">
+      {%- assign accordions_rendered = false -%}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'collapsible_tab' -%}
+            {%- unless accordions_rendered -%}
+              <div class="les56-accordions" data-les56-region="accordions" {{ block.shopify_attributes }}>
+                {{- live_accordions -}}
+              </div>
+              {%- assign accordions_rendered = true -%}
+            {%- endunless -%}
+
+          {%- when 'icons' -%}
+            <ul class="les56-icons" role="list" {{ block.shopify_attributes }}>
+              {%- for i in (1..4) -%}
+                {%- liquid
+                  assign icon_setting = 'icon_' | append: i
+                  assign text_setting = 'text_' | append: i
+                -%}
+                {%- unless block.settings[icon_setting] == blank and block.settings[text_setting] == blank -%}
+                  <li class="les56-icons__item">
+                    <span class="les56-icons__icon" aria-hidden="true">{{ block.settings[icon_setting] }}</span>
+                    <span class="les56-icons__text">{{ block.settings[text_setting] | escape }}</span>
+                  </li>
+                {%- endunless -%}
+              {%- endfor -%}
+            </ul>
+        {%- endcase -%}
+      {%- endfor -%}
+      <div class="les56-relocated-apps" data-les56-app-slot></div>
     </div>
   </div>
 
