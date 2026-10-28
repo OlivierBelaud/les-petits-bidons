@@ -10876,6 +10876,11 @@ html.touch .logo-list--right .logo-bar.animate {
 
 [data-lazy-image] .media.loading::after {
   animation: preloading 1.2s infinite ease;
+  animation-play-state: paused;
+}
+
+[data-lazy-image] .media.loading.loading-in-view::after {
+  animation-play-state: running;
 }
 
 [data-lazy-image] .media.loading>img {
@@ -14248,6 +14253,7 @@ video-media:not([playing]) .deferred-poster .play-button .icon:last-child:not(:o
   content-visibility: auto;
 }
 
+.template-collection[data-page-rendering] #MainContent .shopify-section+.shopify-section~.shopify-section,
 .shopify-design-mode[data-page-rendering] #MainContent .shopify-section+.shopify-section~.shopify-section,
 .no-js [data-page-rendering] #MainContent .shopify-section+.shopify-section~.shopify-section,
 .no-touch [data-page-rendering] #MainContent .shopify-section+.shopify-section~.shopify-section {

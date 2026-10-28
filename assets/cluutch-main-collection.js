@@ -43,15 +43,10 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         }
 
-        const newImageEl = doc.querySelector(".cluutch-banner__image");
-        if (newImageEl) {
-          const currentImageEl = document.querySelector(
-            ".cluutch-banner__image"
-          );
-          if (currentImageEl) {
-            currentImageEl.src = newImageEl.src;
-            currentImageEl.srcset = newImageEl.getAttribute("srcset");
-          }
+        const newPicture = doc.querySelector(".cluutch-banner__picture");
+        const currentPicture = document.querySelector(".cluutch-banner__picture");
+        if (newPicture && currentPicture) {
+          currentPicture.replaceWith(newPicture);
         }
       })
       .catch((error) => {

@@ -1,0 +1,51 @@
+{% comment %}Install before controls are parsed: a slow business script must never submit stale hidden fields.{% endcomment %}
+<script>
+  (() => {
+    function guardPurchase(event) {
+      const button = event.type === 'click' ? event.target.closest('button') : null;
+      const form = event.type === 'submit' ? event.target : button?.form;
+      if (!form?.matches('#product-form.cluutch-product-form')) return;
+      if (button && button.type !== 'submit') return;
+
+      const drawer = document.querySelector('cart-drawer');
+      const ready = form.dataset.productReady === 'true' && form.dataset.buyReady === 'true' &&
+        customElements.get('product-form') && (!drawer || customElements.get('cart-drawer'));
+      if (!ready || form.dataset.variantPending === 'true' || form.dataset.variantError === 'true') {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const status = form.querySelector('[data-purchase-status]');
+        if (status && form.dataset.variantError !== 'true') {
+          status.textContent = ready ? 'Chargement de votre sélection… Veuillez patienter.' : 'Le chargement du produit n’est pas terminé. ';
+          if (!ready) {
+            const reload = document.createElement('a');
+            reload.href = window.location.href;
+            reload.textContent = 'Recharger la page';
+            status.append(reload);
+          }
+          status.hidden = false;
+        }
+        return;
+      }
+
+      // Read the visible choice at the last possible moment, including a click
+      // immediately after changing quantity or subscription frequency.
+      const section = form.closest('.shopify-section');
+      const variant = section.querySelector('.variant-button:checked');
+      const quantity = section.querySelector('input[type="radio"][name="quantity"]:checked');
+      if (variant) form.querySelector('[name="id"]').value = variant.dataset.variant;
+      if (quantity) form.querySelector('[name="quantity"]').value = quantity.value;
+      const plan = [...section.querySelectorAll('.plan-selector')].find(el =>
+        el.dataset.variant === form.querySelector('[name="id"]').value);
+      const sellingPlan = form.querySelector('[name="selling_plan"]');
+      if (sellingPlan && plan) {
+        sellingPlan.value = plan.querySelector('.button-subscribe')?.checked
+          ? plan.querySelector('.plan-button-select')?.selectedOptions[0]?.dataset.planId || '' : '';
+      }
+    }
+    document.addEventListener('change', (event) => {
+      if (event.target.matches('input[type="radio"][name="quantity"]')) event.target.dataset.userSelected = 'true';
+    }, true);
+    document.addEventListener('click', guardPurchase, true);
+    document.addEventListener('submit', guardPurchase, true);
+  })();
+</script>

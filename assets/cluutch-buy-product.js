@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+onProductReady(function () {
   const buyNowButton = document.querySelector(
     "#product-form button.cluutch-add-to-cart--reverse"
   );
@@ -40,5 +40,11 @@ document.addEventListener("DOMContentLoaded", function () {
           console.error("Error:", error);
         });
     });
+  }
+  const form = document.getElementById("product-form");
+  if (form) {
+    form.dataset.buyReady = "true";
+    const status = form.querySelector('[data-purchase-status]');
+    if (status && form.dataset.productReady === 'true' && !form.dataset.variantPending && !form.dataset.variantError) status.hidden = true;
   }
 });

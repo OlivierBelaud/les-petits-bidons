@@ -5,6 +5,7 @@
     assign header_font_bold = header_font | font_modify: 'weight', '700'
 
     assign body_font = settings.type_body_font
+    assign body_font_family = body_font.family | handleize
     assign body_font_medium = body_font | font_modify: 'weight', '500'
     assign body_font_bold = body_font | font_modify: 'weight', '700'
     assign body_font_italic = body_font | font_modify: 'style', 'italic'
@@ -16,11 +17,13 @@
       echo header_font_bold | font_face: font_display: 'swap'
     endif
 
-    echo body_font | font_face: font_display: 'swap'
-    echo body_font_medium | font_face: font_display: 'swap'
-    echo body_font_bold | font_face: font_display: 'swap'
-    echo body_font_italic | font_face: font_display: 'swap'
-    echo body_font_bold_italic | font_face: font_display: 'swap'
+    unless body_font_family == 'dm-sans' or body_font_family == 'raleway'
+      echo body_font | font_face: font_display: 'swap'
+      echo body_font_medium | font_face: font_display: 'swap'
+      echo body_font_bold | font_face: font_display: 'swap'
+      echo body_font_italic | font_face: font_display: 'swap'
+      echo body_font_bold_italic | font_face: font_display: 'swap'
+    endunless
 
     assign rounded_button = 0.75
     if settings.rounded_button == 'round'
@@ -227,7 +230,7 @@
   }
 </style>
 
-{%- unless settings.type_body_font.system? -%}
+{%- unless settings.type_body_font.system? or body_font_family == 'dm-sans' or body_font_family == 'raleway' -%}
   {% # theme-check-disable AssetPreload %}
   <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
   {% # theme-check-enable AssetPreload %}
