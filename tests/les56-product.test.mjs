@@ -445,6 +445,7 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
     nativeSubmissions: [],
     getElementById: (id) => document.querySelector(`[id="${id}"]`),
     createElement: (tag) => createElement(tag),
+    importNode: (node, deep) => node.cloneNode(deep),
   });
   Object.defineProperty(document, 'isConnected', { get: () => true });
 
@@ -671,7 +672,7 @@ function renderGallery(variant) {
       <div data-les56-player></div>
       <template data-les56-video>${type === 'video' ? `<video controls preload="none"><source src="/${image}.mp4"></video>` : `<iframe src="https://www.youtube.com/embed/${image}" title="Vidéo"></iframe>`}</template>
     </div>` : `
-    <button type="button" class="les56-gallery__slide" data-les56-slide data-index="${index}" aria-pressed="false" aria-label="Zoomer sur l’image ${index + 1} sur ${count}">
+    <button type="button" class="les56-gallery__slide" data-les56-slide data-index="${index}" aria-haspopup="dialog" aria-label="Ouvrir sur l’image ${index + 1} sur ${count}">
       <img class="les56-gallery__image" src="/${image}.jpg" alt="${image}" sizes="100vw">
     </button>`).join('');
   const thumbs = media.map(({ id: image }, index) => `
@@ -682,12 +683,17 @@ function renderGallery(variant) {
     <les56-gallery class="les56-gallery">
       <div class="les56-gallery__frame">
         <div class="les56-gallery__viewport" data-les56-viewport>${slides}</div>
-        <button type="button" class="les56-gallery__zoom" data-les56-zoom-toggle aria-pressed="false" aria-label="Zoomer sur l’image"></button>
+
         <button type="button" class="les56-gallery__arrow" data-les56-prev aria-label="Image précédente"></button>
         <button type="button" class="les56-gallery__arrow" data-les56-next aria-label="Image suivante"></button>
         <div class="les56-gallery__dots">${media.map(() => '<span class="les56-gallery__dot" data-les56-dot></span>').join('')}</div>
       </div>
       <div class="les56-gallery__thumbs">${thumbs}</div>
+      <dialog class="les56-lightbox" data-les56-lightbox aria-label="Image produit en grand">
+        <button type="button" data-les56-lightbox-close>Fermer</button>
+        <button type="button" data-les56-zoom-toggle aria-pressed="false" aria-label="Zoomer sur l’image"></button>
+        <div data-les56-lightbox-stage><img data-les56-lightbox-image alt=""></div>
+      </dialog>
     </les56-gallery>`;
 }
 
@@ -828,10 +834,10 @@ test('displayed totals match the observed /cart.js totals for every quantity and
 
   t.choose(t.$('[data-les56-subscribe]'));
   assert.deepEqual(quantityPrices(t).map(([quantity, total]) => [quantity, total]), [
-    [1, euro(1521)],
-    [2, euro(2770)],
-    [3, euro(4062)],
-    [6, euro(8034)],
+    [1, euro(1690)],
+    [2, euro(3076)],
+    [3, euro(4515)],
+    [6, euro(8928)],
   ]);
 
   t.choose(quantityInput(t, 6));
@@ -851,10 +857,10 @@ test('non-round prices round each discounted unit up once, using the real alloca
   ]);
   t.choose(t.$('[data-les56-subscribe]'));
   assert.deepEqual(quantityPrices(t).map(([quantity, total]) => [quantity, total]), [
-    [1, euro(1611)],
-    [2, euro(2934)],
-    [3, euro(4302)],
-    [6, euro(8508)],
+    [1, euro(1790)],
+    [2, euro(3258)],
+    [3, euro(4782)],
+    [6, euro(9456)],
   ]);
 });
 
@@ -891,11 +897,12 @@ test('the detergent keeps its quantity discounts and the plan allocation is disc
   assert.deepEqual(t.$$('.les56-pill--discount').map((pill) => pill.textContent), ['-9%', '-11%', '-12%']);
   t.choose(t.$('[data-les56-subscribe]'));
   // ceil(1521 × (100 − discount) / 100) × quantity, as in /cart.js.
-  const expected = [[1, 0], [2, 9], [3, 11], [6, 12]].map(([quantity, discount]) => [
-    quantity,
-    euro(Math.ceil((1521 * (100 - discount)) / 100) * quantity),
-  ]);
-  assert.deepEqual(quantityPrices(t).map(([quantity, total]) => [quantity, total]), expected);
+  const expected = [1690, 3076, 4515, 8928];
+  assert.deepEqual(quantityPrices(t).map(([, total]) => total), expected.map(euro));
+  for (const [quantity, total] of [[1, 1521], [2, 2770], [3, 4062], [6, 8034]]) {
+    t.choose(quantityInput(t, quantity));
+    assert.equal(t.$('[data-les56-submit="main"] [data-les56-cta-total]').textContent, euro(total));
+  }
 });
 
 test('the cart payload carries the selected fragrance, quantity and frequency exactly once', () => {
@@ -1137,6 +1144,72 @@ test('rapid fragrance changes always leave the latest choice in content, payload
   const lastUrl = new URL(t.window.history.urls.at(-1));
   assert.equal(lastUrl.searchParams.get('variant'), '55185604149626');
   assert.equal(lastUrl.searchParams.get('preview_theme_id'), '186855653754');
+});
+
+// Supply a real asynchronous image boundary without replacing gallery behavior.
+function delayGalleryDecode(t, id) {
+  const slot = t.$(`[data-les56-variant-template="${id}"]`).content.querySelector('[data-les56-slot="gallery"]');
+  const clone = slot.cloneNode.bind(slot);
+  let resolve, reject;
+  const decoded = new Promise((yes, no) => { resolve = yes; reject = no; });
+  slot.cloneNode = (...args) => {
+    const content = clone(...args);
+    content.querySelector('img').decode = () => decoded;
+    return content;
+  };
+  return { resolve, reject };
+}
+
+test('pending fragrance images keep the previous gallery and stale decodes cannot replace the last choice', async () => {
+  const t = setup();
+  const oldGallery = t.$('les56-gallery');
+  const first = delayGalleryDecode(t, 55185604149626);
+  const last = delayGalleryDecode(t, 55185604182394);
+  t.choose(variantInput(t, 55185604149626));
+  assert.equal(t.$('les56-gallery'), oldGallery, 'no blank gallery while loading');
+  assert.equal(t.payload().id, '55185604149626', 'purchase selection updates immediately');
+  t.choose(variantInput(t, 55185604182394));
+  last.resolve();
+  await new Promise(resolve => setImmediate(resolve));
+  const selectedGallery = t.$('les56-gallery');
+  assert.notEqual(selectedGallery, oldGallery);
+  assert.equal(selectedGallery.querySelector('img').getAttribute('alt'), 'bebe-1');
+  first.resolve();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(t.$('les56-gallery'), selectedGallery, 'late old image ignored');
+});
+
+test('returning to the same fragrance ignores an older decode of that fragrance', async () => {
+  const t = setup();
+  const first = delayGalleryDecode(t, 55185604149626);
+  t.choose(variantInput(t, 55185604149626));
+  t.choose(variantInput(t, 55185604182394));
+  const last = delayGalleryDecode(t, 55185604149626);
+  t.choose(variantInput(t, 55185604149626));
+  last.resolve();
+  await new Promise(resolve => setImmediate(resolve));
+  const gallery = t.$('les56-gallery');
+  t.click(t.$('[data-les56-thumb][data-index="1"]'));
+  first.resolve();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.ok(t.$('les56-gallery') === gallery, 'older decode must not replace the current gallery');
+  assert.equal(gallery.activeIndex, 1, 'the shopper keeps the image selected after loading');
+});
+
+test('an image decode rejection still renders the selected gallery and a removed section stays untouched', async () => {
+  const t = setup();
+  const failed = delayGalleryDecode(t, 55185604149626);
+  t.choose(variantInput(t, 55185604149626));
+  failed.reject(new Error('decode failed'));
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(t.$('les56-gallery').querySelector('img').getAttribute('alt'), 'fleurs-1');
+  const pending = delayGalleryDecode(t, 55185604182394);
+  t.choose(variantInput(t, 55185604182394));
+  const gallery = t.$('les56-gallery');
+  t.root.remove();
+  pending.resolve();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(t.root.querySelector('les56-gallery'), gallery, 'no detached DOM replacement');
 });
 
 test('an open accordion stays open when the fragrance changes', () => {
@@ -1393,7 +1466,7 @@ test('thumbnails list every image except the active one and select on click', ()
   t.click(t.$('[data-les56-thumb][data-index="2"]'));
   assert.deepEqual(t.visibleThumbs(), [0, 1]);
   assert.equal(t.$('[data-les56-viewport]').lastScroll.left, 2 * 380);
-  assert.equal(t.$('[data-les56-viewport]').lastScroll.behavior, 'smooth', 'image-only galleries retain smooth navigation');
+  assert.equal(t.$('[data-les56-viewport]').lastScroll.behavior, 'instant', 'no intermediate slide reflows the thumbnail row');
   assert.equal(t.document.activeElement, t.$('[data-les56-slide][data-index="2"]'));
 
   t.click(t.$('[data-les56-next]'));
@@ -1422,7 +1495,7 @@ test('video slides load on selection, hide image zoom and leave native controls 
   assert.ok(video, 'hosted player activated');
   assert.equal(video.hasAttribute('controls'), true);
   assert.equal(video.getAttribute('preload'), 'none');
-  assert.equal(t.$('[data-les56-zoom-toggle]').hidden, true);
+  assert.equal(t.$('[data-les56-lightbox]').open, false);
   t.click(video);
   assert.equal(gallery.zoomed, false, 'native player clicks never zoom');
   gallery.setZoom(true);
@@ -1435,7 +1508,7 @@ test('video slides load on selection, hide image zoom and leave native controls 
   assert.ok(iframe, 'external player activated');
   t.click(t.$('[data-les56-next]'));
   assert.equal(t.$('iframe'), null, 'external player removed to stop playback');
-  assert.equal(t.$('[data-les56-zoom-toggle]').hidden, false, 'zoom restored on image');
+  assert.equal(t.$('[data-les56-lightbox]').open, false, 'no lightbox opened by navigation');
   assert.equal(iframe.isConnected, false);
 });
 
@@ -1523,92 +1596,46 @@ function pointer(t, element, type, clientX, clientY, pointerType = 'mouse') {
   return event;
 }
 
-const zoomState = (t) => ({
-  zoomed: t.$('les56-gallery').classList.contains('is-zoomed'),
-  toggle: [t.$('[data-les56-zoom-toggle]').getAttribute('aria-pressed'), t.$('[data-les56-zoom-toggle]').getAttribute('aria-label')],
-  pressed: t.$$('[data-les56-slide]').map((slide) => slide.getAttribute('aria-pressed')),
-});
-
-test('the zoom control and the image toggle an inline zoom inside the frame, never a dialog', () => {
+test('an image opens full screen before the magnifier zooms and Escape closes it', () => {
   const t = setup();
-  assert.equal(t.$('dialog'), null, 'no popup');
+  const slide = t.$('[data-les56-slide]');
+  const dialog = t.$('[data-les56-lightbox]');
   const toggle = t.$('[data-les56-zoom-toggle]');
-  assert.equal(toggle.closest('.les56-gallery__frame'), t.$('.les56-gallery__frame'), 'control sits in the frame');
-  assert.deepEqual(zoomState(t), { zoomed: false, toggle: ['false', 'Zoomer sur l’image'], pressed: ['false', 'false', 'false'] });
-
-  t.click(toggle);
-  assert.deepEqual(zoomState(t), { zoomed: true, toggle: ['true', 'Zoomer sur l’image'], pressed: ['true', 'false', 'false'] });
-  assert.equal(t.document.activeElement, t.document.body, 'focus is not moved');
-  assert.equal(t.document.body.getAttribute('style'), null, 'no body scroll lock');
-  assert.equal(t.document.documentElement.getAttribute('class'), null);
-  t.click(toggle);
-  assert.equal(zoomState(t).zoomed, false);
-
-  // A click on the image zooms where the shopper pointed and a second click leaves the zoom.
-  const slide = t.$('[data-les56-slide][data-index="0"]');
-  slide.getBoundingClientRect = () => ({ left: 0, top: 100, right: 380, bottom: 450, width: 380, height: 350 });
-  pointer(t, slide.querySelector('img'), 'click', 95, 275);
-  assert.deepEqual(zoomState(t).pressed, ['true', 'false', 'false']);
-  assert.equal(slide.style.getPropertyValue('--les56-zoom-x'), '25%');
-  assert.equal(slide.style.getPropertyValue('--les56-zoom-y'), '50%');
-  pointer(t, slide, 'click', 95, 275);
-  assert.equal(zoomState(t).zoomed, false);
-
-  // Keyboard activation of the image (no pointer position) zooms on its centre.
-  slide.style.setProperty('--les56-zoom-x', '10%');
+  assert.equal(toggle.closest('dialog'), dialog, 'magnifier only inside the full-screen view');
+  assert.equal(dialog.open, false);
   t.click(slide);
-  assert.equal(zoomState(t).zoomed, true);
-  assert.equal(slide.style.getPropertyValue('--les56-zoom-x'), '');
-});
-
-test('a zoomed image pans with the mouse or a finger in its frame and the zoom ends on Escape or a slide change', () => {
-  const t = setup();
-  const slides = t.$$('[data-les56-slide]');
-  for (const slide of slides) slide.getBoundingClientRect = () => ({ left: 0, top: 100, right: 380, bottom: 450, width: 380, height: 350 });
-  const viewport = t.$('[data-les56-viewport]');
-
-  pointer(t, slides[0], 'pointermove', 285, 135);
-  assert.equal(slides[0].style.getPropertyValue('--les56-zoom-x'), '', 'no pan while unzoomed');
-
-  t.click(t.$('[data-les56-zoom-toggle]'));
-  pointer(t, slides[0].querySelector('img'), 'pointermove', 285, 135);
-  assert.deepEqual([slides[0].style.getPropertyValue('--les56-zoom-x'), slides[0].style.getPropertyValue('--les56-zoom-y')], ['75%', '10%']);
-  pointer(t, slides[0], 'pointermove', 500, 40, 'touch');
-  assert.deepEqual([slides[0].style.getPropertyValue('--les56-zoom-x'), slides[0].style.getPropertyValue('--les56-zoom-y')], ['100%', '0%'], 'clamped to the image');
-  assert.ok(Number(slides[0].querySelector('img').getAttribute('sizes').replace('px', '')) >= 380 * 2, 'a sharper source is requested');
-
+  assert.equal(dialog.open, true);
+  assert.equal(t.$('les56-gallery').zoomed, false, 'first click fits the whole image');
+  assert.equal(t.$('[data-les56-lightbox-image]').getAttribute('src'), slide.querySelector('img').getAttribute('src'));
+  t.click(toggle);
+  assert.equal(t.$('les56-gallery').zoomed, true);
+  assert.equal(toggle.getAttribute('aria-pressed'), 'true');
+  t.click(toggle);
+  assert.equal(t.$('les56-gallery').zoomed, false);
   t.keydown(t.document.body, 'Escape');
-  assert.equal(zoomState(t).zoomed, false, 'Escape leaves the zoom wherever the focus is');
-  assert.equal(slides[0].style.getPropertyValue('--les56-zoom-x'), '', 'pan position reset');
-
-  t.click(t.$('[data-les56-zoom-toggle]'));
-  t.click(t.$('[data-les56-next]'));
-  assert.deepEqual(zoomState(t), { zoomed: false, toggle: ['false', 'Zoomer sur l’image'], pressed: ['false', 'false', 'false'] });
-  assert.equal(viewport.lastScroll.left, 380, 'arrows still change the image');
-
-  t.click(t.$('[data-les56-zoom-toggle]'));
-  assert.deepEqual(zoomState(t).pressed, ['false', 'true', 'false'], 'the visible image is the zoomed one');
-  t.click(t.$('[data-les56-thumb][data-index="2"]'));
-  assert.equal(zoomState(t).zoomed, false);
-  assert.deepEqual(t.visibleThumbs(), [0, 1]);
-
-  // Escape without a zoom leaves the key to the page (cart drawer, dialogs).
-  const escape = new t.window.Event('keydown', { bubbles: true, cancelable: true, key: 'Escape' });
-  t.document.body.dispatchEvent(escape);
-  assert.equal(escape.defaultPrevented, false);
+  assert.equal(dialog.open, false);
 });
 
-test('a fragrance change resets the zoom and the replaced gallery releases its listeners', () => {
+test('the enlarged image pans, and close, slide change and fragrance replacement release it', () => {
   const t = setup();
-  const oldGallery = t.$('les56-gallery');
+  const gallery = t.$('les56-gallery');
+  const stage = t.$('[data-les56-lightbox-stage]');
+  stage.getBoundingClientRect = () => ({ left: 0, top: 100, width: 380, height: 350 });
+  t.click(t.$('[data-les56-slide]'));
   t.click(t.$('[data-les56-zoom-toggle]'));
-  assert.ok(t.document.listeners.some((entry) => entry.type === 'keydown'), 'Escape listened for while zoomed');
-
+  pointer(t, stage, 'pointermove', 285, 135);
+  assert.equal(stage.style.getPropertyValue('--les56-zoom-x'), '75%');
+  assert.equal(stage.style.getPropertyValue('--les56-zoom-y'), '10%');
+  t.click(t.$('[data-les56-lightbox-close]'));
+  assert.equal(t.$('[data-les56-lightbox]').open, false);
+  assert.equal(gallery.zoomed, false);
+  t.click(t.$('[data-les56-slide]'));
+  t.click(t.$('[data-les56-next]'));
+  assert.equal(t.$('[data-les56-lightbox]').open, false);
+  t.click(t.$('[data-les56-slide][data-index="1"]'));
   t.choose(variantInput(t, 55185604149626));
-  assert.notEqual(t.$('les56-gallery'), oldGallery);
-  assert.deepEqual(zoomState(t), { zoomed: false, toggle: ['false', 'Zoomer sur l’image'], pressed: ['false', 'false'] });
-  assert.deepEqual(oldGallery.listeners, []);
-  assert.equal(oldGallery.querySelector('[data-les56-viewport]').listeners.length, 0);
+  assert.equal(gallery.querySelector('[data-les56-lightbox]').open, false);
+  assert.equal(t.$('[data-les56-lightbox]').open, false);
   assert.equal(t.document.listeners.some((entry) => entry.type === 'keydown'), false);
 });
 
@@ -1904,7 +1931,7 @@ test('state classes set by the section and script are styled', () => {
   assert.match(productScript, /'has-content'/);
   assert.match(productStyles, /\.les56-app:not\(\.has-content\)\s*{\s*margin-top: 0;/);
   assert.match(productScript, /'is-zoomed'/);
-  assert.match(productStyles, /\.les56-gallery\.is-zoomed [^{]*\.les56-gallery__image\s*{[^}]*transform: scale\(/);
+  assert.match(productStyles, /\.les56-lightbox\.is-zoomed [^{]*\.les56-lightbox__image\s*{[^}]*transform: scale\(/);
 });
 
 test('the per-litre unit comes from Shopify unit pricing or a litre option value, never from a product id', () => {

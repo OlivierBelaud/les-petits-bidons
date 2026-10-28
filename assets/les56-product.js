@@ -45,8 +45,6 @@
       .trim();
   }
 
-  const ZOOM_SCALE = 2.5;
-
   class Les56Gallery extends HTMLElement {
     connectedCallback() {
       this.viewport = this.querySelector('[data-les56-viewport]');
@@ -54,31 +52,43 @@
       this.thumbs = Array.from(this.querySelectorAll('[data-les56-thumb]'));
       this.dots = Array.from(this.querySelectorAll('[data-les56-dot]'));
       this.zoomToggle = this.querySelector('[data-les56-zoom-toggle]');
+      this.lightbox = this.querySelector('[data-les56-lightbox]');
+      this.lightboxImage = this.querySelector('[data-les56-lightbox-image]');
+      this.lightboxStage = this.querySelector('[data-les56-lightbox-stage]');
       this.zoomed = false;
 
       this.onClick = this.onClick.bind(this);
       this.onScroll = this.onScroll.bind(this);
       this.onPointerMove = this.onPointerMove.bind(this);
       this.onKeydown = this.onKeydown.bind(this);
+      this.closeLightbox = this.closeLightbox.bind(this);
       this.addEventListener('click', this.onClick);
       this.viewport?.addEventListener('scroll', this.onScroll, { passive: true });
-      this.viewport?.addEventListener('pointermove', this.onPointerMove);
+      this.lightboxStage?.addEventListener('pointermove', this.onPointerMove);
+      this.lightbox?.addEventListener('close', this.closeLightbox);
 
       this.setActive(0, false);
     }
 
     disconnectedCallback() {
+      this.closeLightbox();
       this.slides.forEach((slide) => this.releaseVideo(slide));
       this.removeEventListener('click', this.onClick);
       this.viewport?.removeEventListener('scroll', this.onScroll, { passive: true });
-      this.viewport?.removeEventListener('pointermove', this.onPointerMove);
-      document.removeEventListener('keydown', this.onKeydown);
+      this.lightboxStage?.removeEventListener('pointermove', this.onPointerMove);
+      this.lightbox?.removeEventListener('close', this.closeLightbox);
       cancelAnimationFrame(this.scrollFrame);
     }
 
     onClick(event) {
       const target = event.target;
+      if (target.closest('[data-les56-lightbox-close]') || target === this.lightbox) return this.closeLightbox();
       if (target.closest('[data-les56-zoom-toggle]')) return this.setZoom(!this.zoomed);
+      if (target.closest('[data-les56-lightbox-stage]')) {
+        this.setZoom(!this.zoomed);
+        if (this.zoomed && event.detail) this.panTo(event);
+        return;
+      }
 
       const thumb = target.closest('[data-les56-thumb]');
       if (thumb) {
@@ -92,10 +102,7 @@
 
       const slide = target.closest('[data-les56-slide]');
       if (!slide || slide.dataset.mediaType === 'video' || slide.dataset.mediaType === 'external_video') return;
-      if (this.zoomed) return this.setZoom(false);
-      this.setZoom(true);
-      // A pointer click zooms where the shopper pointed; keyboard activation (detail 0) on the centre.
-      if (event.detail) this.panTo(event);
+      this.openLightbox();
     }
 
     setActive(index, scroll) {
@@ -103,7 +110,9 @@
       if (!count) return;
       const previous = this.activeIndex;
       this.activeIndex = ((index % count) + count) % count;
-      if (this.zoomed && previous !== this.activeIndex) this.setZoom(false);
+      if (previous !== this.activeIndex) this.closeLightbox();
+      const animateTransition = previous != null && previous !== this.activeIndex && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      const positions = animateTransition ? this.thumbs.map((thumb) => thumb.hidden ? null : thumb.getBoundingClientRect()) : [];
 
       this.slides.forEach((slide, position) => {
         const active = position === this.activeIndex;
@@ -113,17 +122,28 @@
         if (active) this.loadVideo(slide);
         else this.releaseVideo(slide);
       });
-      if (this.zoomToggle) this.zoomToggle.hidden = Boolean(this.slides[this.activeIndex].querySelector('[data-les56-video]'));
       this.thumbs.forEach((thumb) => {
         thumb.hidden = Number(thumb.dataset.index) === this.activeIndex;
       });
       this.dots.forEach((dot, position) => dot.classList.toggle('is-active', position === this.activeIndex));
 
       if (scroll && this.viewport) {
-        // Intermediate smooth-scroll positions would unload a selected player and
-        // make its focused slide inert. Mixed galleries navigate in one step.
-        const behavior = this.querySelector('[data-les56-video]') ? 'instant' : 'smooth';
-        this.viewport.scrollTo({ left: this.viewport.clientWidth * this.activeIndex, behavior });
+        // Navigate once, then animate the visible result. Intermediate scroll positions
+        // would repeatedly hide different thumbnails and unload selected video players.
+        this.viewport.scrollTo({ left: this.viewport.clientWidth * this.activeIndex, behavior: 'instant' });
+      }
+      if (animateTransition) {
+        this.thumbs.forEach((thumb, index) => {
+          if (thumb.hidden) return;
+          const before = positions[index];
+          const after = thumb.getBoundingClientRect();
+          thumb.getAnimations?.().forEach((animation) => animation.cancel());
+          thumb.animate?.(before ? [
+            { transform: `translate(${before.left - after.left}px, ${before.top - after.top}px)` },
+            { transform: 'translate(0, 0)' },
+          ] : [{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'cubic-bezier(0.22,1,0.36,1)' });
+        });
+        if (scroll) this.slides[this.activeIndex].animate?.([{ opacity: 0.7 }, { opacity: 1 }], { duration: 300 });
       }
     }
 
@@ -157,45 +177,58 @@
       });
     }
 
-    setZoom(zoomed) {
-      if (zoomed && this.slides[this.activeIndex]?.querySelector('[data-les56-video]')) return;
-      this.zoomed = zoomed;
-      this.classList.toggle('is-zoomed', zoomed);
-      const active = this.slides[this.activeIndex];
-      for (const slide of this.slides) {
-        if (!slide.querySelector('[data-les56-video]')) slide.setAttribute('aria-pressed', zoomed && slide === active ? 'true' : 'false');
-        slide.style.removeProperty('--les56-zoom-x');
-        slide.style.removeProperty('--les56-zoom-y');
+    openLightbox() {
+      const image = this.slides[this.activeIndex]?.querySelector('img');
+      if (!image || !this.lightbox) return;
+      for (const attribute of ['src', 'srcset', 'alt']) {
+        const value = image.getAttribute(attribute);
+        if (value != null) this.lightboxImage.setAttribute(attribute, value);
+        else this.lightboxImage.removeAttribute(attribute);
       }
-      this.zoomToggle?.setAttribute('aria-pressed', zoomed ? 'true' : 'false');
+      this.lightboxImage.setAttribute('sizes', '100vw');
+      this.setZoom(false);
+      this.lightbox.showModal();
+      document.documentElement.classList.add('les56-lightbox-open');
+      document.addEventListener('keydown', this.onKeydown);
+    }
 
-      if (zoomed) {
-        document.addEventListener('keydown', this.onKeydown);
-        const width = active?.getBoundingClientRect().width;
-        const image = active?.querySelector('img');
-        if (image && width) image.setAttribute('sizes', `${Math.ceil(width * ZOOM_SCALE)}px`);
-      } else {
-        document.removeEventListener('keydown', this.onKeydown);
-      }
+    closeLightbox() {
+      this.setZoom(false);
+      if (this.lightbox?.open) this.lightbox.close();
+      document.documentElement.classList.remove('les56-lightbox-open');
+      document.removeEventListener('keydown', this.onKeydown);
+    }
+
+    setZoom(zoomed) {
+      if (zoomed && (!this.lightbox?.open || this.slides[this.activeIndex]?.querySelector('[data-les56-video]'))) return;
+      this.zoomed = zoomed;
+      this.lightbox?.classList.toggle('is-zoomed', zoomed);
+      this.zoomToggle?.setAttribute('aria-pressed', String(zoomed));
+      this.zoomToggle?.setAttribute('aria-label', zoomed ? 'Réduire l’image' : 'Zoomer sur l’image');
+      this.lightboxImage?.setAttribute('sizes', zoomed ? '250vw' : '100vw');
+      this.lightboxStage?.style.removeProperty('--les56-zoom-x');
+      this.lightboxStage?.style.removeProperty('--les56-zoom-y');
     }
 
     panTo(event) {
-      const slide = this.slides[this.activeIndex];
-      const rect = slide?.getBoundingClientRect();
+      const rect = this.lightboxStage?.getBoundingClientRect();
       if (!rect?.width || !rect.height) return;
       const percent = (offset, size) => `${Math.round(Math.min(1, Math.max(0, offset / size)) * 10000) / 100}%`;
-      slide.style.setProperty('--les56-zoom-x', percent(event.clientX - rect.left, rect.width));
-      slide.style.setProperty('--les56-zoom-y', percent(event.clientY - rect.top, rect.height));
+      this.lightboxStage.style.setProperty('--les56-zoom-x', percent(event.clientX - rect.left, rect.width));
+      this.lightboxStage.style.setProperty('--les56-zoom-y', percent(event.clientY - rect.top, rect.height));
     }
 
     onPointerMove(event) {
-      if (this.zoomed) this.panTo(event);
+      if (this.zoomed) {
+        if (event.pointerType === 'touch') event.preventDefault();
+        this.panTo(event);
+      }
     }
 
     onKeydown(event) {
-      if (event.key !== 'Escape' || !this.zoomed) return;
+      if (event.key !== 'Escape' || !this.lightbox?.open) return;
       event.preventDefault();
-      this.setZoom(false);
+      this.closeLightbox();
     }
   }
 
@@ -392,6 +425,7 @@
     }
 
     renderVariantContent(id) {
+      const generation = this.galleryGeneration = (this.galleryGeneration || 0) + 1;
       const template = this.querySelector(`[data-les56-variant-template="${id}"]`);
       if (!template) return;
 
@@ -403,7 +437,20 @@
 
       for (const slot of template.content.querySelectorAll('[data-les56-slot]')) {
         const region = this.querySelector(`[data-les56-region="${slot.dataset.les56Slot}"]`);
-        if (region) region.replaceChildren(...Array.from(slot.cloneNode(true).childNodes));
+        if (!region) continue;
+        const content = document.importNode(slot, true);
+        const replace = () => {
+          if (generation !== this.galleryGeneration || !this.isConnected) return;
+          region.replaceChildren(...Array.from(content.childNodes));
+          if (slot.dataset.les56Slot === 'gallery' && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+            region.animate?.([{ opacity: 0.75 }, { opacity: 1 }], { duration: 300 });
+          }
+        };
+        const image = slot.dataset.les56Slot === 'gallery' ? content.querySelector('img') : null;
+        if (image?.decode) {
+          image.loading = 'eager';
+          image.decode().catch(() => {}).then(replace);
+        } else replace();
       }
 
       for (const accordion of this.querySelectorAll('[data-les56-accordion]')) {
@@ -448,7 +495,7 @@
         this.renderPrice(
           label.querySelector('[data-les56-quantity-total]'),
           label.querySelector('[data-les56-quantity-compare]'),
-          lineTotal(unitCents, Number(input.dataset.discountBp) || 0, value),
+          lineTotal(variant.price, Number(input.dataset.discountBp) || 0, value),
           compareUnitCents * value,
         );
       }

@@ -119,8 +119,8 @@
                   class="les56-gallery__slide"
                   data-les56-slide
                   data-index="{{ forloop.index0 }}"
-                  aria-pressed="false"
-                  aria-label="Zoomer sur l’image {{ forloop.index }} sur {{ media_count }}"
+                  aria-haspopup="dialog"
+                  aria-label="Ouvrir l’image {{ forloop.index }} sur {{ media_count }} en grand"
                   {% unless forloop.first %}
                     tabindex="-1" aria-hidden="true"
                   {% endunless %}
@@ -140,13 +140,6 @@
               {%- endif -%}
             {%- endfor -%}
           </div>
-          <button
-            type="button"
-            class="les56-gallery__zoom"
-            data-les56-zoom-toggle
-            aria-pressed="false"
-            aria-label="Zoomer sur l’image"
-          ></button>
           {%- if media_count > 1 -%}
             <button
               type="button"
@@ -202,6 +195,15 @@
             {%- endfor -%}
           </div>
         {%- endif -%}
+        <dialog class="les56-lightbox" data-les56-lightbox aria-label="Image produit en grand">
+          <button type="button" class="les56-lightbox__close" data-les56-lightbox-close aria-label="Fermer l’image">✕</button>
+          <button type="button" class="les56-lightbox__zoom" data-les56-zoom-toggle aria-label="Zoomer sur l’image" aria-pressed="false">
+            {% render 'icon', icon: 'zoom' %}
+          </button>
+          <div class="les56-lightbox__stage" data-les56-lightbox-stage>
+            <img class="les56-lightbox__image" data-les56-lightbox-image alt="" width="2048" height="2048">
+          </div>
+        </dialog>
       </les56-gallery>
     {%- endif -%}
   {%- endcapture -%}
@@ -449,7 +451,7 @@
                         >
                       {%- endfor -%}
                     </span>
-                    <span class="les56-rating__count">{{ rating_count }} avis</span>
+                    <a class="les56-rating__count" href="#judgeme_product_reviews">{{ rating_count }} avis</a>
                   </div>
                 {%- endif -%}
               </div>
@@ -643,6 +645,17 @@
                           assign fragrance_accent = fragrance_text_color
                         endif
                       endif
+
+                      case fragrance_key
+                        when 'lavande'
+                          assign fragrance_color = '#E6E1EE'
+                          assign fragrance_text_color = '#8A66C5'
+                          assign fragrance_accent = '#8A66C5'
+                        when 'amande-douce'
+                          assign fragrance_color = '#E4EDCC'
+                          assign fragrance_text_color = '#87926B'
+                          assign fragrance_accent = '#87926B'
+                      endcase
 
                       if fragrance_position > 0
                         assign fragrance_image = 'les56-fragrance-' | append: fragrance_key | append: '.jpg'
@@ -1057,39 +1070,38 @@
               {%- render 'product-variants', block: block, product: product, product_id: product.id, section_id: section.id -%}
           {%- endcase -%}
         {%- endfor -%}
-      </div>
-    </div>
-
-    <div class="les56__details">
-      {%- assign accordions_rendered = false -%}
-      {%- for block in section.blocks -%}
-        {%- case block.type -%}
-          {%- when 'collapsible_tab' -%}
-            {%- unless accordions_rendered -%}
-              <div class="les56-accordions" data-les56-region="accordions" {{ block.shopify_attributes }}>
-                {{- live_accordions -}}
-              </div>
-              {%- assign accordions_rendered = true -%}
-            {%- endunless -%}
-
-          {%- when 'icons' -%}
-            <ul class="les56-icons" role="list" {{ block.shopify_attributes }}>
-              {%- for i in (1..4) -%}
-                {%- liquid
-                  assign icon_setting = 'icon_' | append: i
-                  assign text_setting = 'text_' | append: i
-                -%}
-                {%- unless block.settings[icon_setting] == blank and block.settings[text_setting] == blank -%}
-                  <li class="les56-icons__item">
-                    <span class="les56-icons__icon" aria-hidden="true">{{ block.settings[icon_setting] }}</span>
-                    <span class="les56-icons__text">{{ block.settings[text_setting] | escape }}</span>
-                  </li>
+        <div class="les56__details">
+          {%- assign accordions_rendered = false -%}
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when 'collapsible_tab' -%}
+                {%- unless accordions_rendered -%}
+                  <div class="les56-accordions" data-les56-region="accordions" {{ block.shopify_attributes }}>
+                    {{- live_accordions -}}
+                  </div>
+                  {%- assign accordions_rendered = true -%}
                 {%- endunless -%}
-              {%- endfor -%}
-            </ul>
-        {%- endcase -%}
-      {%- endfor -%}
-      <div class="les56-relocated-apps" data-les56-app-slot></div>
+
+              {%- when 'icons' -%}
+                <ul class="les56-icons" role="list" {{ block.shopify_attributes }}>
+                  {%- for i in (1..4) -%}
+                    {%- liquid
+                      assign icon_setting = 'icon_' | append: i
+                      assign text_setting = 'text_' | append: i
+                    -%}
+                    {%- unless block.settings[icon_setting] == blank and block.settings[text_setting] == blank -%}
+                      <li class="les56-icons__item">
+                        <span class="les56-icons__icon" aria-hidden="true">{{ block.settings[icon_setting] }}</span>
+                        <span class="les56-icons__text">{{ block.settings[text_setting] | escape }}</span>
+                      </li>
+                    {%- endunless -%}
+                  {%- endfor -%}
+                </ul>
+            {%- endcase -%}
+          {%- endfor -%}
+          <div class="les56-relocated-apps" data-les56-app-slot></div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -12,7 +12,7 @@
   --les56-white: #fffffa;
   --les56-orange: #f0813c;
   --les56-muted: #9f9f9f;
-  --les56-border: #e7e7e7;
+  --les56-border: #8F8F8F;
   --les56-cream: #fbedbf;
   --les56-error: #b42318;
 
@@ -105,6 +105,8 @@
   display: flex;
   aspect-ratio: 380 / 350;
   overflow-x: auto;
+  overflow-y: hidden;
+  touch-action: pan-x pan-y pinch-zoom;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
@@ -161,51 +163,81 @@
   display: none;
 }
 
-.les56-gallery.is-zoomed .les56-gallery__viewport {
+html.les56-lightbox-open {
   overflow: hidden;
 }
 
-.les56-gallery.is-zoomed .les56-gallery__slide {
-  cursor: zoom-out;
-  touch-action: none;
+.les56-lightbox {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 64px 16px 16px;
+  border: 0;
+  background: var(--les56-background);
 }
 
-.les56-gallery.is-zoomed .les56-gallery__slide[aria-pressed='true'] .les56-gallery__image {
+.les56-lightbox[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.les56-lightbox::backdrop {
+  background: rgb(0 0 0 / 70%);
+}
+
+.les56-lightbox__stage {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.les56-lightbox__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: var(--les56-zoom-x, 50%) var(--les56-zoom-y, 50%);
+}
+
+.les56-lightbox.is-zoomed .les56-lightbox__image {
   transform: scale(2.5);
 }
 
-.les56 .les56-gallery__zoom {
+.les56-lightbox.is-zoomed .les56-lightbox__stage {
+  touch-action: none;
+  cursor: zoom-out;
+}
+
+.les56 .les56-lightbox__close,
+.les56 .les56-lightbox__zoom {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 1;
-  width: 40px;
-  height: 40px;
-  padding: 0;
+  top: max(12px, env(safe-area-inset-top));
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 12px;
   border: 1px solid var(--les56-mint-dark);
   border-radius: 50%;
-  background: var(--les56-mint-light);
+  background: var(--les56-white);
 }
 
-.les56-gallery__zoom::before,
-.les56-gallery__zoom::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 14px;
-  height: 2px;
-  border-radius: 1px;
-  background: var(--les56-mint-dark);
-  transform: translate(-50%, -50%);
+.les56 .les56-lightbox__zoom {
+  right: 72px;
 }
 
-.les56-gallery__zoom::after {
-  transform: translate(-50%, -50%) rotate(90deg);
-}
-
-.les56-gallery__zoom[aria-pressed='true']::after {
-  display: none;
+.les56-lightbox__zoom svg {
+  width: 100%;
+  height: 100%;
 }
 
 .les56-gallery__arrow {
@@ -278,6 +310,8 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  border-radius: inherit;
+  clip-path: inset(0 round 8px);
 }
 
 /* ---------- Heading: title, price, rating ---------- */
@@ -473,8 +507,9 @@
   display: flex;
   clear: both;
   justify-content: center;
-  gap: 4px;
-  padding-top: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px 0;
 }
 
 /* Default crop; the per-fragrance modifiers below override these variables. */
@@ -492,9 +527,9 @@
 .les56 .les56-fragrance {
   position: relative;
   display: block;
-  flex: 0 0 70px;
-  width: 70px;
-  height: 84px;
+  flex: 0 0 88px;
+  width: 88px;
+  height: 100px;
   overflow: hidden;
   border-radius: 12px;
   background: #fff;
@@ -553,8 +588,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 32px;
-  padding: 0 2px;
+  height: 40px;
+  padding: 0 8px;
   border-radius: 0 0 10px 10px;
   background: var(--les56-fragrance-color);
   color: var(--les56-fragrance-text);
@@ -851,8 +886,18 @@
 
 .les56-subscription__option {
   margin-top: 6px;
-  border: 1px solid var(--les56-white);
+  border: 1px solid var(--les56-border);
   border-radius: 12px;
+}
+
+.les56-subscription__option:has([data-les56-subscribe]:checked) {
+  border-color: #000;
+}
+
+.les56-subscription__option:has([data-les56-subscribe]:checked) .les56-subscription__title,
+.les56-subscription__option:has([data-les56-subscribe]:checked) .les56-subscription__note,
+.les56-subscription__option:has([data-les56-subscribe]:checked) .les56-subscription__radio {
+  color: #000;
 }
 
 .les56 .les56-subscription__toggle {
@@ -864,6 +909,8 @@
 }
 
 .les56-subscription__radio {
+  border: 2px solid var(--les56-border);
+  border-radius: 50%;
   flex: none;
   width: 20px;
   height: 20px;
@@ -871,6 +918,7 @@
 }
 
 .les56-sr-only:checked + .les56-subscription__toggle .les56-subscription__radio {
+  border: 0;
   background-image: var(--les56-radio-checked-image);
 }
 
@@ -1045,6 +1093,7 @@
 
 .les56-buy {
   margin-top: 20px;
+  padding: 0 16px;
 }
 
 .les56 .les56-cta {
@@ -1531,9 +1580,9 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
   }
 
   .les56 .les56-fragrance {
-    flex-basis: 78px;
-    width: 78px;
-    height: 92px;
+    flex-basis: 88px;
+    width: 88px;
+    height: 104px;
   }
 
   .les56-fragrance__name {
@@ -1644,10 +1693,10 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
   }
 
   .les56__details {
-    width: 520px;
+    width: 100%;
     max-width: 100%;
-    margin-top: 103px;
-    margin-left: -10px;
+    margin-top: 24px;
+    margin-left: 0;
   }
 
   .les56-accordions {
@@ -1677,6 +1726,29 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
   .les56-icons,
   .les56-relocated-apps {
     padding: 0;
+  }
+
+  .les56-sticky__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    max-width: 1360px;
+    margin: 0 auto;
+  }
+
+  .les56-sticky__title {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .les56 .les56-cta--sticky {
+    flex: 0 1 520px;
+  }
+
+  .les56-gallery__thumb-image {
+    clip-path: inset(0 round 20px);
   }
 
   .les56-sticky {
