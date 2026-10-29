@@ -11,8 +11,10 @@
   "sections": {
     "main-page": {
       "type": "main-page",
+      "disabled": true,
       "settings": {
         "heading_size": "title-xl tracking-heading",
+        "heading_alignment": "text-left",
         "heading_tag": "h1",
         "text_size": "text-base",
         "padding_top": 72,
@@ -21,9 +23,67 @@
         "narrow": true,
         "rounded": false
       }
+    },
+    "17932663289ee628f6": {
+      "type": "apps",
+      "blocks": {
+        "loyoly_section_banner_t7tK6H": {
+          "type": "shopify://apps/loyoly/blocks/section-banner/f8398f67-b476-4b74-89b8-cb199b7011c9",
+          "settings": {
+            "full_width": false
+          }
+        },
+        "loyoly_section_steps_VPkQCe": {
+          "type": "shopify://apps/loyoly/blocks/section-steps/f8398f67-b476-4b74-89b8-cb199b7011c9",
+          "settings": {
+            "full_width": false
+          }
+        },
+        "loyoly_section_challenges_BfNLeR": {
+          "type": "shopify://apps/loyoly/blocks/section-challenges/f8398f67-b476-4b74-89b8-cb199b7011c9",
+          "settings": {
+            "full_width": false
+          }
+        },
+        "loyoly_section_rewards_bGbWpz": {
+          "type": "shopify://apps/loyoly/blocks/section-rewards/f8398f67-b476-4b74-89b8-cb199b7011c9",
+          "settings": {
+            "full_width": false
+          }
+        },
+        "loyoly_section_referral_eMURCV": {
+          "type": "shopify://apps/loyoly/blocks/section-referral/f8398f67-b476-4b74-89b8-cb199b7011c9",
+          "settings": {
+            "full_width": false
+          }
+        }
+      },
+      "block_order": [
+        "loyoly_section_banner_t7tK6H",
+        "loyoly_section_steps_VPkQCe",
+        "loyoly_section_challenges_BfNLeR",
+        "loyoly_section_rewards_bGbWpz",
+        "loyoly_section_referral_eMURCV"
+      ],
+      "settings": {
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
     }
   },
   "order": [
-    "main-page"
+    "main-page",
+    "17932663289ee628f6"
   ]
 }
