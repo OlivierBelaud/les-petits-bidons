@@ -241,6 +241,30 @@
         "type": "shopify://apps/wheelio-spin-popup-email-sms/blocks/wheelio/f45cb831-26a4-40d6-92e9-b57362611b34",
         "disabled": false,
         "settings": {}
+      },
+      "2622072997443157346": {
+        "type": "shopify://apps/loyoly/blocks/account-legacy/f8398f67-b476-4b74-89b8-cb199b7011c9",
+        "disabled": false,
+        "settings": {}
+      },
+      "8263934491506400522": {
+        "type": "shopify://apps/loyoly/blocks/widget/f8398f67-b476-4b74-89b8-cb199b7011c9",
+        "disabled": false,
+        "settings": {
+          "pages_excluded": "",
+          "pages_excluded_patterns": "",
+          "hide_launcher": false
+        }
+      },
+      "14400299622900873742": {
+        "type": "shopify://apps/loyoly/blocks/international/f8398f67-b476-4b74-89b8-cb199b7011c9",
+        "disabled": false,
+        "settings": {}
+      },
+      "16268316118097564792": {
+        "type": "shopify://apps/loyoly/blocks/modals/f8398f67-b476-4b74-89b8-cb199b7011c9",
+        "disabled": false,
+        "settings": {}
       }
     }
   },
