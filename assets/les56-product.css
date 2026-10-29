@@ -1362,6 +1362,39 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
   }
 }
 
+/* Shared purchase gutters on mobile and tablet. */
+@media screen and (max-width: 1023px) {
+  .les56-purchase {
+    padding: 0 16px;
+  }
+
+  .les56-fragrances .les56-label,
+  .les56-quantities .les56-label {
+    padding-left: 0;
+  }
+
+  .les56-fragrances__list {
+    justify-content: flex-start;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .les56-quantities__grid {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .les56-subscription {
+    width: 100%;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .les56-subscription__intro {
+    margin-left: 0;
+  }
+}
+
 /* ---------- Tablet: single column, contained ---------- */
 
 @media screen and (min-width: 600px) and (max-width: 1023px) {
