@@ -519,8 +519,6 @@ html.les56-lightbox-open {
 
 /* Default crop; the per-fragrance modifiers below override these variables. */
 .les56-fragrance {
-
-
   --les56-art-width: 46px;
   --les56-art-height: 44px;
   --les56-image-width: 100%;
@@ -607,8 +605,6 @@ html.les56-lightbox-open {
 
 /* Crops of the Figma illustrations (Rectangle 1651–1655). */
 .les56-fragrance--lavande {
-
-
   --les56-art-width: 28px;
   --les56-art-height: 48px;
   --les56-image-width: 204.55%;
@@ -618,8 +614,6 @@ html.les56-lightbox-open {
 }
 
 .les56-fragrance--fleurs-blanches {
-
-
   --les56-art-width: 34px;
   --les56-art-height: 41px;
   --les56-image-width: 149.47%;
@@ -629,8 +623,6 @@ html.les56-lightbox-open {
 }
 
 .les56-fragrance--eucalyptus {
-
-
   --les56-art-width: 30px;
   --les56-art-height: 47px;
   --les56-image-width: 192.59%;
@@ -640,8 +632,6 @@ html.les56-lightbox-open {
 }
 
 .les56-fragrance--amande-douce {
-
-
   --les56-art-width: 45px;
   --les56-art-height: 45px;
   --les56-image-width: 139.93%;
@@ -651,8 +641,6 @@ html.les56-lightbox-open {
 }
 
 .les56-fragrance--bebe {
-
-
   --les56-art-width: 31px;
   --les56-art-height: 45px;
   --les56-image-width: 174.19%;
@@ -666,7 +654,6 @@ html.les56-lightbox-open {
     flex: 0 1 70px;
     min-width: 0;
   }
-
 }
 
 @media screen and (max-width: 359px) {
@@ -1594,25 +1581,13 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
     line-height: 14px;
   }
 
-  .les56-fragrance--lavande {
-
-
-  }
-
   .les56-fragrance--fleurs-blanches {
-
-
     --les56-art-height: 45px;
     --les56-image-height: 112.93%;
     --les56-image-top: -11.97%;
   }
 
-  .les56-fragrance--amande-douce {
-
-  }
-
   .les56-fragrance--bebe {
-
     --les56-art-width: 33px;
     --les56-art-height: 46px;
     --les56-image-width: 168.75%;
