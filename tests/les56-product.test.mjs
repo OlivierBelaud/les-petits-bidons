@@ -1631,7 +1631,7 @@ test('an image opens full screen before the magnifier zooms and Escape closes it
   assert.equal(dialog.open, false);
   t.click(slide);
   assert.equal(dialog.open, true);
-  assert.equal(t.$('les56-gallery').zoomed, false, 'first click fits the whole image');
+  assert.equal(t.$('les56-gallery').zoomed, false, 'first click opens the full-screen view without extra magnification');
   assert.equal(t.$('[data-les56-lightbox-image]').getAttribute('src'), slide.querySelector('img').getAttribute('src'));
   t.click(toggle);
   assert.equal(t.$('les56-gallery').zoomed, true);

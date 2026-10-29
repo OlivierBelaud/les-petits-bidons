@@ -176,8 +176,9 @@ html.les56-lightbox-open {
   height: 100dvh;
   max-height: none;
   margin: 0;
-  padding: 64px 16px 16px;
+  padding: 0;
   border: 0;
+  border-radius: 0;
   background: var(--les56-background);
 }
 
@@ -203,7 +204,7 @@ html.les56-lightbox-open {
 .les56-lightbox__image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   transform-origin: var(--les56-zoom-x, 50%) var(--les56-zoom-y, 50%);
 }
 
@@ -219,6 +220,7 @@ html.les56-lightbox-open {
 .les56 .les56-lightbox__close,
 .les56 .les56-lightbox__zoom {
   position: absolute;
+  z-index: 1;
   top: max(12px, env(safe-area-inset-top));
   right: 16px;
   display: grid;
