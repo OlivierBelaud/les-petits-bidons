@@ -112,9 +112,12 @@
       this.activeIndex = ((index % count) + count) % count;
       if (previous !== this.activeIndex) this.closeLightbox();
       const animateTransition = previous != null && previous !== this.activeIndex && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-      const positions = animateTransition ? this.thumbs.map((thumb) => thumb.hidden ? null : thumb.getBoundingClientRect()) : [];
-      // Preserve the painted positions, then remove old transforms before measuring the new layout.
-      this.thumbs.forEach((thumb) => thumb.getAnimations?.().forEach((animation) => animation.cancel()));
+      if (previous != null && previous !== this.activeIndex) {
+        const previousThumb = this.thumbs.find((thumb) => Number(thumb.dataset.index) === previous);
+        const selectedThumb = this.thumbs.find((thumb) => Number(thumb.dataset.index) === this.activeIndex);
+        // Replace only the selected slot; every other thumbnail keeps its place and tab order.
+        if (previousThumb && selectedThumb) selectedThumb.parentNode.insertBefore(previousThumb, selectedThumb);
+      }
 
       this.slides.forEach((slide, position) => {
         const active = position === this.activeIndex;
@@ -134,18 +137,7 @@
         // would repeatedly hide different thumbnails and unload selected video players.
         this.viewport.scrollTo({ left: this.viewport.clientWidth * this.activeIndex, behavior: 'instant' });
       }
-      if (animateTransition) {
-        this.thumbs.forEach((thumb, index) => {
-          if (thumb.hidden) return;
-          const before = positions[index];
-          const after = thumb.getBoundingClientRect();
-          thumb.animate?.(before ? [
-            { transform: `translate(${before.left - after.left}px, ${before.top - after.top}px)` },
-            { transform: 'translate(0, 0)' },
-          ] : [{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'cubic-bezier(0.22,1,0.36,1)' });
-        });
-        if (scroll) this.slides[this.activeIndex].animate?.([{ opacity: 0.7 }, { opacity: 1 }], { duration: 300 });
-      }
+      if (animateTransition && scroll) this.slides[this.activeIndex].animate?.([{ opacity: 0.7 }, { opacity: 1 }], { duration: 300 });
     }
 
     loadVideo(slide) {
