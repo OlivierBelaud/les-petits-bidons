@@ -801,11 +801,11 @@ function renderSection(product) {
               <div class="product-form__error-message les56-error" role="alert" hidden></div>
             </form>
           </div>
+          <div class="les56__details">
+            <div class="les56-accordions" data-les56-region="accordions">${renderAccordions(current)}</div>
+            <div class="les56-relocated-apps" data-les56-app-slot></div>
+          </div>
         </div>
-      </div>
-      <div class="les56__details">
-        <div class="les56-accordions" data-les56-region="accordions">${renderAccordions(current)}</div>
-        <div class="les56-relocated-apps" data-les56-app-slot></div>
       </div>
       <div class="les56-sticky" data-les56-sticky hidden>
         <p class="les56-sticky__title" data-les56-sticky-title>${current.title}</p>

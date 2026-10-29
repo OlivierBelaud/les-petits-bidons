@@ -1437,8 +1437,15 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
     column-gap: 49px;
   }
 
+  .les56__media {
+    position: sticky;
+    top: calc(var(--sticky-header-height, 0px) + 16px);
+  }
+
   .les56-gallery__viewport {
     aspect-ratio: 770 / 715;
+    /* Keep the thumbnails visible above the fixed purchase bar, including short screens. */
+    max-height: calc(100dvh - var(--sticky-header-height, 0px) - 234px);
   }
 
   .les56-gallery__dots {
@@ -1717,10 +1724,8 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
   .les56__details {
     display: flex;
     flex-direction: column;
-    width: 520px;
-    max-width: 100%;
-    margin-top: 103px;
-    margin-left: -10px;
+    width: 100%;
+    margin-top: 0;
   }
 
   .les56-icons {
