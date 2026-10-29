@@ -306,6 +306,15 @@ function createBrowser({ url = 'https://shop.test/products/lessive?variant=101&p
       notifyMutation(this);
       return node;
     }
+    insertBefore(node, reference) {
+      if (node === reference) return node;
+      if (node.parentNode) node.parentNode.removeChild(node);
+      node.parentNode = this;
+      this.childNodes.splice(this.childNodes.indexOf(reference), 0, node);
+      if (this.isConnected) connect(node);
+      notifyMutation(this);
+      return node;
+    }
     removeChild(node) {
       const wasConnected = node.isConnected;
       this.childNodes = this.childNodes.filter((child) => child !== node);
@@ -1460,37 +1469,32 @@ test('a removed section releases its scroll and resize listeners and its pending
   assert.equal(html.classList.contains('les56-sticky-visible'), false, 'launchers restored when the section goes');
 });
 
-test('a thumbnail keeps its visual position when another selection interrupts its movement', () => {
+test('selecting a thumbnail replaces only its slot with the previous main image', () => {
   const t = setup();
+  t.choose(variantInput(t, 55185604182394));
   const gallery = t.$('les56-gallery');
-  const thumbs = t.$$('[data-les56-thumb]');
-  const offsets = new Map();
-  for (const thumb of thumbs) {
-    thumb.getBoundingClientRect = () => ({
-      left: thumbs.filter((item) => !item.hidden).indexOf(thumb) * 100 + (offsets.get(thumb) || 0),
-      top: 0,
-    });
-    thumb.getAnimations = () => [{ cancel: () => offsets.delete(thumb) }];
-    thumb.animate = (keyframes) => {
-      const match = keyframes[0].transform?.match(/translate\(([-.\d]+)px/);
-      offsets.set(thumb, match ? Number(match[1]) : 0);
-    };
+  for (const thumb of t.$$('[data-les56-thumb]')) {
+    thumb.animate = () => assert.fail('thumbnails must not move or fade between slots');
   }
-  gallery.setActive(2, true);
-  // Image 1 is halfway through moving from the first slot into the second.
-  const survivor = thumbs[1];
-  offsets.set(survivor, -50);
-  const before = survivor.getBoundingClientRect().left;
-  gallery.setActive(0, true);
-  assert.equal(survivor.getBoundingClientRect().left, before, 'a second selection must start at the currently painted position');
-  assert.deepEqual(t.visibleThumbs(), [1, 2]);
+  let expected = [1, 2, 3];
+  let previous = 0;
+  for (const target of [3, 1, 0, 2, 3, 2, 0]) {
+    const slot = expected.indexOf(target);
+    expected[slot] = previous;
+    gallery.setActive(target, true);
+    assert.deepEqual(t.visibleThumbs(), expected, 'all other thumbnails stay in their original slots');
+    assert.equal(gallery.activeIndex, target);
+    previous = target;
+  }
+  gallery.setActive(previous, false);
+  assert.deepEqual(t.visibleThumbs(), expected, 'scroll reconciliation leaves the slots untouched');
 });
 
 test('thumbnails list every image except the active one and select on click', () => {
   const t = setup();
   assert.deepEqual(t.visibleThumbs(), [1, 2]);
   t.click(t.$('[data-les56-thumb][data-index="2"]'));
-  assert.deepEqual(t.visibleThumbs(), [0, 1]);
+  assert.deepEqual(t.visibleThumbs(), [1, 0]);
   assert.equal(t.$('[data-les56-viewport]').lastScroll.left, 2 * 380);
   assert.equal(t.$('[data-les56-viewport]').lastScroll.behavior, 'instant', 'no intermediate slide reflows the thumbnail row');
   assert.equal(t.document.activeElement, t.$('[data-les56-slide][data-index="2"]'));
@@ -1501,7 +1505,7 @@ test('thumbnails list every image except the active one and select on click', ()
   t.choose(variantInput(t, 55185604182394));
   assert.deepEqual(t.visibleThumbs(), [1, 2, 3], 'replacement gallery starts on its first image');
   t.click(t.$('[data-les56-thumb][data-index="3"]'));
-  assert.deepEqual(t.visibleThumbs(), [0, 1, 2]);
+  assert.deepEqual(t.visibleThumbs(), [1, 2, 0]);
 });
 
 const mixedMediaProduct = () => ({
@@ -1599,7 +1603,7 @@ test('an interrupted smooth scroll leaves the gallery on the slide that is actua
   settleOn(1);
   settleOn(1);
   assert.deepEqual(state(), {
-    thumbs: [0, 2],
+    thumbs: [2, 0],
     dots: [false, true, false],
     tabindex: ['-1', '0', '-1'],
     hidden: ['true', 'false', 'true'],
@@ -1607,7 +1611,7 @@ test('an interrupted smooth scroll leaves the gallery on the slide that is actua
 
   t.click(t.$('[data-les56-next]'));
   assert.equal(viewport.lastScroll.left, 2 * 380);
-  assert.deepEqual(t.visibleThumbs(), [0, 1]);
+  assert.deepEqual(t.visibleThumbs(), [1, 0]);
   t.click(t.$('[data-les56-thumb][data-index="0"]'));
   assert.deepEqual(t.visibleThumbs(), [1, 2]);
   settleOn(0);
