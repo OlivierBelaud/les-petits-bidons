@@ -1395,6 +1395,17 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
   }
 }
 
+@media screen and (max-width: 359px) {
+  .les56 .les56-subscription__toggle {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .les56-subscription__bubble {
+    margin-left: 24px;
+  }
+}
+
 /* ---------- Tablet: single column, contained ---------- */
 
 @media screen and (min-width: 600px) and (max-width: 1023px) {
