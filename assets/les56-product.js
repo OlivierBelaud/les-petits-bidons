@@ -113,6 +113,8 @@
       if (previous !== this.activeIndex) this.closeLightbox();
       const animateTransition = previous != null && previous !== this.activeIndex && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       const positions = animateTransition ? this.thumbs.map((thumb) => thumb.hidden ? null : thumb.getBoundingClientRect()) : [];
+      // Preserve the painted positions, then remove old transforms before measuring the new layout.
+      this.thumbs.forEach((thumb) => thumb.getAnimations?.().forEach((animation) => animation.cancel()));
 
       this.slides.forEach((slide, position) => {
         const active = position === this.activeIndex;
@@ -137,7 +139,6 @@
           if (thumb.hidden) return;
           const before = positions[index];
           const after = thumb.getBoundingClientRect();
-          thumb.getAnimations?.().forEach((animation) => animation.cancel());
           thumb.animate?.(before ? [
             { transform: `translate(${before.left - after.left}px, ${before.top - after.top}px)` },
             { transform: 'translate(0, 0)' },
