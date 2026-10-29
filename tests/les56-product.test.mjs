@@ -1460,6 +1460,32 @@ test('a removed section releases its scroll and resize listeners and its pending
   assert.equal(html.classList.contains('les56-sticky-visible'), false, 'launchers restored when the section goes');
 });
 
+test('a thumbnail keeps its visual position when another selection interrupts its movement', () => {
+  const t = setup();
+  const gallery = t.$('les56-gallery');
+  const thumbs = t.$$('[data-les56-thumb]');
+  const offsets = new Map();
+  for (const thumb of thumbs) {
+    thumb.getBoundingClientRect = () => ({
+      left: thumbs.filter((item) => !item.hidden).indexOf(thumb) * 100 + (offsets.get(thumb) || 0),
+      top: 0,
+    });
+    thumb.getAnimations = () => [{ cancel: () => offsets.delete(thumb) }];
+    thumb.animate = (keyframes) => {
+      const match = keyframes[0].transform?.match(/translate\(([-.\d]+)px/);
+      offsets.set(thumb, match ? Number(match[1]) : 0);
+    };
+  }
+  gallery.setActive(2, true);
+  // Image 1 is halfway through moving from the first slot into the second.
+  const survivor = thumbs[1];
+  offsets.set(survivor, -50);
+  const before = survivor.getBoundingClientRect().left;
+  gallery.setActive(0, true);
+  assert.equal(survivor.getBoundingClientRect().left, before, 'a second selection must start at the currently painted position');
+  assert.deepEqual(t.visibleThumbs(), [1, 2]);
+});
+
 test('thumbnails list every image except the active one and select on click', () => {
   const t = setup();
   assert.deepEqual(t.visibleThumbs(), [1, 2]);
