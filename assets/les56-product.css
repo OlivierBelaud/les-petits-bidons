@@ -1444,8 +1444,6 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
 
   .les56-gallery__viewport {
     aspect-ratio: 770 / 715;
-    /* Keep the thumbnails visible above the fixed purchase bar, including short screens. */
-    max-height: calc(100dvh - var(--sticky-header-height, 0px) - 234px);
   }
 
   .les56-gallery__dots {
