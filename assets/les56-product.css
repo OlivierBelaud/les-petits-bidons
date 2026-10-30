@@ -1439,7 +1439,7 @@ html.les56-sticky-visible #smile-ui-lite-launcher-frame-container {
 
   .les56__media {
     position: sticky;
-    top: calc(var(--sticky-header-height, 0px) + 16px);
+    top: 0;
   }
 
   .les56-gallery__viewport {
